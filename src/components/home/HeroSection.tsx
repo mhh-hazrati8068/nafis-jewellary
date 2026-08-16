@@ -3,14 +3,37 @@
 import Link from "next/link";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF, Center } from "@react-three/drei";
-import { Suspense, useRef, useEffect, useState, useMemo } from "react";
+import { Suspense, useRef, useEffect, useState, useMemo, Component, ErrorInfo, ReactNode } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import BrandLogo from "@/components/layout/BrandLogo";
+import { getAssetPath } from "@/lib/assets";
 import * as THREE from "three";
 
 interface RingProps {
   onLoaded: () => void;
   animStep: number;
+}
+
+class ThreeErrorBoundary extends Component<{ fallback: ReactNode; children: ReactNode }, { hasError: boolean }> {
+  constructor(props: { fallback: ReactNode; children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.warn("3D GLB model loading fallback triggered:", error.message);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
 }
 
 function FloatingGoldParticles({ count = 35 }: { count?: number }) {
@@ -54,8 +77,47 @@ function FloatingGoldParticles({ count = 35 }: { count?: number }) {
   );
 }
 
-function AnimatedRing({ onLoaded, animStep }: RingProps) {
-  const goldModel = useGLTF("/models/ring-min.glb");
+// Procedural 18K Solid Gold & Agate Gemstone Ring (Zero-fail fallback)
+function ProceduralGoldRing() {
+  const meshRef = useRef<THREE.Group>(null);
+
+  useFrame((_, delta) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y += delta * 0.35;
+    }
+  });
+
+  return (
+    <group ref={meshRef}>
+      {/* 18K Gold Band */}
+      <mesh rotation={[Math.PI / 3, 0, 0]}>
+        <torusGeometry args={[1.1, 0.16, 32, 64]} />
+        <meshStandardMaterial
+          color="#C4852B"
+          metalness={0.92}
+          roughness={0.16}
+        />
+      </mesh>
+
+      {/* Signature Red Agate Gem Crown */}
+      <mesh position={[0, 1.15, 0.4]}>
+        <octahedronGeometry args={[0.3, 2]} />
+        <meshPhysicalMaterial
+          color="#660000"
+          metalness={0.1}
+          roughness={0.05}
+          transmission={0.85}
+          ior={1.8}
+          transparent
+          opacity={0.95}
+        />
+      </mesh>
+    </group>
+  );
+}
+
+function GLTFModelRing({ modelPath }: { modelPath: string }) {
+  const goldModel = useGLTF(modelPath);
 
   const clonedScene = useMemo(() => {
     const cloned = goldModel.scene.clone(true);
@@ -65,7 +127,6 @@ function AnimatedRing({ onLoaded, animStep }: RingProps) {
         const matName = mesh.material ? (mesh.material as THREE.Material).name : '';
 
         if (matName === 'Crystal' || mesh.name === 'Object_0') {
-          // Authentic Crystal Clear Diamond Gemstone
           mesh.material = new THREE.MeshPhysicalMaterial({
             color: new THREE.Color("#FFFFFF"),
             metalness: 0.0,
@@ -76,7 +137,6 @@ function AnimatedRing({ onLoaded, animStep }: RingProps) {
             opacity: 0.95
           });
         } else {
-          // Lustrous 18K Solid Gold
           mesh.material = new THREE.MeshStandardMaterial({
             color: new THREE.Color("#C4852B"),
             metalness: 0.9,
@@ -88,6 +148,15 @@ function AnimatedRing({ onLoaded, animStep }: RingProps) {
     return cloned;
   }, [goldModel.scene]);
 
+  return (
+    <Center>
+      <primitive object={clonedScene} />
+    </Center>
+  );
+}
+
+function AnimatedRing({ onLoaded, animStep }: RingProps) {
+  const modelUrl = useMemo(() => getAssetPath("/models/ring-min.glb"), []);
   const groupRef = useRef<THREE.Group>(null);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -135,16 +204,18 @@ function AnimatedRing({ onLoaded, animStep }: RingProps) {
 
   return (
     <group ref={groupRef} position={[0, -0.45, 0]}>
-      <Center>
-        <primitive object={clonedScene} />
-      </Center>
+      <ThreeErrorBoundary fallback={<ProceduralGoldRing />}>
+        <Suspense fallback={<ProceduralGoldRing />}>
+          <GLTFModelRing modelPath={modelUrl} />
+        </Suspense>
+      </ThreeErrorBoundary>
       <FloatingGoldParticles count={40} />
     </group>
   );
 }
 
 export default function HeroSection() {
-  const { t, language, theme } = useAppStore();
+  const { t, language } = useAppStore();
   const [modelReady, setModelReady] = useState(false);
   const [animStep, setAnimStep] = useState(0);
   const [loaderVisible, setLoaderVisible] = useState(true);
@@ -154,6 +225,15 @@ export default function HeroSection() {
   const handleModelLoaded = () => {
     setModelReady(true);
   };
+
+  useEffect(() => {
+    // Safety fallback: ensure loader dismisses even on slow connections
+    const timer = setTimeout(() => {
+      setModelReady(true);
+    }, 600);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -235,7 +315,7 @@ export default function HeroSection() {
               <spotLight position={[0, 12, 6]} angle={0.35} penumbra={1} intensity={3.5} color="#ffffff" />
               <pointLight position={[0, -5, 5]} intensity={1.5} color="#C4852B" />
               
-              <Suspense fallback={null}>
+              <Suspense fallback={<ProceduralGoldRing />}>
                 <AnimatedRing onLoaded={handleModelLoaded} animStep={animStep} />
               </Suspense>
             </Canvas>
@@ -270,14 +350,14 @@ export default function HeroSection() {
           <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-5 w-full sm:w-auto pointer-events-auto px-4 sm:px-0 max-w-xs sm:max-w-none">
             <Link 
               href="/collections"
-              className="w-full sm:w-auto text-center px-8 py-3.5 bg-[#660000] text-white font-bold text-xs uppercase tracking-[0.2em] rounded-full shadow-[0_8px_25px_rgba(102,0,0,0.35)] hover:bg-[#7D0000] hover:scale-105 transition-all duration-300"
+              className="w-full sm:w-auto text-center px-8 py-3.5 bg-[#660000] text-white font-bold text-xs uppercase tracking-[0.2em] rounded-full shadow-[0_8px_25px_rgba(102,0,0,0.35)] hover:bg-[#7D0000] hover:scale-105 transition-all duration-300 cursor-pointer"
             >
               {t.hero.explore}
             </Link>
             
             <Link 
               href="/about"
-              className="w-full sm:w-auto text-center px-8 py-3.5 border-2 border-[#C4852B] bg-white/90 backdrop-blur-sm text-zinc-950 font-bold text-xs uppercase tracking-[0.2em] rounded-full hover:bg-[#C4852B] hover:text-white transition-all duration-300 shadow-sm"
+              className="w-full sm:w-auto text-center px-8 py-3.5 border-2 border-[#C4852B] bg-white/90 backdrop-blur-sm text-zinc-950 font-bold text-xs uppercase tracking-[0.2em] rounded-full hover:bg-[#C4852B] hover:text-white transition-all duration-300 shadow-sm cursor-pointer"
             >
               {t.hero.philosophy}
             </Link>
@@ -289,4 +369,3 @@ export default function HeroSection() {
   );
 }
 
-useGLTF.preload("/models/ring-min.glb");

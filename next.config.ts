@@ -1,7 +1,26 @@
 import type { NextConfig } from "next";
 
+const isGithubActions = process.env.GITHUB_ACTIONS === "true";
+let basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
+if (!basePath && isGithubActions && process.env.GITHUB_REPOSITORY) {
+  const repoName = process.env.GITHUB_REPOSITORY.split("/")[1];
+  if (repoName && !repoName.endsWith(".github.io")) {
+    basePath = `/${repoName}`;
+  }
+}
+
 const nextConfig: NextConfig = {
-  /* config options here */
+  output: "export",
+  basePath: basePath || undefined,
+  assetPrefix: basePath || undefined,
+  images: {
+    unoptimized: true,
+  },
+  env: {
+    NEXT_PUBLIC_BASE_PATH: basePath,
+  },
 };
 
 export default nextConfig;
+
