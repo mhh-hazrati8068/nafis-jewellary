@@ -1,26 +1,209 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Official Brand Typography: Kalameh (Persian) & Clash Display (English) */
+@font-face {
+  font-family: 'Kalameh';
+  src: url('/fonts/Kalameh-Thin.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kalameh';
+  src: url('/fonts/Kalameh-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kalameh';
+  src: url('/fonts/Kalameh-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kalameh';
+  src: url('/fonts/Kalameh-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Extralight.otf') format('opentype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Nafise Ebadi Official Color Hierarchy (March 2026 Guidelines: 50% Gold, 20% Burgundy, 20% White, 5% Slate, 5% Black) */
+  --brand-gold: #C4852B;         /* 50% Primary Dominant Accent (Ochre / Gold) RGB: 196,133,43 */
+  --brand-gold-dark: #A76E1F;    /* Richer Gold Shade */
+  --brand-burgundy: #660000;     /* 20% Luxury Editorial Accent (Deep Burgundy) RGB: 102,0,0 */
+  --brand-burgundy-hover: #7D0000;
+  --brand-white: #FFFFFF;        /* 20% Pure White Canvas RGB: 255,255,255 */
+  --brand-ivory: #FAF9F5;        /* Warm Ivory Canvas */
+  --brand-card: #F4F1EA;         /* Soft Sand Card Background */
+  --brand-gray: #626667;         /* 5% Slate Gray RGB: 98,102,103 */
+  --brand-black: #1A1816;        /* 5% High Contrast Typographic Black */
+
+  --background: #FFFFFF;
+  --background-secondary: #FAF9F5;
+  --foreground: #1A1816;
+}
+
+.dark {
+  --background: #FAF9F5;
+  --background-secondary: #F4F1EA;
+  --foreground: #1A1816;
+  --brand-ivory: #FAF9F5;
+  --brand-card: #FFFFFF;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-brand-gold: var(--brand-gold);
+  --color-brand-burgundy: var(--brand-burgundy);
+  --color-brand-gray: var(--brand-gray);
+  --font-clash: var(--font-clash), 'Clash Display', -apple-system, sans-serif;
+  --font-kalameh: var(--font-kalameh), 'Kalameh', tahoma, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Smooth Scroll & Base Performance */
+html {
+  scroll-behavior: smooth;
+}
+
+html, body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden !important;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Apply Official Brand Typography */
+body, [dir="rtl"] {
+  font-family: var(--font-kalameh), 'Kalameh', tahoma, sans-serif;
+}
+
+[dir="ltr"] {
+  font-family: var(--font-clash), 'Clash Display', -apple-system, sans-serif;
+}
+
+.font-kalameh {
+  font-family: var(--font-kalameh), 'Kalameh', tahoma, sans-serif;
+}
+
+.font-clash {
+  font-family: var(--font-clash), 'Clash Display', -apple-system, sans-serif;
+}
+
+h1, h2, h3, h4, .font-brand-en {
+  font-family: var(--font-clash), 'Clash Display', -apple-system, sans-serif;
+  letter-spacing: 0.05em;
+}
+
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, .font-brand-fa {
+  font-family: var(--font-kalameh), 'Kalameh', tahoma, sans-serif;
+  letter-spacing: normal;
+}
+
+/* Custom Selection */
+::-selection {
+  background-color: var(--brand-burgundy);
+  color: #FFFFFF;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Signature 2026 Brand Gold Pattern (From Letterhead & Packaging Guidelines - Pages 22-24) */
+.brand-gold-pattern {
+  background-color: #FAF9F5;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(196, 133, 43, 0.08) 0,
+    rgba(196, 133, 43, 0.08) 3px,
+    transparent 3px,
+    transparent 12px
+  ), repeating-linear-gradient(
+    -45deg,
+    rgba(196, 133, 43, 0.08) 0,
+    rgba(196, 133, 43, 0.08) 3px,
+    transparent 3px,
+    transparent 12px
+  );
+}
+
+.dark .brand-gold-pattern {
+  background-color: #F4F1EA;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(196, 133, 43, 0.1) 0,
+    rgba(196, 133, 43, 0.1) 3px,
+    transparent 3px,
+    transparent 12px
+  ), repeating-linear-gradient(
+    -45deg,
+    rgba(196, 133, 43, 0.1) 0,
+    rgba(196, 133, 43, 0.1) 3px,
+    transparent 3px,
+    transparent 12px
+  );
+}
+
+/* Luxury Card Hover */
+.luxury-card-hover {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
+}
+
+.luxury-card-hover:hover {
+  transform: translateY(-4px);
+}
+

@@ -1,0 +1,8 @@
+Model Information:
+* title:	Jewelery - Ring- Diamonds
+* source:	https://sketchfab.com/3d-models/jewelery-ring-diamonds-24b406272bc74fdb8b38c4a16547f0b1
+* author:	Cécile Amstad (https://sketchfab.com/c.m.a)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works
