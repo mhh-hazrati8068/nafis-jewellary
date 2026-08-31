@@ -75,7 +75,9 @@ export default function ShopPage() {
                 </div>
 
                 <div className="pt-4 border-t border-zinc-200 flex items-center justify-between mt-4">
-                  <span className="font-mono text-base font-bold text-[#C4852B]">${product.price}</span>
+                  <span className="font-mono text-sm font-bold text-[#C4852B]">
+                    {product.price.toLocaleString()} تومان
+                  </span>
                   <button
                     onClick={() => addToCart({
                       id: product.id,

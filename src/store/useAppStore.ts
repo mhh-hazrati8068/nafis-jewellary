@@ -1,6 +1,16 @@
 import { create } from 'zustand'
 import { Language, translations } from '@/lib/translations'
 import { Product, mockProducts } from '@/data/products'
+import { 
+  UserProfile, 
+  fetchAllProducts, 
+  fetchLiveSilverPrice as getLiveSilverPriceApi,
+  verifyOtp,
+  adminLogin as adminLoginApi,
+  getUserProfile,
+  API_BASE_URL,
+  BackendProduct
+} from '@/lib/api'
 
 export type { Product }
 export type Theme = 'dark' | 'light';
@@ -30,7 +40,10 @@ interface AppState {
 
   // Products state
   products: Product[]
+  backendProducts: BackendProduct[]
+  isLoadingProducts: boolean
   getProductById: (id: number) => Product | undefined
+  fetchProducts: () => Promise<void>
 
   // Search modal state
   isSearchOpen: boolean
@@ -49,12 +62,54 @@ interface AppState {
   wishlist: number[]
   toggleWishlist: (id: number) => void
 
-  // Gold price ticker
+  // Live Silver & Gold Price Ticker
+  silverPricePerGramToman: number
   goldPricePerGram: number
+  fetchSilverPrice: () => Promise<void>
+
+  // Authentication state
+  token: string | null
+  user: UserProfile | null
+  isAdmin: boolean
+  isAuthModalOpen: boolean
+  isProfileModalOpen: boolean
+  setAuthModalOpen: (open: boolean) => void
+  setProfileModalOpen: (open: boolean) => void
+  loginWithOtp: (phoneNumber: string, code: string) => Promise<void>
+  loginAsAdmin: (username: string, pass: string) => Promise<void>
+  logout: () => void
+  loadUserFromStorage: () => Promise<void>
+  refreshProfile: () => Promise<void>
+}
+
+// Convert Backend product to Frontend product
+function mapBackendToFrontend(bp: BackendProduct): Product {
+  const imageUrl = bp.imageUrl 
+    ? (bp.imageUrl.startsWith('http') ? bp.imageUrl : `${API_BASE_URL}${bp.imageUrl}`)
+    : "https://images.unsplash.com/photo-1605100804763-247f66126e28?q=80&w=800&auto=format&fit=crop";
+
+  return {
+    id: bp.id,
+    nameFa: bp.name,
+    nameEn: bp.name,
+    price: bp.livePriceToman || 0,
+    category: 'rings',
+    categoryFa: bp.stoneName ? `نقره دست‌ساز (${bp.stoneName})` : 'زیورآلات نقره',
+    categoryEn: bp.stoneName ? `Handmade Silver (${bp.stoneName})` : 'Silver Jewelry',
+    materialFa: `نقره ۹۹۹ عیار خالص ${bp.weight ? `(${bp.weight} گرم)` : ''}`,
+    materialEn: `999 Fine Silver ${bp.weight ? `(${bp.weight}g)` : ''}`,
+    descriptionFa: `طراحی اصیل نقره با فرمول قیمت‌گذاری پویا بر پایه نرخ لحظه‌ای TGJU. موجودی: ${bp.stockQuantity} عدد`,
+    descriptionEn: `Authentic silver jewelry with live dynamic pricing based on daily TGJU silver rates. In stock: ${bp.stockQuantity}`,
+    image: imageUrl,
+    images: [imageUrl],
+    weightGram: bp.weight || 4.2,
+    carat: "Silver 999",
+    featured: bp.badge === 'BEST_SELLER' || bp.badge === 'SPECIAL_OFFER',
+  };
 }
 
 export const useAppStore = create<AppState>()((set, get) => ({
-  // Theme management (Pure White & Ivory default, never pitch black)
+  // Theme management
   theme: typeof window !== 'undefined' && localStorage.getItem('nafis_theme') === 'warm' ? 'dark' : 'light',
   setTheme: (theme) => {
     if (typeof window !== 'undefined') {
@@ -99,7 +154,28 @@ export const useAppStore = create<AppState>()((set, get) => ({
 
   // Products
   products: mockProducts,
+  backendProducts: [],
+  isLoadingProducts: false,
   getProductById: (id) => get().products.find((p) => p.id === id),
+
+  fetchProducts: async () => {
+    set({ isLoadingProducts: true })
+    try {
+      const backendItems = await fetchAllProducts();
+      if (backendItems && backendItems.length > 0) {
+        const mapped = backendItems.map(mapBackendToFrontend);
+        set({
+          products: mapped,
+          backendProducts: backendItems,
+          isLoadingProducts: false,
+        });
+      } else {
+        set({ products: mockProducts, isLoadingProducts: false });
+      }
+    } catch {
+      set({ products: mockProducts, isLoadingProducts: false });
+    }
+  },
 
   // Search Modal
   isSearchOpen: false,
@@ -108,18 +184,17 @@ export const useAppStore = create<AppState>()((set, get) => ({
   })),
 
   // Cart State
-  cart: [
-    {
-      id: 1,
-      name: "انگشتر طلای ۱۸ عیار مینیمال",
-      price: 250,
-      image: "https://images.unsplash.com/photo-1605100804763-247f66126e28?q=80&w=600&auto=format&fit=crop",
-      quantity: 1,
-      category: "انگشتر"
-    }
-  ],
+  cart: [],
   isCartOpen: false,
+  silverPricePerGramToman: 474820,
   goldPricePerGram: 85.50,
+
+  fetchSilverPrice: async () => {
+    const price = await getLiveSilverPriceApi();
+    if (price && price > 0) {
+      set({ silverPricePerGramToman: price });
+    }
+  },
 
   addToCart: (product) => set((state) => {
     const existingIndex = state.cart.findIndex((item) => item.id === product.id)
@@ -158,7 +233,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
 
   clearCart: () => set({ cart: [] }),
 
-  wishlist: [2],
+  wishlist: [1, 2],
   toggleWishlist: (id) => set((state) => {
     const exists = state.wishlist.includes(id)
     return {
@@ -166,5 +241,77 @@ export const useAppStore = create<AppState>()((set, get) => ({
         ? state.wishlist.filter((wId) => wId !== id)
         : [...state.wishlist, id]
     }
-  })
+  }),
+
+  // Authentication
+  token: typeof window !== 'undefined' ? localStorage.getItem('nafis_token') : null,
+  user: typeof window !== 'undefined' && localStorage.getItem('nafis_user') 
+    ? JSON.parse(localStorage.getItem('nafis_user')!) 
+    : null,
+  isAdmin: typeof window !== 'undefined' ? localStorage.getItem('nafis_role') === 'ADMIN' : false,
+  isAuthModalOpen: false,
+  isProfileModalOpen: false,
+
+  setAuthModalOpen: (open) => set({ isAuthModalOpen: open }),
+  setProfileModalOpen: (open) => set({ isProfileModalOpen: open }),
+
+  loginWithOtp: async (phoneNumber: string, code: string) => {
+    const token = await verifyOtp(phoneNumber, code);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('nafis_token', token);
+      localStorage.setItem('nafis_role', 'USER');
+    }
+    set({ token, isAdmin: false, isAuthModalOpen: false });
+    await get().refreshProfile();
+  },
+
+  loginAsAdmin: async (username: string, pass: string) => {
+    const token = await adminLoginApi(username, pass);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('nafis_token', token);
+      localStorage.setItem('nafis_role', 'ADMIN');
+      localStorage.setItem('nafis_user', JSON.stringify({ phoneNumber: username, role: 'ADMIN', firstName: 'مدیر', lastName: 'سیستم' }));
+    }
+    set({ 
+      token, 
+      isAdmin: true, 
+      isAuthModalOpen: false,
+      user: { phoneNumber: username, role: 'ADMIN', firstName: 'مدیر', lastName: 'سیستم' }
+    });
+  },
+
+  logout: () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('nafis_token');
+      localStorage.removeItem('nafis_user');
+      localStorage.removeItem('nafis_role');
+    }
+    set({ token: null, user: null, isAdmin: false, isProfileModalOpen: false });
+  },
+
+  loadUserFromStorage: async () => {
+    if (typeof window === 'undefined') return;
+    const token = localStorage.getItem('nafis_token');
+    const role = localStorage.getItem('nafis_role');
+    if (token) {
+      set({ token, isAdmin: role === 'ADMIN' });
+      if (role !== 'ADMIN') {
+        await get().refreshProfile();
+      }
+    }
+  },
+
+  refreshProfile: async () => {
+    const { token } = get();
+    if (!token) return;
+    try {
+      const profile = await getUserProfile(token);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('nafis_user', JSON.stringify(profile));
+      }
+      set({ user: profile });
+    } catch (err) {
+      console.warn('Could not refresh profile:', err);
+    }
+  }
 }))

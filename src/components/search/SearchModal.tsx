@@ -90,7 +90,9 @@ export default function SearchModal() {
                         {language === 'fa' ? p.nameFa : p.nameEn}
                       </h4>
                       <p className="text-[10px] text-[#626667]">{language === 'fa' ? p.materialFa : p.materialEn}</p>
-                      <span className="font-mono text-xs font-bold text-[#C4852B]">${p.price}</span>
+                      <span className="font-mono text-xs font-bold text-[#C4852B]">
+                        {p.price.toLocaleString()} تومان
+                      </span>
                     </div>
                   </Link>
                   <button

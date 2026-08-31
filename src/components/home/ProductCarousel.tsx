@@ -88,8 +88,8 @@ export default function ProductCarousel() {
                   </div>
 
                   <div className="pt-4 border-t border-zinc-200 flex items-center justify-between mt-4">
-                    <span className="font-mono text-lg font-bold text-[#C4852B]">
-                      ${product.price.toLocaleString()}
+                    <span className="font-mono text-sm font-bold text-[#C4852B]">
+                      {product.price.toLocaleString()} تومان
                     </span>
 
                     <button

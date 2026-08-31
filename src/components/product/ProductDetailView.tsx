@@ -85,7 +85,7 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
               </h1>
 
               <div className="font-mono text-2xl font-bold text-[#C4852B] mb-6">
-                ${product.price.toLocaleString()}
+                {product.price.toLocaleString()} تومان
               </div>
 
               <p className="text-xs md:text-sm text-[#626667] leading-relaxed mb-8">
