@@ -10,26 +10,12 @@ if (!basePath && isGithubActions && process.env.GITHUB_REPOSITORY) {
   }
 }
 
-const isExport = process.env.NEXT_EXPORT === "true";
-
 const nextConfig: NextConfig = {
-  ...(isExport ? { output: "export" } : {}),
+  output: "export",
   basePath: basePath || undefined,
   assetPrefix: basePath || undefined,
   images: {
     unoptimized: true,
-  },
-  async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination: "http://188.212.99.215:8080/api/:path*",
-      },
-      {
-        source: "/uploads/:path*",
-        destination: "http://188.212.99.215:8080/uploads/:path*",
-      },
-    ];
   },
   env: {
     NEXT_PUBLIC_BASE_PATH: basePath,
@@ -37,4 +23,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-
