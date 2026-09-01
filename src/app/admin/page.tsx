@@ -17,7 +17,7 @@ import {
 import Link from "next/link";
 
 export default function AdminDashboardPage() {
-  const { token, isAdmin, setAuthModalOpen, silverPricePerGramToman, fetchSilverPrice, fetchProducts } = useAppStore();
+  const { token, isAdmin, setAuthModalOpen, silverPricePerGramToman, fetchSilverPrice, fetchProducts, logout } = useAppStore();
 
   const [activeTab, setActiveTab] = useState<"products" | "invoices">("products");
   const [products, setProducts] = useState<BackendProduct[]>([]);
@@ -65,8 +65,11 @@ export default function AdminDashboardPage() {
         const invList = await fetchAdminInvoices(token);
         setInvoices(invList);
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      console.warn("Failed to load admin data:", err?.message);
+      if (err?.message?.includes("403") || err?.message?.includes("401")) {
+        logout();
+      }
     } finally {
       setIsLoading(false);
     }

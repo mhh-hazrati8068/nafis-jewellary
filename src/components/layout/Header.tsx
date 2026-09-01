@@ -29,8 +29,10 @@ export default function Header() {
   } = useAppStore();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     loadUserFromStorage();
     fetchProducts();
     fetchSilverPrice();
@@ -78,7 +80,7 @@ export default function Header() {
               <span>{t.header.collections}</span>
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#C4852B] group-hover:w-full transition-all duration-300"></span>
             </Link>
-            {isAdmin && (
+            {mounted && isAdmin && (
               <Link href="/admin" className="px-2 py-0.5 rounded bg-[#660000] text-white text-[10px] font-bold tracking-wider hover:bg-[#800000] transition-colors shadow-sm">
                 ⚙️ {language === 'fa' ? 'پنل مدیریت' : 'Admin Panel'}
               </Link>
@@ -115,7 +117,7 @@ export default function Header() {
             </button>
 
             {/* User Account / Login Button */}
-            {token ? (
+            {mounted && token ? (
               <button
                 onClick={() => setProfileModalOpen(true)}
                 className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[#C4852B]/40 bg-[#C4852B]/10 hover:bg-[#C4852B]/20 text-zinc-900 text-xs font-medium transition-all"

@@ -1,6 +1,5 @@
-// API client for Silver Shop Spring Boot Backend (http://localhost:8085)
-
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8085';
+// API client for Silver Shop Spring Boot Backend
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 export interface BackendProduct {
   id: number;
@@ -56,7 +55,7 @@ export interface SilverPriceResponse {
 }
 
 function getAuthHeaders(token?: string | null): HeadersInit {
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     'Accept': 'application/json',
   };
   const activeToken = token || (typeof window !== 'undefined' ? localStorage.getItem('nafis_token') : null);
@@ -134,11 +133,11 @@ export async function updateUserProfile(profile: Partial<UserProfile>, token?: s
 }
 
 // ---------------- PRODUCTS API ----------------
-export async function fetchAllProducts(): Promise<BackendProduct[]> {
+export async function fetchAllProducts(token?: string | null): Promise<BackendProduct[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/products`, {
       method: 'GET',
-      headers: { 'Accept': 'application/json' },
+      headers: getAuthHeaders(token),
       cache: 'no-store',
     });
     if (!res.ok) {
@@ -151,11 +150,11 @@ export async function fetchAllProducts(): Promise<BackendProduct[]> {
   }
 }
 
-export async function fetchProductById(id: number | string): Promise<BackendProduct | null> {
+export async function fetchProductById(id: number | string, token?: string | null): Promise<BackendProduct | null> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/products/${id}`, {
       method: 'GET',
-      headers: { 'Accept': 'application/json' },
+      headers: getAuthHeaders(token),
       cache: 'no-store',
     });
     if (!res.ok) return null;

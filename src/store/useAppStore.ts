@@ -110,7 +110,7 @@ function mapBackendToFrontend(bp: BackendProduct): Product {
 
 export const useAppStore = create<AppState>()((set, get) => ({
   // Theme management
-  theme: typeof window !== 'undefined' && localStorage.getItem('nafis_theme') === 'warm' ? 'dark' : 'light',
+  theme: 'light',
   setTheme: (theme) => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('nafis_theme', theme === 'dark' ? 'warm' : 'light');
@@ -161,7 +161,8 @@ export const useAppStore = create<AppState>()((set, get) => ({
   fetchProducts: async () => {
     set({ isLoadingProducts: true })
     try {
-      const backendItems = await fetchAllProducts();
+      const { token } = get();
+      const backendItems = await fetchAllProducts(token);
       if (backendItems && backendItems.length > 0) {
         const mapped = backendItems.map(mapBackendToFrontend);
         set({
@@ -244,11 +245,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
   }),
 
   // Authentication
-  token: typeof window !== 'undefined' ? localStorage.getItem('nafis_token') : null,
-  user: typeof window !== 'undefined' && localStorage.getItem('nafis_user') 
-    ? JSON.parse(localStorage.getItem('nafis_user')!) 
-    : null,
-  isAdmin: typeof window !== 'undefined' ? localStorage.getItem('nafis_role') === 'ADMIN' : false,
+  token: null,
+  user: null,
+  isAdmin: false,
   isAuthModalOpen: false,
   isProfileModalOpen: false,
 
@@ -293,8 +292,24 @@ export const useAppStore = create<AppState>()((set, get) => ({
     if (typeof window === 'undefined') return;
     const token = localStorage.getItem('nafis_token');
     const role = localStorage.getItem('nafis_role');
+    const userStr = localStorage.getItem('nafis_user');
+    const themeStr = localStorage.getItem('nafis_theme');
+
+    if (themeStr === 'warm') {
+      get().setTheme('dark');
+    }
+
     if (token) {
-      set({ token, isAdmin: role === 'ADMIN' });
+      let parsedUser = null;
+      try {
+        if (userStr) parsedUser = JSON.parse(userStr);
+      } catch {}
+
+      set({ 
+        token, 
+        isAdmin: role === 'ADMIN',
+        user: parsedUser
+      });
       if (role !== 'ADMIN') {
         await get().refreshProfile();
       }
