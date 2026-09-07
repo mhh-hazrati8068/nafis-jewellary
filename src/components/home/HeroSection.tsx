@@ -124,24 +124,23 @@ function GLTFModelRing({ modelPath }: { modelPath: string }) {
     cloned.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
-        const matName = mesh.material ? (mesh.material as THREE.Material).name : '';
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
 
-        if (matName === 'Crystal' || mesh.name === 'Object_0') {
-          mesh.material = new THREE.MeshPhysicalMaterial({
-            color: new THREE.Color("#FFFFFF"),
-            metalness: 0.0,
-            roughness: 0.02,
-            transmission: 0.95,
-            ior: 2.417,
-            transparent: true,
-            opacity: 0.95
+        if (Array.isArray(mesh.material)) {
+          mesh.material.forEach((m) => {
+            if (m instanceof THREE.MeshStandardMaterial) {
+              if (m.map) m.map.colorSpace = THREE.SRGBColorSpace;
+              m.envMapIntensity = 2.2;
+              m.needsUpdate = true;
+            }
           });
-        } else {
-          mesh.material = new THREE.MeshStandardMaterial({
-            color: new THREE.Color("#C4852B"),
-            metalness: 0.9,
-            roughness: 0.18
-          });
+        } else if (mesh.material instanceof THREE.MeshStandardMaterial) {
+          if (mesh.material.map) {
+            mesh.material.map.colorSpace = THREE.SRGBColorSpace;
+          }
+          mesh.material.envMapIntensity = 2.2;
+          mesh.material.needsUpdate = true;
         }
       }
     });
@@ -155,61 +154,111 @@ function GLTFModelRing({ modelPath }: { modelPath: string }) {
   );
 }
 
-function AnimatedRing({ onLoaded, animStep }: RingProps) {
-  const modelUrl = useMemo(() => getAssetPath("/models/ring-min.glb"), []);
+// Preload the model for instantaneous display
+useGLTF.preload(getAssetPath("/models/an-old-ring.glb"));
+
+function AnimatedRing({ 
+  onLoaded, 
+  animStep, 
+  targetProgressRef,
+  currentProgressRef,
+  contentLayerRef,
+  scrollHintRef
+}: RingProps & { 
+  targetProgressRef: React.MutableRefObject<number>;
+  currentProgressRef: React.MutableRefObject<number>;
+  contentLayerRef: React.RefObject<HTMLDivElement | null>;
+  scrollHintRef: React.RefObject<HTMLDivElement | null>;
+}) {
+  const modelUrl = useMemo(() => getAssetPath("/models/an-old-ring.glb"), []);
   const groupRef = useRef<THREE.Group>(null);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     onLoaded();
+
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+    };
   }, [onLoaded]);
 
-  const targetScale = isMobile ? 0.95 : 1.25;
-  const targetPosY = isMobile ? -0.42 : -0.55;
+  // Scales & Positions:
+  // - State 1 (Top / Unscrolled): 3/4 angled view showcasing amber gemstone (~1.40 desktop, 0.95 mobile)
+  // - State 2 (Scrolled step 1): Perfectly sized circular loop framing hero content (~2.25 desktop, 1.05 mobile)
+  const initialScale = isMobile ? 0.95 : 1.40;
+  const targetExpandedScale = isMobile ? 1.05 : 2.25;
+  const initialPosY = isMobile ? -0.30 : -0.20;
+  const targetExpandedPosY = isMobile ? -0.28 : -0.16;
+
+  // Euler Rotation Angles for Image 1 (3/4 top angle) and Image 2 (Front portal loop)
+  const img1Rot = { x: -0.62, y: -0.28, z: -0.05 };
+  const img2Rot = { x: -1.28, y: 0.135, z: 0.018 };
 
   useFrame((state, delta) => {
+    // Single unified physics damping in sync with Three.js render loop (60-120 FPS)
+    currentProgressRef.current = THREE.MathUtils.damp(
+      currentProgressRef.current,
+      targetProgressRef.current,
+      9.0,
+      delta
+    );
+    const p = currentProgressRef.current;
+
+    // Stage 1: Ring 3D transform occurs over progress [0.0 -> 0.50]
+    const ringProgress = Math.min(1, Math.max(0, p / 0.50));
+    // Smooth cubic easeInOut
+    const ringFactor = ringProgress * ringProgress * (3 - 2 * ringProgress);
+
     if (groupRef.current) {
-      let scaleGoal = targetScale;
-      let posGoalY = targetPosY;
+      let targetScale = initialScale + (targetExpandedScale - initialScale) * ringFactor;
+      let targetPosY = initialPosY + (targetExpandedPosY - initialPosY) * ringFactor;
 
       if (animStep === 0) {
-        scaleGoal = 0.25;
-        posGoalY = 0;
+        targetScale = 0.25;
+        targetPosY = -0.5;
       } else if (animStep === 1) {
-        scaleGoal = targetScale * 1.35;
-        posGoalY = targetPosY * 0.5;
+        targetScale = initialScale * 1.05;
       }
 
-      const currentScale = groupRef.current.scale.x;
-      const newScale = THREE.MathUtils.damp(currentScale, scaleGoal, 3.2, delta);
-      groupRef.current.scale.setScalar(newScale);
+      groupRef.current.scale.setScalar(targetScale);
+      groupRef.current.position.y = targetPosY;
 
-      groupRef.current.position.y = THREE.MathUtils.damp(
-        groupRef.current.position.y,
-        posGoalY,
-        3.2,
-        delta
-      );
+      // Pointer parallax only when resting at top, fades out cleanly to avoid jumps on reverse
+      const pointerStrength = Math.max(0, 1 - ringProgress * 2.5) * 0.025;
+      const targetRotX = THREE.MathUtils.lerp(img1Rot.x, img2Rot.x, ringFactor) + (state.pointer.y * pointerStrength);
+      const targetRotY = THREE.MathUtils.lerp(img1Rot.y, img2Rot.y, ringFactor) + (state.pointer.x * pointerStrength);
+      const targetRotZ = THREE.MathUtils.lerp(img1Rot.z, img2Rot.z, ringFactor);
 
-      // Continuous Smooth 3D Ring Rotation Spin with subtle pointer parallax
-      groupRef.current.rotation.y += delta * 0.35;
-      const targetRotX = (state.pointer.y * 0.2) + 0.15;
-      groupRef.current.rotation.x = THREE.MathUtils.damp(groupRef.current.rotation.x, targetRotX, 3, delta);
+      groupRef.current.rotation.set(targetRotX, targetRotY, targetRotZ);
+    }
+
+    // Stage 2: Direct GPU DOM updates for the full-screen content layer [0.50 -> 1.00]
+    const contentProgress = Math.min(1, Math.max(0, (p - 0.50) / 0.50));
+    const contentFactor = contentProgress * contentProgress * (3 - 2 * contentProgress);
+
+    if (contentLayerRef.current) {
+      contentLayerRef.current.style.opacity = `${contentFactor}`;
+      contentLayerRef.current.style.transform = `translate3d(0, ${(1 - contentFactor) * 100}%, 0)`;
+      contentLayerRef.current.style.pointerEvents = contentFactor > 0.8 ? "auto" : "none";
+    }
+
+    if (scrollHintRef.current) {
+      scrollHintRef.current.style.opacity = `${Math.max(0, 1 - p * 3)}`;
     }
   });
 
   return (
-    <group ref={groupRef} position={[0, -0.45, 0]}>
+    <group ref={groupRef} position={[0, -0.20, 0]}>
       <ThreeErrorBoundary fallback={<ProceduralGoldRing />}>
         <Suspense fallback={<ProceduralGoldRing />}>
           <GLTFModelRing modelPath={modelUrl} />
         </Suspense>
       </ThreeErrorBoundary>
-      <FloatingGoldParticles count={40} />
+      <FloatingGoldParticles count={35} />
     </group>
   );
 }
@@ -220,7 +269,13 @@ export default function HeroSection() {
   const [animStep, setAnimStep] = useState(0);
   const [loaderVisible, setLoaderVisible] = useState(true);
   const [isHeroVisible, setIsHeroVisible] = useState(true);
+  
+  // High-performance direct refs (0 React re-renders on scroll for 120fps fluid smoothness)
+  const targetProgressRef = useRef<number>(0);
+  const currentProgressRef = useRef<number>(0);
   const sectionRef = useRef<HTMLElement>(null);
+  const contentLayerRef = useRef<HTMLDivElement>(null);
+  const scrollHintRef = useRef<HTMLDivElement>(null);
 
   const handleModelLoaded = () => {
     setModelReady(true);
@@ -233,6 +288,99 @@ export default function HeroSection() {
     }, 600);
 
     return () => clearTimeout(timer);
+  }, []);
+
+  // Seamless, glitch-free scroll interception & step gate
+  useEffect(() => {
+    let touchStartY = 0;
+
+    const handleScroll = () => {
+      if (window.scrollY > 5) {
+        targetProgressRef.current = 1;
+        currentProgressRef.current = 1;
+      }
+    };
+
+    const handleWheel = (e: WheelEvent) => {
+      const isAtTop = window.scrollY <= 0;
+
+      if (!isAtTop) {
+        targetProgressRef.current = 1;
+        return;
+      }
+
+      // Scrolling down: advance animation smoothly until 100%
+      if (e.deltaY > 0) {
+        if (targetProgressRef.current < 1) {
+          e.preventDefault();
+          const delta = Math.min(0.06, Math.max(0.01, Math.abs(e.deltaY) * 0.0008));
+          targetProgressRef.current = Math.min(1, targetProgressRef.current + delta);
+        }
+      }
+      // Scrolling up: reverse animation smoothly back to 0%
+      else if (e.deltaY < 0) {
+        if (targetProgressRef.current > 0) {
+          e.preventDefault();
+          const delta = Math.min(0.06, Math.max(0.01, Math.abs(e.deltaY) * 0.0008));
+          targetProgressRef.current = Math.max(0, targetProgressRef.current - delta);
+        }
+      }
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        touchStartY = e.touches[0].clientY;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const isAtTop = window.scrollY <= 0;
+      if (!isAtTop || e.touches.length === 0) {
+        if (window.scrollY > 5) targetProgressRef.current = 1;
+        return;
+      }
+
+      const currentY = e.touches[0].clientY;
+      const deltaY = touchStartY - currentY; // positive = swipe up (scroll down)
+      const touchDelta = Math.min(0.06, Math.max(0.01, Math.abs(deltaY) * 0.0025));
+
+      if (deltaY > 0 && targetProgressRef.current < 1) {
+        e.preventDefault();
+        targetProgressRef.current = Math.min(1, targetProgressRef.current + touchDelta);
+        touchStartY = currentY;
+      } else if (deltaY < 0 && targetProgressRef.current > 0) {
+        e.preventDefault();
+        targetProgressRef.current = Math.max(0, targetProgressRef.current - touchDelta);
+        touchStartY = currentY;
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const isAtTop = window.scrollY <= 0;
+      if (!isAtTop) return;
+
+      if (["ArrowDown", "PageDown", " "].includes(e.key) && targetProgressRef.current < 1) {
+        e.preventDefault();
+        targetProgressRef.current = Math.min(1, targetProgressRef.current + 0.15);
+      } else if (["ArrowUp", "PageUp"].includes(e.key) && targetProgressRef.current > 0) {
+        e.preventDefault();
+        targetProgressRef.current = Math.max(0, targetProgressRef.current - 0.15);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
+    window.addEventListener("keydown", handleKeyDown, { passive: false });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, []);
 
   useEffect(() => {
@@ -292,7 +440,7 @@ export default function HeroSection() {
       {/* Hero Section Container */}
       <section 
         ref={sectionRef}
-        className="relative w-full max-w-full overflow-hidden h-[85vh] min-h-[560px] md:min-h-[640px] flex items-center justify-center bg-[#FFFFFF] dark:bg-[#FAF9F5] text-zinc-950 transition-colors duration-500 pt-14 md:pt-20"
+        className="relative w-full max-w-full overflow-hidden h-screen min-h-[580px] md:min-h-[660px] flex items-center justify-center bg-[#FAF9F5] text-zinc-950 transition-colors duration-500 pt-14 md:pt-20"
       >
         
         {/* Zero-Lag Radial Glow */}
@@ -316,7 +464,14 @@ export default function HeroSection() {
               <pointLight position={[0, -5, 5]} intensity={1.5} color="#C4852B" />
               
               <Suspense fallback={<ProceduralGoldRing />}>
-                <AnimatedRing onLoaded={handleModelLoaded} animStep={animStep} />
+                <AnimatedRing 
+                  onLoaded={handleModelLoaded} 
+                  animStep={animStep} 
+                  targetProgressRef={targetProgressRef}
+                  currentProgressRef={currentProgressRef} 
+                  contentLayerRef={contentLayerRef}
+                  scrollHintRef={scrollHintRef}
+                />
               </Suspense>
             </Canvas>
           </div>
@@ -325,42 +480,68 @@ export default function HeroSection() {
         {/* Vignette Overlay */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(250,249,245,0.05)_30%,rgba(250,249,245,0.85)_100%)] opacity-90 z-0 pointer-events-none"></div>
 
-        {/* Editorial Content Layout */}
+        {/* Initial Scroll Hint (fades out as animation advances) */}
         <div 
-          className={`relative z-10 text-center px-4 md:px-8 flex flex-col items-center mt-4 md:mt-12 pointer-events-none transition-all duration-700 ${
-            animStep >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
+          ref={scrollHintRef}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 pointer-events-none transition-opacity duration-200"
+          style={{ opacity: 1 }}
         >
-          {/* Badge */}
-          <div className="mb-4 md:mb-6 px-4 py-1.5 rounded-full border border-[#C4852B]/50 bg-[#C4852B]/15 backdrop-blur-sm text-[9px] md:text-[10px] tracking-[0.25em] uppercase text-[#C4852B] font-bold font-mono">
-            {t.hero.badge}
+          <span className="text-[9px] md:text-[10px] font-mono tracking-[0.3em] uppercase text-[#C4852B] font-bold">
+            {language === 'fa' ? 'برای کاوش به پایین اسکرول کنید' : 'Scroll to explore'}
+          </span>
+          <div className="w-5 h-8 rounded-full border-2 border-[#C4852B]/40 flex items-start justify-center p-1">
+            <div className="w-1.5 h-2 rounded-full bg-[#C4852B] animate-bounce"></div>
           </div>
+        </div>
 
-          {/* Persian Editorial Headline */}
-          <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold tracking-tight mb-4 md:mb-6 uppercase text-zinc-950 max-w-3xl leading-[1.3] md:leading-[1.25]">
-            {t.hero.title}
-          </h1>
+        {/* Full-Screen Hidden Content Layer: Completely covers the whole hero section */}
+        <div 
+          ref={contentLayerRef}
+          className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#FAF9F5] text-zinc-950 px-4 sm:px-8 will-change-transform"
+          style={{
+            opacity: 0,
+            transform: 'translate3d(0, 100%, 0)',
+            pointerEvents: 'none'
+          }}
+        >
+          {/* Subtle Ambient Radial Gold Glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] sm:w-[700px] h-[500px] sm:h-[700px] bg-[radial-gradient(circle,rgba(196,133,43,0.12)_0%,rgba(250,249,245,0)_70%)] pointer-events-none"></div>
 
-          {/* Subtitle */}
-          <p className="text-xs sm:text-sm font-normal max-w-xs sm:max-w-md md:max-w-lg mx-auto mb-8 text-[#660000] leading-relaxed tracking-wide font-semibold">
-            {t.hero.subtitle}
-          </p>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-5 w-full sm:w-auto pointer-events-auto px-4 sm:px-0 max-w-xs sm:max-w-none">
-            <Link 
-              href="/collections"
-              className="w-full sm:w-auto text-center px-8 py-3.5 bg-[#660000] text-white font-bold text-xs uppercase tracking-[0.2em] rounded-full shadow-[0_8px_25px_rgba(102,0,0,0.35)] hover:bg-[#7D0000] hover:scale-105 transition-all duration-300 cursor-pointer"
-            >
-              {t.hero.explore}
-            </Link>
+          {/* Centered Editorial Content */}
+          <div className="relative z-10 text-center flex flex-col items-center max-w-3xl mx-auto pt-6 sm:pt-10">
             
-            <Link 
-              href="/about"
-              className="w-full sm:w-auto text-center px-8 py-3.5 border-2 border-[#C4852B] bg-white/90 backdrop-blur-sm text-zinc-950 font-bold text-xs uppercase tracking-[0.2em] rounded-full hover:bg-[#C4852B] hover:text-white transition-all duration-300 shadow-sm cursor-pointer"
-            >
-              {t.hero.philosophy}
-            </Link>
+            {/* Badge */}
+            <div className="mb-4 md:mb-6 px-4 py-1.5 rounded-full border border-[#C4852B]/60 bg-[#C4852B]/15 backdrop-blur-sm text-[9px] md:text-[10px] tracking-[0.25em] uppercase text-[#A06314] font-bold font-mono shadow-sm">
+              {t.hero.badge}
+            </div>
+
+            {/* Persian Editorial Headline */}
+            <h1 className="text-2xl sm:text-4xl md:text-6xl font-extrabold tracking-tight mb-4 md:mb-6 uppercase text-zinc-950 leading-[1.3] md:leading-[1.25]">
+              {t.hero.title}
+            </h1>
+
+            {/* Subtitle */}
+            <p className="text-xs sm:text-sm md:text-base font-semibold max-w-xs sm:max-w-md md:max-w-xl mx-auto mb-8 sm:mb-10 text-[#660000] leading-relaxed tracking-wide">
+              {t.hero.subtitle}
+            </p>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 w-full sm:w-auto px-4 sm:px-0 max-w-xs sm:max-w-none">
+              <Link 
+                href="/collections"
+                className="w-full sm:w-auto text-center px-8 py-3.5 bg-[#660000] text-white font-bold text-xs uppercase tracking-[0.2em] rounded-full shadow-[0_8px_25px_rgba(102,0,0,0.4)] hover:bg-[#7D0000] hover:scale-105 transition-all duration-300 cursor-pointer"
+              >
+                {t.hero.explore}
+              </Link>
+              
+              <Link 
+                href="/about"
+                className="w-full sm:w-auto text-center px-8 py-3.5 border-2 border-[#C4852B] bg-white text-zinc-950 font-bold text-xs uppercase tracking-[0.2em] rounded-full hover:bg-[#C4852B] hover:text-white transition-all duration-300 shadow-sm cursor-pointer"
+              >
+                {t.hero.philosophy}
+              </Link>
+            </div>
+
           </div>
         </div>
 
