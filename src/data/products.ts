@@ -21,7 +21,7 @@ export interface Product {
   featured?: boolean
 }
 
-export const mockProducts: Product[] = [
+export const initialProducts: Product[] = [
   {
     id: 1,
     nameFa: "انگشتر طلای ۱۸ عیار مینیمال",

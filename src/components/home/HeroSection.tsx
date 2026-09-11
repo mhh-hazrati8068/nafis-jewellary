@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF, Center } from "@react-three/drei";
-import { Suspense, useRef, useEffect, useState, useMemo, Component, ErrorInfo, ReactNode } from "react";
+import { Suspense, useRef, useEffect, useState, useMemo, Component, ReactNode } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import BrandLogo from "@/components/layout/BrandLogo";
 import { getAssetPath } from "@/lib/assets";
@@ -24,7 +24,7 @@ class ThreeErrorBoundary extends Component<{ fallback: ReactNode; children: Reac
     return { hasError: true };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  componentDidCatch(error: Error) {
     console.warn("3D GLB model loading fallback triggered:", error.message);
   }
 
@@ -39,16 +39,17 @@ class ThreeErrorBoundary extends Component<{ fallback: ReactNode; children: Reac
 function FloatingGoldParticles({ count = 35 }: { count?: number }) {
   const pointsRef = useRef<THREE.Points>(null);
   
-  const [positions, scales] = useMemo(() => {
+  const positions = useMemo(() => {
     const pos = new Float32Array(count * 3);
-    const scl = new Float32Array(count);
     for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 5.5;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 4.5;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 3.5;
-      scl[i] = Math.random() * 0.04 + 0.015;
+      const rx = (Math.sin(i * 12.9898 + 78.233) * 43758.5453) % 1;
+      const ry = (Math.sin((i + 1) * 12.9898 + 78.233) * 43758.5453) % 1;
+      const rz = (Math.sin((i + 2) * 12.9898 + 78.233) * 43758.5453) % 1;
+      pos[i * 3] = (Math.abs(rx) - 0.5) * 5.5;
+      pos[i * 3 + 1] = (Math.abs(ry) - 0.5) * 4.5;
+      pos[i * 3 + 2] = (Math.abs(rz) - 0.5) * 3.5;
     }
-    return [pos, scl];
+    return pos;
   }, [count]);
 
   useFrame((state, delta) => {
@@ -187,12 +188,12 @@ function AnimatedRing({
   }, [onLoaded]);
 
   // Scales & Positions:
-  // - State 1 (Top / Unscrolled): 3/4 angled view showcasing amber gemstone (~1.40 desktop, 0.95 mobile)
-  // - State 2 (Scrolled step 1): Perfectly sized circular loop framing hero content (~2.25 desktop, 1.05 mobile)
-  const initialScale = isMobile ? 0.95 : 1.40;
-  const targetExpandedScale = isMobile ? 1.05 : 2.25;
-  const initialPosY = isMobile ? -0.30 : -0.20;
-  const targetExpandedPosY = isMobile ? -0.28 : -0.16;
+  // - State 1 (Top / Unscrolled): 3/4 angled view showcasing amber gemstone (~1.40 desktop, 1.05 mobile)
+  // - State 2 (Scrolled step 1): Perfectly sized circular loop framing hero content (~2.25 desktop, 1.15 mobile)
+  const initialScale = isMobile ? 1.05 : 1.40;
+  const targetExpandedScale = isMobile ? 1.15 : 2.25;
+  const initialPosY = isMobile ? -0.15 : -0.20;
+  const targetExpandedPosY = isMobile ? -0.16 : -0.16;
 
   // Euler Rotation Angles for Image 1 (3/4 top angle) and Image 2 (Front portal loop)
   const img1Rot = { x: -0.62, y: -0.28, z: -0.05 };
@@ -440,7 +441,7 @@ export default function HeroSection() {
       {/* Hero Section Container */}
       <section 
         ref={sectionRef}
-        className="relative w-full max-w-full overflow-hidden h-screen min-h-[580px] md:min-h-[660px] flex items-center justify-center bg-[#FAF9F5] text-zinc-950 transition-colors duration-500 pt-14 md:pt-20"
+        className="relative w-full max-w-full overflow-hidden h-[82vh] sm:h-[88vh] md:h-screen min-h-[500px] sm:min-h-[560px] md:min-h-[660px] flex items-center justify-center bg-[#FAF9F5] text-zinc-950 transition-colors duration-500 pt-0 sm:pt-4 md:pt-16"
       >
         
         {/* Zero-Lag Radial Glow */}
@@ -483,11 +484,11 @@ export default function HeroSection() {
         {/* Initial Scroll Hint (fades out as animation advances) */}
         <div 
           ref={scrollHintRef}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 pointer-events-none transition-opacity duration-200"
+          className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 pointer-events-none transition-opacity duration-200"
           style={{ opacity: 1 }}
         >
-          <span className="text-[9px] md:text-[10px] font-mono tracking-[0.3em] uppercase text-[#C4852B] font-bold">
-            {language === 'fa' ? 'برای کاوش به پایین اسکرول کنید' : 'Scroll to explore'}
+          <span className="text-[10px] md:text-[11px] ltr:tracking-[0.2em] uppercase text-[#C4852B] font-bold">
+            {language === 'fa' ? 'برای کاوش به پایین اسکرول کنید' : language === 'ar' ? 'قم بالتمرير للأسفل للاستكشاف' : 'Scroll to explore'}
           </span>
           <div className="w-5 h-8 rounded-full border-2 border-[#C4852B]/40 flex items-start justify-center p-1">
             <div className="w-1.5 h-2 rounded-full bg-[#C4852B] animate-bounce"></div>
@@ -497,7 +498,7 @@ export default function HeroSection() {
         {/* Full-Screen Hidden Content Layer: Completely covers the whole hero section */}
         <div 
           ref={contentLayerRef}
-          className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#FAF9F5] text-zinc-950 px-4 sm:px-8 will-change-transform"
+          className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#FAF9F5] text-zinc-950 px-4 sm:px-8 will-change-transform py-4 sm:py-8"
           style={{
             opacity: 0,
             transform: 'translate3d(0, 100%, 0)',
@@ -508,20 +509,20 @@ export default function HeroSection() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] sm:w-[700px] h-[500px] sm:h-[700px] bg-[radial-gradient(circle,rgba(196,133,43,0.12)_0%,rgba(250,249,245,0)_70%)] pointer-events-none"></div>
 
           {/* Centered Editorial Content */}
-          <div className="relative z-10 text-center flex flex-col items-center max-w-3xl mx-auto pt-6 sm:pt-10">
+          <div className="relative z-10 text-center flex flex-col items-center max-w-3xl mx-auto pt-0 sm:pt-4 md:pt-8">
             
             {/* Badge */}
-            <div className="mb-4 md:mb-6 px-4 py-1.5 rounded-full border border-[#C4852B]/60 bg-[#C4852B]/15 backdrop-blur-sm text-[9px] md:text-[10px] tracking-[0.25em] uppercase text-[#A06314] font-bold font-mono shadow-sm">
+            <div className="mb-3 sm:mb-4 md:mb-6 px-4 py-1.5 rounded-full border border-[#C4852B]/60 bg-[#C4852B]/15 backdrop-blur-sm text-[10px] sm:text-[11px] md:text-xs uppercase text-[#A06314] font-bold shadow-xs ltr:tracking-[0.2em]">
               {t.hero.badge}
             </div>
 
-            {/* Persian Editorial Headline */}
-            <h1 className="text-2xl sm:text-4xl md:text-6xl font-extrabold tracking-tight mb-4 md:mb-6 uppercase text-zinc-950 leading-[1.3] md:leading-[1.25]">
+            {/* Editorial Headline */}
+            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-3 sm:mb-4 md:mb-6 uppercase text-zinc-950 leading-[1.3] md:leading-[1.25]">
               {t.hero.title}
             </h1>
 
             {/* Subtitle */}
-            <p className="text-xs sm:text-sm md:text-base font-semibold max-w-xs sm:max-w-md md:max-w-xl mx-auto mb-8 sm:mb-10 text-[#660000] leading-relaxed tracking-wide">
+            <p className="text-xs sm:text-sm md:text-base font-semibold max-w-xs sm:max-w-md md:max-w-xl mx-auto mb-6 sm:mb-8 md:mb-10 text-[#660000] leading-relaxed">
               {t.hero.subtitle}
             </p>
 
@@ -529,14 +530,14 @@ export default function HeroSection() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 w-full sm:w-auto px-4 sm:px-0 max-w-xs sm:max-w-none">
               <Link 
                 href="/collections"
-                className="w-full sm:w-auto text-center px-8 py-3.5 bg-[#660000] text-white font-bold text-xs uppercase tracking-[0.2em] rounded-full shadow-[0_8px_25px_rgba(102,0,0,0.4)] hover:bg-[#7D0000] hover:scale-105 transition-all duration-300 cursor-pointer"
+                className="w-full sm:w-auto text-center px-8 py-3.5 bg-[#660000] text-white font-bold text-xs uppercase ltr:tracking-[0.15em] rounded-full shadow-[0_8px_25px_rgba(102,0,0,0.4)] hover:bg-[#7D0000] hover:scale-105 transition-all duration-300 cursor-pointer"
               >
                 {t.hero.explore}
               </Link>
               
               <Link 
                 href="/about"
-                className="w-full sm:w-auto text-center px-8 py-3.5 border-2 border-[#C4852B] bg-white text-zinc-950 font-bold text-xs uppercase tracking-[0.2em] rounded-full hover:bg-[#C4852B] hover:text-white transition-all duration-300 shadow-sm cursor-pointer"
+                className="w-full sm:w-auto text-center px-8 py-3.5 border-2 border-[#C4852B] bg-white text-zinc-950 font-bold text-xs uppercase ltr:tracking-[0.15em] rounded-full hover:bg-[#C4852B] hover:text-white transition-all duration-300 shadow-sm cursor-pointer"
               >
                 {t.hero.philosophy}
               </Link>

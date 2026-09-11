@@ -35,7 +35,6 @@ export default function BrandLogo({
   
   const goldColor = isWhite ? "#FFFFFF" : isMonochrome ? "currentColor" : "#C4852B";
   const hatchColor = isWhite ? "rgba(255,255,255,0.75)" : isMonochrome ? "currentColor" : "#C4852B";
-  const stoneFill = isWhite ? "#FFFFFF" : isMonochrome ? "currentColor" : "#660000";
   const stoneBorder = isWhite ? "rgba(255,255,255,0.9)" : isMonochrome ? "currentColor" : "#C4852B";
   const textColor = isWhite ? "text-white" : "text-zinc-950 dark:text-white";
 

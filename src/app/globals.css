@@ -75,7 +75,31 @@ h1, h2, h3, h4, .font-brand-en {
 
 [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, .font-brand-fa {
   font-family: var(--font-kalameh), 'Kalameh', tahoma, sans-serif;
-  letter-spacing: normal;
+  letter-spacing: normal !important;
+}
+
+/* Prevent letter-spacing from breaking Persian/Arabic cursive glyph connections */
+[dir="rtl"],
+[dir="rtl"] body,
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] h4,
+[dir="rtl"] p,
+[dir="rtl"] span,
+[dir="rtl"] button,
+[dir="rtl"] a,
+[dir="rtl"] div {
+  letter-spacing: normal !important;
+}
+
+/* Allow letter-spacing ONLY on explicit Latin / English classes or numbers */
+[dir="rtl"] .font-mono,
+[dir="rtl"] .font-clash,
+[dir="rtl"] .font-brand-en,
+[dir="rtl"] [dir="ltr"],
+[dir="rtl"] [dir="ltr"] * {
+  letter-spacing: initial !important;
 }
 
 /* Custom Selection */
@@ -133,4 +157,3 @@ body {
 .luxury-card-hover:hover {
   transform: translateY(-4px);
 }
-

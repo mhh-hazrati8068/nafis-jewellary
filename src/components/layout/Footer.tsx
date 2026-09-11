@@ -22,8 +22,8 @@ export default function Footer() {
               <span className="text-xl font-brand-en tracking-[0.22em] uppercase font-bold text-zinc-950 group-hover:text-[#C4852B] transition-colors">
                 Nafise Ebadi
               </span>
-              <span className="text-[9px] tracking-[0.28em] uppercase text-[#660000] font-mono font-bold">
-                {language === 'fa' ? 'زیورآلات نفیسه عبادی' : 'Jewellery Art Direction'}
+              <span className="text-[10px] uppercase text-[#660000] font-bold ltr:tracking-[0.2em]">
+                {language === 'fa' ? 'زیورآلات نفیسه عبادی' : language === 'ar' ? 'مجوهرات نفيسة عبادي' : 'Jewellery Art Direction'}
               </span>
             </div>
           </Link>
@@ -43,7 +43,7 @@ export default function Footer() {
         
         {/* Navigation */}
         <div>
-          <h4 className="text-xs uppercase tracking-[0.25em] text-[#660000] mb-6 font-bold font-mono">{t.footer.collectionsTitle}</h4>
+          <h4 className="text-xs uppercase ltr:tracking-[0.2em] text-[#660000] mb-6 font-bold">{t.footer.collectionsTitle}</h4>
           <ul className="flex flex-col gap-3.5 text-xs text-[#626667]">
             <li><Link href="/rings" className="hover:text-[#C4852B] transition-colors">{t.footer.rings}</Link></li>
             <li><Link href="/necklaces" className="hover:text-[#C4852B] transition-colors">{t.footer.necklaces}</Link></li>
@@ -55,7 +55,7 @@ export default function Footer() {
 
         {/* Support */}
         <div>
-          <h4 className="text-xs uppercase tracking-[0.25em] text-[#660000] mb-6 font-bold font-mono">{t.footer.serviceTitle}</h4>
+          <h4 className="text-xs uppercase ltr:tracking-[0.2em] text-[#660000] mb-6 font-bold">{t.footer.serviceTitle}</h4>
           <ul className="flex flex-col gap-3.5 text-xs text-[#626667]">
             <li><Link href="/stores" className="hover:text-[#C4852B] transition-colors">{t.footer.findBranch}</Link></li>
             <li><Link href="/contact" className="hover:text-[#C4852B] transition-colors">{t.footer.bookAppt}</Link></li>
@@ -66,7 +66,7 @@ export default function Footer() {
 
         {/* Newsletter */}
         <div>
-          <h4 className="text-xs uppercase tracking-[0.25em] text-[#660000] mb-6 font-bold font-mono">{t.footer.circleTitle}</h4>
+          <h4 className="text-xs uppercase ltr:tracking-[0.2em] text-[#660000] mb-6 font-bold">{t.footer.circleTitle}</h4>
           <p className="text-xs text-[#626667] mb-4 leading-relaxed">
             {t.footer.circleDesc}
           </p>

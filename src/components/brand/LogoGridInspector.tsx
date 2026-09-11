@@ -3,11 +3,25 @@
 import { useState } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import BrandLogo from "@/components/layout/BrandLogo";
-import { MotionFadeIn } from "@/components/ui/MotionWrappers";
+
+type InspectorMode = "construction" | "clearspace" | "misuse";
+
+interface ModeOption {
+  id: InspectorMode;
+  nameFa: string;
+  nameEn: string;
+  nameAr: string;
+}
 
 export default function LogoGridInspector() {
   const { language } = useAppStore();
-  const [activeMode, setActiveMode] = useState<"construction" | "clearspace" | "misuse">("construction");
+  const [activeMode, setActiveMode] = useState<InspectorMode>("construction");
+
+  const modes: ModeOption[] = [
+    { id: "construction", nameFa: "هندسه و گرید", nameEn: "Grid Anatomy", nameAr: "الهندسة والشبكة" },
+    { id: "clearspace", nameFa: "حریم امن (X)", nameEn: "Clear Space (X)", nameAr: "المجال الآمن (X)" },
+    { id: "misuse", nameFa: "موارد منع استفاده", nameEn: "Prohibited Misuse", nameAr: "الاستخدامات المحظورة" }
+  ];
 
   return (
     <div className="p-8 sm:p-12 rounded-3xl bg-[#F4F1EA] border border-[#C4852B]/30 shadow-md">
@@ -16,29 +30,25 @@ export default function LogoGridInspector() {
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-10 pb-6 border-b border-zinc-200">
         <div>
           <span className="text-[10px] text-[#C4852B] font-mono tracking-widest uppercase mb-1 block font-bold">
-            {language === 'fa' ? 'راهنمای مهندسی لوگو (صفحات ۱۰ تا ۱۳)' : 'LOGO ANATOMY & CLEAR SPACE (PAGES 10-13)'}
+            {language === 'fa' ? 'راهنمای مهندسی لوگو (صفحات ۱۰ تا ۱۳)' : language === 'ar' ? 'دليل هندسة وتصميم الشعار' : 'LOGO ANATOMY & CLEAR SPACE (PAGES 10-13)'}
           </span>
           <h3 className="text-2xl font-bold uppercase text-zinc-950">
-            {language === 'fa' ? 'ساختار هندسی و حریم امن نشان' : 'Geometric Grid & Clear Space Matrix'}
+            {language === 'fa' ? 'ساختار هندسی و حریم امن نشان' : language === 'ar' ? 'الهندسة والنسب المعمارية للشعار' : 'Geometric Grid & Clear Space Matrix'}
           </h3>
         </div>
 
         <div className="flex gap-2">
-          {[
-            { id: "construction", nameFa: "هندسه و گرید", nameEn: "Grid Anatomy" },
-            { id: "clearspace", nameFa: "حریم امن (X)", nameEn: "Clear Space (X)" },
-            { id: "misuse", nameFa: "موارد منع استفاده", nameEn: "Prohibited Misuse" }
-          ].map((mode) => (
+          {modes.map((mode) => (
             <button
               key={mode.id}
-              onClick={() => setActiveMode(mode.id as any)}
+              onClick={() => setActiveMode(mode.id)}
               className={`px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
                 activeMode === mode.id
                   ? "bg-[#660000] text-white shadow-md"
                   : "bg-white/80 text-zinc-700 hover:border-[#C4852B] border border-zinc-300"
               }`}
             >
-              {language === 'fa' ? mode.nameFa : mode.nameEn}
+              {language === 'fa' ? mode.nameFa : language === 'ar' ? mode.nameAr : mode.nameEn}
             </button>
           ))}
         </div>

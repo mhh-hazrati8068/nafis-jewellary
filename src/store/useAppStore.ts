@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { Language, translations } from '@/lib/translations'
-import { Product, mockProducts } from '@/data/products'
+import { Product, initialProducts } from '@/data/products'
 import { translateDynamicText } from '@/lib/dynamicTranslator'
 import { 
   UserProfile, 
@@ -14,7 +14,6 @@ import {
 } from '@/lib/api'
 
 export type { Product }
-export type Theme = 'dark' | 'light';
 
 export interface CartItem {
   id: number
@@ -27,11 +26,6 @@ export interface CartItem {
 }
 
 interface AppState {
-  // Theme state
-  theme: Theme
-  setTheme: (theme: Theme) => void
-  toggleTheme: () => void
-
   // Language & Direction state
   language: Language
   direction: 'rtl' | 'ltr'
@@ -117,26 +111,6 @@ function mapBackendToFrontend(bp: BackendProduct): Product {
 }
 
 export const useAppStore = create<AppState>()((set, get) => ({
-  // Theme management
-  theme: 'light',
-  setTheme: (theme) => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('nafis_theme', theme === 'dark' ? 'warm' : 'light');
-      if (theme === 'dark') {
-        document.documentElement.classList.add('dark')
-        document.documentElement.classList.remove('light')
-      } else {
-        document.documentElement.classList.remove('dark')
-        document.documentElement.classList.add('light')
-      }
-    }
-    set({ theme })
-  },
-  toggleTheme: () => {
-    const nextTheme: Theme = get().theme === 'dark' ? 'light' : 'dark'
-    get().setTheme(nextTheme)
-  },
-
   // Language & Direction
   language: 'fa',
   direction: 'rtl',
@@ -163,7 +137,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
   },
 
   // Products
-  products: mockProducts,
+  products: initialProducts,
   backendProducts: [],
   isLoadingProducts: false,
   getProductById: (id) => get().products.find((p) => p.id === id),
@@ -181,10 +155,10 @@ export const useAppStore = create<AppState>()((set, get) => ({
           isLoadingProducts: false,
         });
       } else {
-        set({ products: mockProducts, isLoadingProducts: false });
+        set({ products: initialProducts, isLoadingProducts: false });
       }
     } catch {
-      set({ products: mockProducts, isLoadingProducts: false });
+      set({ products: initialProducts, isLoadingProducts: false });
     }
   },
 
@@ -307,11 +281,6 @@ export const useAppStore = create<AppState>()((set, get) => ({
 
     if (langStr && (langStr === 'fa' || langStr === 'en' || langStr === 'ar')) {
       get().setLanguage(langStr);
-    }
-
-    const themeStr = localStorage.getItem('nafis_theme');
-    if (themeStr === 'warm') {
-      get().setTheme('dark');
     }
 
     if (token) {

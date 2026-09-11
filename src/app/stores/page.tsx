@@ -1,30 +1,34 @@
 "use client";
 
 import { useAppStore } from "@/store/useAppStore";
-import { useState } from "react";
 
 export default function StoresPage() {
   const { language } = useAppStore();
-  const [submitted, setSubmitted] = useState(false);
 
   const branches = [
     {
       cityFa: "تهران - شعبه مرکزی VIP",
       cityEn: "Tehran - Central VIP Lounge",
+      cityAr: "طهران - الفرع الرئيسي VIP",
       addressFa: "خیابان فرشته، برج رز، طبقه همکف، پلاک ۱۲",
       addressEn: "Fereshteh St, Rose Tower, Ground Floor, Suite 12",
+      addressAr: "شارع فرشته، برج روز، الطابق الأرضي، جناح 12",
       phone: "+98 (21) 2200-8800",
       hoursFa: "همه‌روزه از ۱۰:۳۰ الی ۲۱:۰۰",
-      hoursEn: "Daily: 10:30 AM - 9:00 PM"
+      hoursEn: "Daily: 10:30 AM - 9:00 PM",
+      hoursAr: "يومياً من 10:30 صباحاً حتى 9:00 مساءً"
     },
     {
       cityFa: "تهران - شعبه نیاوران",
       cityEn: "Tehran - Niavaran Gallery",
+      cityAr: "طهران - معرض نياوران",
       addressFa: "خیابان باهنر، مجتمع تجاری اطلس، پلاک ۴۰۵",
       addressEn: "Bahanar St, Atlas Commercial Center, Suite 405",
+      addressAr: "شارع باهنر، مركز أطلس التجاري، جناح 405",
       phone: "+98 (21) 2611-4400",
       hoursFa: "همه‌روزه از ۱۱:۰۰ الی ۲۱:۳۰",
-      hoursEn: "Daily: 11:00 AM - 9:30 PM"
+      hoursEn: "Daily: 11:00 AM - 9:30 PM",
+      hoursAr: "يومياً من 11:00 صباحاً حتى 9:30 مساءً"
     }
   ];
 
@@ -34,14 +38,16 @@ export default function StoresPage() {
         
         <div className="max-w-3xl mx-auto text-center mb-20">
           <span className="text-[10px] text-[#C4852B] uppercase tracking-[0.3em] font-semibold mb-3 block font-mono">
-            {language === 'fa' ? 'شعب و گالری‌های اختصاصی' : 'FLAGSHIP BOUTIQUES'}
+            {language === 'fa' ? 'شعب و گالری‌های اختصاصی' : language === 'ar' ? 'فروع ومعارض البوتيك' : 'FLAGSHIP BOUTIQUES'}
           </span>
           <h1 className="text-3xl sm:text-5xl font-bold uppercase tracking-tight mb-6">
-            {language === 'fa' ? 'شعب زیورآلات نفیسه عبادی' : 'Boutique Locations'}
+            {language === 'fa' ? 'شعب زیورآلات نفیسه عبادی' : language === 'ar' ? 'صالات عرض مجوهرات نفيسة عبادي' : 'Boutique Locations'}
           </h1>
           <p className="text-xs md:text-sm text-[#626667] leading-relaxed">
             {language === 'fa'
               ? 'جهت مشاوره اختصاصی، رزرو وقت قبلی و مشاهده مستقیم مجموعه‌های طلا و جواهرات به گالری‌های ما مراجعه فرمایید.'
+              : language === 'ar'
+              ? 'تفضلوا بزيارة معارضنا البوتيكية للاستشارات الخاصة ومشاهدة مجموعات الذهب الخالص عيار 18 قيراطاً مباشرة.'
               : 'Visit our flagship boutiques for private consultations and private viewing of 18K gold creations.'}
           </p>
         </div>
@@ -55,7 +61,7 @@ export default function StoresPage() {
               <div>
                 <div className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-200">
                   <h3 className="font-bold text-xl text-zinc-950">
-                    {language === 'fa' ? b.cityFa : b.cityEn}
+                    {language === 'fa' ? b.cityFa : language === 'ar' ? b.cityAr : b.cityEn}
                   </h3>
                   <span className="text-[9px] font-mono text-[#660000] bg-[#660000]/10 px-3 py-1 rounded-full uppercase font-bold">
                     VIP GALLERY
@@ -65,11 +71,15 @@ export default function StoresPage() {
                 <div className="space-y-4 text-xs text-[#626667]">
                   <div className="flex items-start gap-3">
                     <span className="text-[#C4852B]">📍</span>
-                    <span>{language === 'fa' ? b.addressFa : b.addressEn}</span>
+                    <span>{language === 'fa' ? b.addressFa : language === 'ar' ? b.addressAr : b.addressEn}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-[#C4852B]">📞</span>
                     <span className="font-mono text-zinc-950 font-semibold">{b.phone}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[#C4852B]">🕒</span>
+                    <span>{language === 'fa' ? b.hoursFa : language === 'ar' ? b.hoursAr : b.hoursEn}</span>
                   </div>
                 </div>
               </div>
@@ -79,7 +89,7 @@ export default function StoresPage() {
                   href={`tel:${b.phone}`}
                   className="inline-block px-6 py-2.5 bg-[#660000] text-white text-xs font-semibold uppercase tracking-wider rounded-full hover:bg-[#7D0000] transition-colors cursor-pointer"
                 >
-                  {language === 'fa' ? 'تماس با شعبه' : 'Call Boutique'}
+                  {language === 'fa' ? 'تماس با شعبه' : language === 'ar' ? 'الاتصال بالفرع' : 'Call Boutique'}
                 </a>
               </div>
             </div>

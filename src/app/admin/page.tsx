@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { useAppStore } from "@/store/useAppStore";
 import { 
   BackendProduct, 
@@ -14,10 +15,8 @@ import {
   forceUpdateSilverPrice,
   API_BASE_URL
 } from "@/lib/api";
-import Link from "next/link";
-
 export default function AdminDashboardPage() {
-  const { token, isAdmin, setAuthModalOpen, silverPricePerGramToman, fetchSilverPrice, fetchProducts, logout } = useAppStore();
+  const { token, isAdmin, loginAsAdmin, silverPricePerGramToman, fetchSilverPrice, fetchProducts, logout } = useAppStore();
 
   const [activeTab, setActiveTab] = useState<"products" | "invoices">("products");
   const [products, setProducts] = useState<BackendProduct[]>([]);
@@ -25,6 +24,12 @@ export default function AdminDashboardPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdatingPrice, setIsUpdatingPrice] = useState(false);
+
+  // Direct Admin Login state
+  const [adminUser, setAdminUser] = useState("");
+  const [adminPass, setAdminPass] = useState("");
+  const [adminLoginLoading, setAdminLoginLoading] = useState(false);
+  const [adminLoginError, setAdminLoginError] = useState<string | null>(null);
 
   // Modal / Form state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,13 +50,8 @@ export default function AdminDashboardPage() {
   const [formError, setFormError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    if (isAdmin && token) {
-      loadData();
-    }
-  }, [isAdmin, token, activeTab]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
+    if (!token) return;
     setIsLoading(true);
     try {
       if (activeTab === "products") {
@@ -65,15 +65,55 @@ export default function AdminDashboardPage() {
         const invList = await fetchAdminInvoices(token);
         setInvoices(invList);
       }
-    } catch (err: any) {
-      console.warn("Failed to load admin data:", err?.message);
-      if (err?.message?.includes("403") || err?.message?.includes("401")) {
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      console.warn("Failed to load admin data:", errorMsg);
+      if (errorMsg.includes("403") || errorMsg.includes("401")) {
         logout();
       }
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [token, activeTab, logout]);
+
+  useEffect(() => {
+    let ignore = false;
+    if (isAdmin && token) {
+      const loadInitialData = async () => {
+        try {
+          if (activeTab === "products") {
+            const [prodList, stoneList] = await Promise.all([
+              fetchAdminProducts(token),
+              fetchAdminStones(token)
+            ]);
+            if (!ignore) {
+              setProducts(prodList);
+              setStones(stoneList);
+            }
+          } else {
+            const invList = await fetchAdminInvoices(token);
+            if (!ignore) {
+              setInvoices(invList);
+            }
+          }
+        } catch (err: unknown) {
+          const errorMsg = err instanceof Error ? err.message : String(err);
+          console.warn("Failed to load admin data:", errorMsg);
+          if (errorMsg.includes("403") || errorMsg.includes("401")) {
+            logout();
+          }
+        } finally {
+          if (!ignore) {
+            setIsLoading(false);
+          }
+        }
+      };
+      loadInitialData();
+    }
+    return () => {
+      ignore = true;
+    };
+  }, [isAdmin, token, activeTab, logout]);
 
   const handleOpenAddModal = () => {
     setEditingProduct(null);
@@ -96,12 +136,12 @@ export default function AdminDashboardPage() {
     setEditingProduct(prod);
     setName(prod.name || "");
     setPricingMethod(prod.pricingMethod || "METHOD_1_SILVER_MAKING_STONE");
-    setWeight(prod.weight ? String(prod.weight) : "0");
-    setMakingChargePercentage(prod.makingChargePercentage ? String(prod.makingChargePercentage) : "0");
+    setWeight(prod.weight ? String(prod.weight) : "4.5");
+    setMakingChargePercentage(prod.makingChargePercentage ? String(prod.makingChargePercentage) : "15");
     setFixedPrice(prod.fixedPrice ? String(prod.fixedPrice) : "0");
     setStonePrice(prod.stonePrice ? String(prod.stonePrice) : "0");
     setSelectedStoneId(prod.stone?.id ? String(prod.stone.id) : "");
-    setStockQuantity(String(prod.stockQuantity || 0));
+    setStockQuantity(String(prod.stockQuantity || 10));
     setBadge(prod.badge || "NONE");
     setIsVisible(prod.isVisible ?? true);
     setImageFile(null);
@@ -147,8 +187,9 @@ export default function AdminDashboardPage() {
       setIsModalOpen(false);
       await loadData();
       await fetchProducts();
-    } catch (err: any) {
-      setFormError(err.message || "خطا در ذخیره محصول");
+    } catch (err: unknown) {
+      const errorText = err instanceof Error ? err.message : "خطا در ذخیره محصول";
+      setFormError(errorText);
     } finally {
       setIsSaving(false);
     }
@@ -160,8 +201,9 @@ export default function AdminDashboardPage() {
       await deleteAdminProduct(id, token);
       await loadData();
       await fetchProducts();
-    } catch (err: any) {
-      alert(err.message || "خطا در حذف محصول");
+    } catch (err: unknown) {
+      const errorText = err instanceof Error ? err.message : "خطا در حذف محصول";
+      alert(errorText);
     }
   };
 
@@ -172,8 +214,9 @@ export default function AdminDashboardPage() {
       await fetchSilverPrice();
       await fetchProducts();
       alert("نرخ لحظه‌ای نقره با موفقیت از TGJU بروزرسانی شد.");
-    } catch (err: any) {
-      alert(err.message || "خطا در بروزرسانی نرخ نقره");
+    } catch (err: unknown) {
+      const errorText = err instanceof Error ? err.message : "خطا در بروزرسانی نرخ نقره";
+      alert(errorText);
     } finally {
       setIsUpdatingPrice(false);
     }
@@ -183,26 +226,94 @@ export default function AdminDashboardPage() {
     try {
       await updateInvoiceStatus(invoiceId, newStatus, token);
       loadData();
-    } catch (err: any) {
-      alert(err.message || "خطا در تغییر وضعیت فاکتور");
+    } catch (err: unknown) {
+      const errorText = err instanceof Error ? err.message : "خطا در تغییر وضعیت فاکتور";
+      alert(errorText);
+    }
+  };
+
+  const handleDirectAdminLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!adminUser.trim() || !adminPass.trim()) {
+      setAdminLoginError("لطفاً نام کاربری و کلمه عبور را وارد کنید.");
+      return;
+    }
+    setAdminLoginLoading(true);
+    setAdminLoginError(null);
+    try {
+      await loginAsAdmin(adminUser, adminPass);
+    } catch (err: unknown) {
+      const errorText = err instanceof Error ? err.message : "نام کاربری یا کلمه عبور نادرست است.";
+      setAdminLoginError(errorText);
+    } finally {
+      setAdminLoginLoading(false);
     }
   };
 
   if (!isAdmin) {
     return (
-      <div className="container mx-auto px-4 py-24 text-center max-w-lg">
-        <div className="p-8 bg-white dark:bg-[#FAF9F5] border border-[#660000]/30 rounded-2xl shadow-xl space-y-4">
-          <span className="text-5xl block">🔒</span>
-          <h1 className="text-xl font-bold text-zinc-900 font-serif">پنل مدیریت زیورآلات نفیسه عبادی</h1>
-          <p className="text-xs text-zinc-600">
-            برای دسترسی به این بخش، لطفاً با نام کاربری و کلمه عبور ادمین وارد شوید.
-          </p>
-          <button
-            onClick={() => setAuthModalOpen(true)}
-            className="px-6 py-2.5 bg-[#660000] hover:bg-[#800000] text-white text-xs font-bold uppercase tracking-widest rounded-lg shadow-md transition-all cursor-pointer"
-          >
-            ورود به عنوان ادمین (admin / admin)
-          </button>
+      <div className="min-h-[80vh] flex items-center justify-center px-4 py-16 bg-[#FAF9F5]">
+        <div className="w-full max-w-md bg-white border border-[#660000]/30 rounded-3xl shadow-2xl p-8 space-y-6">
+          <div className="text-center space-y-2">
+            <div className="w-14 h-14 mx-auto rounded-full bg-[#660000]/10 text-[#660000] flex items-center justify-center text-2xl font-bold font-serif">
+              👑
+            </div>
+            <h1 className="text-xl font-bold text-zinc-950 font-serif">
+              ورود به پنل مدیریت
+            </h1>
+            <p className="text-xs text-[#626667]">
+              پرتال اختصاصی مدیریت محصولات، نرخ‌گذاری و فاکتورها
+            </p>
+          </div>
+
+          {adminLoginError && (
+            <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-center gap-2">
+              <span>⚠️</span>
+              <span>{adminLoginError}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleDirectAdminLogin} className="space-y-4">
+            <div>
+              <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
+                نام کاربری مدیر (Username)
+              </label>
+              <input
+                type="text"
+                dir="ltr"
+                required
+                autoComplete="username"
+                value={adminUser}
+                onChange={(e) => setAdminUser(e.target.value)}
+                placeholder="نام کاربری..."
+                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-300 rounded-xl text-xs focus:outline-none focus:border-[#660000] focus:ring-1 focus:ring-[#660000] text-zinc-950 font-mono"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
+                کلمه عبور (Password)
+              </label>
+              <input
+                type="password"
+                dir="ltr"
+                required
+                autoComplete="current-password"
+                value={adminPass}
+                onChange={(e) => setAdminPass(e.target.value)}
+                placeholder="••••••••"
+                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-300 rounded-xl text-xs focus:outline-none focus:border-[#660000] focus:ring-1 focus:ring-[#660000] text-zinc-950 font-mono"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={adminLoginLoading}
+              className="w-full py-3.5 bg-[#660000] hover:bg-[#7D0000] text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all shadow-md disabled:opacity-50 cursor-pointer"
+            >
+              {adminLoginLoading ? "در حال احراز هویت..." : "ورود به پنل مدیریت"}
+            </button>
+          </form>
         </div>
       </div>
     );

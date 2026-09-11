@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { Invoice, fetchMyOrders, payInvoice, updateUserProfile } from "@/lib/api";
 
-export default function ProfileModal() {
-  const { isProfileModalOpen, setProfileModalOpen, user, token, logout, language, refreshProfile } = useAppStore();
+function ProfileModalContent() {
+  const { setProfileModalOpen, user, token, logout, language, refreshProfile } = useAppStore();
 
   const [activeTab, setActiveTab] = useState<"profile" | "orders">("profile");
   const [firstName, setFirstName] = useState(user?.firstName || "");
@@ -17,34 +17,37 @@ export default function ProfileModal() {
   const [isSaving, setIsSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (user) {
-      setFirstName(user.firstName || "");
-      setLastName(user.lastName || "");
-      setAddress(user.address || "");
-      setPostalCode(user.postalCode || "");
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (isProfileModalOpen && token && activeTab === "orders") {
-      loadOrders();
-    }
-  }, [isProfileModalOpen, token, activeTab]);
-
-  const loadOrders = async () => {
+  const loadOrders = useCallback(async () => {
+    if (!token) return;
     setIsLoadingOrders(true);
     try {
       const data = await fetchMyOrders(token);
       setOrders(data);
     } catch (err) {
-      console.error(err);
+      console.error("Failed to load orders:", err);
     } finally {
       setIsLoadingOrders(false);
     }
-  };
+  }, [token]);
 
-  if (!isProfileModalOpen) return null;
+  useEffect(() => {
+    let ignore = false;
+    if (token && activeTab === "orders") {
+      fetchMyOrders(token)
+        .then((data) => {
+          if (!ignore) setOrders(data);
+        })
+        .catch((err) => {
+          console.error("Failed to load orders:", err);
+        })
+        .finally(() => {
+          if (!ignore) setIsLoadingOrders(false);
+        });
+    }
+    return () => {
+      ignore = true;
+    };
+  }, [token, activeTab]);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,9 +56,10 @@ export default function ProfileModal() {
     try {
       await updateUserProfile({ firstName, lastName, address, postalCode }, token);
       await refreshProfile();
-      setMsg(language === "fa" ? "پروفایل با موفقیت بروزرسانی شد" : "Profile updated successfully");
-    } catch (err: any) {
-      setMsg(err.message || "خطا در بروزرسانی");
+      setMsg(language === "fa" ? "پروفایل با موفقیت بروزرسانی شد" : language === "ar" ? "تم تحديث الملف الشخصي بنجاح" : "Profile updated successfully");
+    } catch (err: unknown) {
+      const errorText = err instanceof Error ? err.message : "خطا در بروزرسانی";
+      setMsg(errorText);
     } finally {
       setIsSaving(false);
     }
@@ -65,8 +69,9 @@ export default function ProfileModal() {
     try {
       await payInvoice(invoiceId, token);
       loadOrders();
-    } catch (err: any) {
-      alert(err.message || "خطا در پرداخت");
+    } catch (err: unknown) {
+      const errorText = err instanceof Error ? err.message : "خطا در پرداخت";
+      alert(errorText);
     }
   };
 
@@ -81,184 +86,194 @@ export default function ProfileModal() {
               {user?.firstName ? user.firstName[0] : "👤"}
             </div>
             <div>
-              <h2 className="text-base font-bold text-zinc-900">
-                {user?.firstName ? `${user.firstName} ${user.lastName || ""}` : (user?.phoneNumber || "حساب کاربری")}
-              </h2>
-              <p className="text-xs text-zinc-500 font-mono">{user?.phoneNumber}</p>
+              <h3 className="font-bold text-base text-zinc-950">
+                {user?.firstName ? `${user.firstName} ${user.lastName || ""}` : (language === "fa" ? "حساب کاربری" : language === "ar" ? "الحساب الشخصي" : "User Account")}
+              </h3>
+              <p className="text-xs text-[#626667] font-mono">{user?.phoneNumber}</p>
             </div>
           </div>
-
-          <button
+          <button 
             onClick={() => setProfileModalOpen(false)}
-            className="p-1 text-zinc-400 hover:text-zinc-700 transition-colors"
+            className="p-2 text-zinc-400 hover:text-[#660000] text-sm font-semibold transition-colors cursor-pointer"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-            </svg>
+            ✕
           </button>
         </div>
 
-        {/* Tabs */}
-        <div className="flex border-b border-zinc-200 dark:border-zinc-300 bg-zinc-50 dark:bg-[#F4F1EA] px-6 pt-2">
+        {/* Tab Switcher */}
+        <div className="flex border-b border-zinc-200 bg-zinc-50 dark:bg-[#F4F1EA]">
           <button
             onClick={() => setActiveTab("profile")}
-            className={`pb-3 px-4 text-xs font-bold border-b-2 transition-all cursor-pointer ${
-              activeTab === "profile"
-                ? "border-[#C4852B] text-[#C4852B]"
-                : "border-transparent text-zinc-500 hover:text-zinc-800"
+            className={`flex-1 py-3 text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer ${
+              activeTab === "profile" 
+                ? "border-b-2 border-[#C4852B] text-[#C4852B] bg-white dark:bg-[#FAF9F5] font-bold" 
+                : "text-zinc-600 hover:text-zinc-950"
             }`}
           >
-            {language === "fa" ? "اطلاعات حساب و آدرس" : "Profile & Address"}
+            {language === "fa" ? "مشخصات و آدرس" : language === "ar" ? "البيانات والعنوان" : "Profile & Address"}
           </button>
           <button
-            onClick={() => setActiveTab("orders")}
-            className={`pb-3 px-4 text-xs font-bold border-b-2 transition-all cursor-pointer ${
-              activeTab === "orders"
-                ? "border-[#C4852B] text-[#C4852B]"
-                : "border-transparent text-zinc-500 hover:text-zinc-800"
+            onClick={() => {
+              setActiveTab("orders");
+              if (orders.length === 0) setIsLoadingOrders(true);
+            }}
+            className={`flex-1 py-3 text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer ${
+              activeTab === "orders" 
+                ? "border-b-2 border-[#C4852B] text-[#C4852B] bg-white dark:bg-[#FAF9F5] font-bold" 
+                : "text-zinc-600 hover:text-zinc-950"
             }`}
           >
-            {language === "fa" ? "سفارش‌ها و فاکتورها" : "Orders & Invoices"}
+            {language === "fa" ? "سفارش‌ها و فاکتورها" : language === "ar" ? "الطلبات والفواتير" : "Orders & Invoices"}
           </button>
         </div>
 
-        {/* Body */}
+        {/* Body Content */}
         <div className="p-6 overflow-y-auto flex-1">
-          {msg && (
-            <div className="mb-4 p-3 bg-amber-50 border border-amber-200 text-amber-900 text-xs rounded-lg">
-              {msg}
-            </div>
-          )}
-
-          {activeTab === "profile" && (
+          {activeTab === "profile" ? (
             <form onSubmit={handleUpdateProfile} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {msg && (
+                <div className="p-3 bg-green-50 border border-green-200 text-green-800 text-xs rounded-lg font-medium">
+                  {msg}
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-medium text-zinc-700 mb-1">
-                    {language === "fa" ? "نام" : "First Name"}
+                    {language === "fa" ? "نام" : language === "ar" ? "الاسم" : "First Name"}
                   </label>
                   <input
                     type="text"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    className="w-full px-3 py-2 bg-zinc-50 dark:bg-white border border-zinc-300 rounded-lg text-sm focus:outline-none focus:border-[#C4852B] text-zinc-900"
+                    className="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-xs focus:outline-none focus:border-[#C4852B] text-zinc-900"
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-zinc-700 mb-1">
-                    {language === "fa" ? "نام خانوادگی" : "Last Name"}
+                    {language === "fa" ? "نام خانوادگی" : language === "ar" ? "اسم العائلة" : "Last Name"}
                   </label>
                   <input
                     type="text"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    className="w-full px-3 py-2 bg-zinc-50 dark:bg-white border border-zinc-300 rounded-lg text-sm focus:outline-none focus:border-[#C4852B] text-zinc-900"
+                    className="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-xs focus:outline-none focus:border-[#C4852B] text-zinc-900"
                   />
                 </div>
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-zinc-700 mb-1">
-                  {language === "fa" ? "آدرس تحویل سفارش" : "Shipping Address"}
+                  {language === "fa" ? "نشانی دقیق جهت ارسال مرسولات" : language === "ar" ? "عنوان التوصيل الدقيق" : "Shipping Address"}
                 </label>
                 <textarea
                   rows={3}
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-white border border-zinc-300 rounded-lg text-sm focus:outline-none focus:border-[#C4852B] text-zinc-900"
-                  placeholder={language === "fa" ? "تهران، خیابان..." : "City, Street..."}
+                  placeholder={language === "fa" ? "استان، شهر، خیابان، پلاک..." : language === "ar" ? "المدينة، الشارع، المبنى..." : "City, Street, Building..."}
+                  className="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-xs focus:outline-none focus:border-[#C4852B] text-zinc-900"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-zinc-700 mb-1">
-                  {language === "fa" ? "کد پستی ۱۰ رقمی" : "Postal Code"}
+                  {language === "fa" ? "کد پستی ۱۰ رقمی" : language === "ar" ? "الرمز البريدي" : "Postal Code"}
                 </label>
                 <input
                   type="text"
                   dir="ltr"
                   value={postalCode}
                   onChange={(e) => setPostalCode(e.target.value)}
-                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-white border border-zinc-300 rounded-lg text-sm focus:outline-none focus:border-[#C4852B] text-zinc-900 font-mono"
+                  className="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-xs font-mono focus:outline-none focus:border-[#C4852B] text-zinc-900"
                 />
               </div>
 
-              <div className="flex items-center justify-between pt-4 border-t border-zinc-200">
-                <button
-                  type="button"
-                  onClick={logout}
-                  className="text-xs text-red-600 hover:text-red-800 font-semibold cursor-pointer"
-                >
-                  {language === "fa" ? "خروج از حساب کاربری" : "Log Out"}
-                </button>
-
+              <div className="pt-4 flex items-center justify-between">
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="px-6 py-2.5 bg-[#C4852B] hover:bg-[#A36C20] text-white text-xs font-bold rounded-lg transition-all shadow-md cursor-pointer disabled:opacity-50"
+                  className="px-6 py-2.5 bg-[#C4852B] hover:bg-[#A76E1F] text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-md transition-all cursor-pointer disabled:opacity-50"
                 >
-                  {isSaving ? (language === "fa" ? "در حال ذخیره..." : "Saving...") : (language === "fa" ? "ذخیره تغییرات" : "Save Profile")}
+                  {isSaving 
+                    ? (language === "fa" ? "در حال ذخیره..." : language === "ar" ? "جاري الحفظ..." : "Saving...") 
+                    : (language === "fa" ? "ذخیره تغییرات" : language === "ar" ? "حفظ التغييرات" : "Save Changes")}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={logout}
+                  className="text-xs text-[#660000] hover:underline font-bold cursor-pointer"
+                >
+                  {language === "fa" ? "خروج از حساب کاربری" : language === "ar" ? "تسجيل الخروج" : "Sign Out"}
                 </button>
               </div>
             </form>
-          )}
-
-          {activeTab === "orders" && (
-            <div>
+          ) : (
+            <div className="space-y-4">
               {isLoadingOrders ? (
-                <div className="py-12 text-center text-xs text-zinc-500">
-                  {language === "fa" ? "در حال بارگذاری فاکتورها..." : "Loading invoices..."}
+                <div className="py-12 text-center text-xs text-[#626667]">
+                  <span className="inline-block animate-spin text-lg mb-2">⌛</span>
+                  <p>{language === "fa" ? "در حال بارگذاری فاکتورها..." : language === "ar" ? "جاري تحميل الفواتير..." : "Loading orders..."}</p>
                 </div>
               ) : orders.length === 0 ? (
-                <div className="py-12 text-center text-xs text-zinc-500">
-                  {language === "fa" ? "هنوز سفارشی ثبت نکرده‌اید." : "No orders found."}
+                <div className="py-12 text-center text-xs text-[#626667]">
+                  <span className="text-3xl block mb-2">🧾</span>
+                  <p>{language === "fa" ? "هنوز سفارشی ثبت نکرده‌اید." : language === "ar" ? "لم تقم بتسجيل أي طلب بعد." : "No orders found."}</p>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  {orders.map((inv) => (
-                    <div key={inv.id} className="p-4 border border-zinc-200 dark:border-zinc-300 rounded-xl bg-zinc-50/50 dark:bg-white">
-                      <div className="flex items-center justify-between pb-2 border-b border-zinc-200 text-xs">
-                        <span className="font-bold text-zinc-800">
-                          {language === "fa" ? `فاکتور شماره #${inv.id}` : `Invoice #${inv.id}`}
+                orders.map((invoice) => (
+                  <div 
+                    key={invoice.id}
+                    className="p-4 rounded-xl bg-white border border-zinc-200 space-y-3 text-xs shadow-xs"
+                  >
+                    <div className="flex items-center justify-between border-b border-zinc-100 pb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-zinc-950">
+                          {language === "fa" ? `فاکتور شماره #${invoice.id}` : `Invoice #${invoice.id}`}
                         </span>
-                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                          inv.isPaid 
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                          invoice.isPaid 
                             ? "bg-green-100 text-green-800" 
                             : "bg-amber-100 text-amber-800"
                         }`}>
-                          {inv.isPaid ? (language === "fa" ? "پرداخت شده" : "Paid") : (language === "fa" ? "در انتظار پرداخت" : "Pending Payment")}
+                          {invoice.isPaid 
+                            ? (language === "fa" ? "پرداخت شده" : language === "ar" ? "تم الدفع" : "Paid") 
+                            : (language === "fa" ? "در انتظار پرداخت" : language === "ar" ? "بانتظار الدفع" : "Pending Payment")}
                         </span>
                       </div>
-
-                      <div className="py-3 space-y-1.5 text-xs text-zinc-600">
-                        {inv.items?.map((it) => (
-                          <div key={it.id} className="flex justify-between">
-                            <span>{it.product?.name || "محصول نقره"} × {it.quantity}</span>
-                            <span className="font-mono">{Number(it.calculatedPriceToman).toLocaleString()} تومان</span>
-                          </div>
-                        ))}
-                      </div>
-
-                      <div className="pt-2 border-t border-zinc-200 flex items-center justify-between">
-                        <div>
-                          <span className="text-[11px] text-zinc-500">{language === "fa" ? "مبلغ نهایی (با ۱۰٪ مالیات): " : "Total with VAT: "}</span>
-                          <span className="text-sm font-bold text-[#C4852B] font-mono">
-                            {Number(inv.finalTotalToman).toLocaleString()} تومان
-                          </span>
-                        </div>
-
-                        {!inv.isPaid && (
-                          <button
-                            onClick={() => handlePay(inv.id)}
-                            className="px-4 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded-lg shadow cursor-pointer transition-all"
-                          >
-                            {language === "fa" ? "پرداخت آزمایشی 💳" : "Mock Pay 💳"}
-                          </button>
-                        )}
-                      </div>
+                      <span className="text-[10px] text-[#626667] font-mono">
+                        {invoice.createdAt ? new Date(invoice.createdAt).toLocaleDateString() : ""}
+                      </span>
                     </div>
-                  ))}
-                </div>
+
+                    <div className="space-y-1 text-[#626667]">
+                      {invoice.items?.map((item) => (
+                        <div key={item.id} className="flex justify-between">
+                          <span>{item.product?.name} × {item.quantity}</span>
+                          <span className="font-mono">{Number(item.calculatedPriceToman).toLocaleString()} تومان</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-zinc-100 font-bold">
+                      <span className="text-zinc-950">
+                        {language === "fa" ? "مبلغ کل:" : language === "ar" ? "المجموع الكلي:" : "Total:"}
+                      </span>
+                      <span className="font-mono text-sm text-[#C4852B]">
+                        {Number(invoice.finalTotalToman).toLocaleString()} تومان
+                      </span>
+                    </div>
+
+                    {!invoice.isPaid && (
+                      <button
+                        onClick={() => handlePay(invoice.id)}
+                        className="w-full mt-2 py-2 bg-green-600 hover:bg-green-700 text-white font-bold text-xs rounded-lg transition-colors cursor-pointer"
+                      >
+                        {language === "fa" ? "💳 پرداخت آنلاین فاکتور" : language === "ar" ? "💳 الدفع الإلكتروني للفاتورة" : "💳 Pay Online Now"}
+                      </button>
+                    )}
+                  </div>
+                ))
               )}
             </div>
           )}
@@ -267,4 +282,10 @@ export default function ProfileModal() {
       </div>
     </div>
   );
+}
+
+export default function ProfileModal() {
+  const { isProfileModalOpen, user } = useAppStore();
+  if (!isProfileModalOpen) return null;
+  return <ProfileModalContent key={user?.id || "profile-open"} />;
 }

@@ -68,30 +68,32 @@ export default function CartDrawer() {
       setCreatedInvoice(invoice);
       clearCart();
       setIsCheckingOut(false);
-    } catch (err: any) {
-      setErrorMsg(err.message || (language === "fa" ? "خطا در ثبت سفارش" : language === "ar" ? "خطأ في إنشاء الطلب" : "Checkout error"));
+    } catch (err: unknown) {
+      const error = err as { message?: string };
+      setErrorMsg(error.message || (language === "fa" ? "خطا در ثبت سفارش" : language === "ar" ? "خطأ في إنشاء الطلب" : "Checkout error"));
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleMockPayment = async () => {
+  const handlePayment = async () => {
     if (!createdInvoice) return;
     setIsLoading(true);
     try {
       await payInvoice(createdInvoice.id, token);
       alert(
         language === "fa" 
-          ? "پرداخت با موفقیت شبیه‌سازی شد! فاکتور تسویه گردید." 
+          ? "پرداخت با موفقیت انجام شد! فاکتور تسویه گردید." 
           : language === "ar"
-          ? "تمت عملية الدفع التجريبي بنجاح! تم تسوية الفاتورة."
+          ? "تمت عملية الدفع بنجاح! تم تسوية الفاتورة."
           : "Payment successful! Invoice settled."
       );
       setCreatedInvoice(null);
       toggleCart(false);
       setProfileModalOpen(true);
-    } catch (err: any) {
-      alert(err.message || (language === "fa" ? "خطا در پرداخت" : language === "ar" ? "خطأ في الدفع" : "Payment failed"));
+    } catch (err: unknown) {
+      const error = err as { message?: string };
+      alert(error.message || (language === "fa" ? "خطا در پرداخت" : language === "ar" ? "خطأ في الدفع" : "Payment failed"));
     } finally {
       setIsLoading(false);
     }
@@ -193,13 +195,13 @@ export default function CartDrawer() {
 
             <div className="space-y-2 pt-4">
               <button
-                onClick={handleMockPayment}
+                onClick={handlePayment}
                 disabled={isLoading}
                 className="w-full py-3.5 bg-green-600 hover:bg-green-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl text-center shadow-lg transition-all cursor-pointer"
               >
                 {isLoading 
                   ? (language === "fa" ? "در حال اتصال به درگاه..." : language === "ar" ? "جاري الاتصال ببوابة الدفع..." : "Connecting to Gateway...") 
-                  : (language === "fa" ? "💳 پرداخت تستی و تسویه فاکتور (Mock Pay)" : language === "ar" ? "💳 دفع تجريبي وتسوية الفاتورة" : "💳 Mock Pay & Settle Invoice")}
+                  : (language === "fa" ? "💳 پرداخت آنلاین و تسویه فاکتور" : language === "ar" ? "💳 الدفع الإلكتروني وتسوية الفاتورة" : "💳 Pay Online & Settle Invoice")}
               </button>
               <button
                 onClick={() => { toggleCart(false); setCreatedInvoice(null); setProfileModalOpen(true); }}

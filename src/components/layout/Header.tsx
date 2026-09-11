@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useAppStore } from "@/store/useAppStore";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import BrandLogo from "@/components/layout/BrandLogo";
 import AuthModal from "@/components/auth/AuthModal";
 import ProfileModal from "@/components/auth/ProfileModal";
+
+const emptySubscribe = () => () => {};
 
 export default function Header() {
   const { 
@@ -14,8 +16,6 @@ export default function Header() {
     wishlist, 
     language, 
     setLanguage, 
-    theme, 
-    toggleTheme, 
     toggleSearch, 
     t,
     user,
@@ -29,10 +29,9 @@ export default function Header() {
   } = useAppStore();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
   useEffect(() => {
-    setMounted(true);
     loadUserFromStorage();
     fetchProducts();
     fetchSilverPrice();
@@ -95,7 +94,7 @@ export default function Header() {
                 <span className="text-base sm:text-lg md:text-xl tracking-[0.2em] font-brand-en uppercase font-bold text-zinc-950 group-hover:text-[#C4852B] transition-colors whitespace-nowrap">
                   Nafise Ebadi
                 </span>
-                <span className="text-[8px] sm:text-[9px] tracking-[0.25em] uppercase text-[#660000] font-mono whitespace-nowrap font-bold">
+                <span className="text-[9px] sm:text-[10px] text-[#660000] whitespace-nowrap font-bold ltr:tracking-[0.2em]">
                   {t.brandName}
                 </span>
               </div>
@@ -145,20 +144,6 @@ export default function Header() {
                 </span>
               </button>
             )}
-
-            {/* Desktop Theme Switcher */}
-            <button
-              onClick={toggleTheme}
-              className="hidden md:flex p-2 rounded-full text-zinc-800 hover:text-[#C4852B] transition-colors border border-zinc-200 bg-white/90 dark:bg-[#F4F1EA] shadow-sm cursor-pointer"
-              aria-label="Toggle Theme"
-              title={theme === 'dark' ? 'حالت روشن عاجی / Ivory Light' : 'حالت کتان گرم / Warm Linen'}
-            >
-              {theme === 'dark' ? (
-                <span className="text-xs" title="Warm Linen Mode">🏛️</span>
-              ) : (
-                <span className="text-xs" title="Pure Ivory Mode">✨</span>
-              )}
-            </button>
 
             {/* Desktop 3-Language Selector Pill */}
             <div className="hidden md:flex items-center p-0.5 rounded-full border border-[#C4852B]/40 bg-[#C4852B]/10 text-[11px] font-semibold tracking-wider">
@@ -235,7 +220,7 @@ export default function Header() {
 
       {/* Mobile Menu with Smooth Slide In & Out Animations */}
       <div 
-        className={`fixed inset-0 z-40 md:hidden flex flex-col bg-[#FFFFFF]/98 dark:bg-[#FAF9F5]/98 text-zinc-900 pt-20 px-6 gap-6 backdrop-blur-md transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        className={`fixed inset-0 z-40 md:hidden flex flex-col bg-[#FFFFFF]/98 text-zinc-900 pt-20 px-6 gap-6 backdrop-blur-md transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           mobileMenuOpen 
             ? "translate-y-0 opacity-100 pointer-events-auto" 
             : "-translate-y-full opacity-0 pointer-events-none"
@@ -269,13 +254,6 @@ export default function Header() {
               <span>🔑</span>
             </button>
           )}
-          <button
-            onClick={() => { toggleTheme(); setMobileMenuOpen(false); }}
-            className="flex items-center justify-between p-3.5 rounded-lg border border-zinc-300 bg-white font-semibold"
-          >
-            <span>تم رنگی پوسته / Theme</span>
-            <span>{theme === 'dark' ? '🏛️ کتان گرم (Warm Linen)' : '✨ عاجی سفید (Pure Ivory)'}</span>
-          </button>
 
           {/* Mobile 3-Language Selector */}
           <div className="flex flex-col gap-2 p-3 rounded-lg border border-[#C4852B]/30 bg-[#C4852B]/5">
@@ -287,7 +265,7 @@ export default function Header() {
                   language === 'fa' ? 'bg-[#C4852B] text-white shadow-xs' : 'bg-white text-zinc-800 border border-zinc-200'
                 }`}
               >
-                🇮🇷 فارسی
+                فارسی
               </button>
               <button
                 onClick={() => { setLanguage('en'); setMobileMenuOpen(false); }}
@@ -295,7 +273,7 @@ export default function Header() {
                   language === 'en' ? 'bg-[#C4852B] text-white shadow-xs' : 'bg-white text-zinc-800 border border-zinc-200'
                 }`}
               >
-                🇬🇧 EN
+                English
               </button>
               <button
                 onClick={() => { setLanguage('ar'); setMobileMenuOpen(false); }}
@@ -303,7 +281,7 @@ export default function Header() {
                   language === 'ar' ? 'bg-[#C4852B] text-white shadow-xs' : 'bg-white text-zinc-800 border border-zinc-200'
                 }`}
               >
-                🇸🇦 عر
+                العربية
               </button>
             </div>
           </div>

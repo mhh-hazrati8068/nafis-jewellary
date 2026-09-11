@@ -39,10 +39,10 @@ export default function GoldCalculatorModal({ isOpen, onClose }: CalculatorProps
         <div className="p-6 sm:p-8 border-b border-zinc-200 flex items-center justify-between bg-[#F4F1EA]">
           <div>
             <span className="text-[9px] font-mono uppercase tracking-[0.25em] text-[#C4852B] font-bold block mb-1">
-              {language === 'fa' ? 'محاسبه‌گر تخصصی بر اساس نرخ رسمی طلا' : 'OFFICIAL 18K GOLD VALUATION MATRIX'}
+              {language === 'fa' ? 'محاسبه‌گر تخصصی بر اساس نرخ رسمی طلا' : language === 'ar' ? 'حاسبة تقييم الذهب والأحجار الكريمة' : 'OFFICIAL 18K GOLD VALUATION MATRIX'}
             </span>
             <h3 className="text-lg sm:text-xl font-bold uppercase tracking-tight">
-              {language === 'fa' ? 'محاسبه‌گر آنلاین وزن و عیار طلا' : 'Gold & Gemstone Price Calculator'}
+              {language === 'fa' ? 'محاسبه‌گر آنلاین وزن و عیار طلا' : language === 'ar' ? 'حاسبة أسعار الذهب والأحجار الكريمة' : 'Gold & Gemstone Price Calculator'}
             </h3>
           </div>
           <button 
@@ -60,10 +60,10 @@ export default function GoldCalculatorModal({ isOpen, onClose }: CalculatorProps
           <div>
             <div className="flex justify-between items-center mb-2 font-mono">
               <span className="font-semibold text-zinc-700">
-                {language === 'fa' ? 'وزن طلا (گرم):' : 'Gold Weight (Grams):'}
+                {language === 'fa' ? 'وزن طلا (گرم):' : language === 'ar' ? 'وزن الذهب (غرام):' : 'Gold Weight (Grams):'}
               </span>
               <span className="text-sm font-bold text-[#C4852B] bg-[#C4852B]/10 px-2.5 py-0.5 rounded">
-                {weight} {language === 'fa' ? 'گرم' : 'g'}
+                {weight} {language === 'fa' ? 'گرم' : language === 'ar' ? 'غرام' : 'g'}
               </span>
             </div>
             <input 
@@ -81,7 +81,7 @@ export default function GoldCalculatorModal({ isOpen, onClose }: CalculatorProps
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-[10px] font-mono uppercase tracking-wider text-[#626667] mb-1.5 font-bold">
-                {language === 'fa' ? 'عیار استاندارد' : 'Gold Purity Standard'}
+                {language === 'fa' ? 'عیار استاندارد' : language === 'ar' ? 'معيار العيار' : 'Gold Purity Standard'}
               </label>
               <select 
                 value={karat}
@@ -96,7 +96,7 @@ export default function GoldCalculatorModal({ isOpen, onClose }: CalculatorProps
 
             <div>
               <label className="block text-[10px] font-mono uppercase tracking-wider text-[#626667] mb-1.5 font-bold">
-                {language === 'fa' ? 'وزن گوهر / عقیق (قیراط)' : 'Gemstone Carats'}
+                {language === 'fa' ? 'وزن گوهر / عقیق (قیراط)' : language === 'ar' ? 'وزن الحجر (قيراط)' : 'Gemstone Carats'}
               </label>
               <input 
                 type="number"
@@ -110,23 +110,44 @@ export default function GoldCalculatorModal({ isOpen, onClose }: CalculatorProps
             </div>
           </div>
 
+          {/* Crafting Fee Slider */}
+          <div>
+            <div className="flex justify-between items-center mb-2 font-mono">
+              <span className="font-semibold text-zinc-700">
+                {language === 'fa' ? 'اجرت ساخت دست‌ساز:' : language === 'ar' ? 'أجرة الصياغة اليدوية:' : 'Artisan Crafting Fee:'}
+              </span>
+              <span className="text-sm font-bold text-[#660000] bg-[#660000]/10 px-2.5 py-0.5 rounded">
+                {makingFeePercent}%
+              </span>
+            </div>
+            <input 
+              type="range" 
+              min="5" 
+              max="30" 
+              step="1"
+              value={makingFeePercent}
+              onChange={(e) => setMakingFeePercent(parseInt(e.target.value))}
+              className="w-full accent-[#660000] cursor-pointer"
+            />
+          </div>
+
           {/* Value Breakdown Box */}
           <div className="p-5 rounded-2xl bg-[#F4F1EA] border border-[#C4852B]/30 space-y-2.5 font-mono text-[11px]">
             <div className="flex justify-between text-[#626667]">
-              <span>{language === 'fa' ? 'ارزش طلای خام ۱۸ عیار:' : '18K Raw Gold Base:'}</span>
+              <span>{language === 'fa' ? 'ارزش طلای خام ۱۸ عیار:' : language === 'ar' ? 'قيمة الذهب الخام عيار 18:' : '18K Raw Gold Base:'}</span>
               <span>${Math.round(rawGoldValue).toLocaleString()}</span>
             </div>
             <div className="flex justify-between text-[#626667]">
-              <span>{language === 'fa' ? 'اجرت ساخت دست‌ساز (۱۲٪):' : 'Artisan Crafting Fee (12%):'}</span>
+              <span>{language === 'fa' ? `اجرت ساخت دست‌ساز (${makingFeePercent}٪):` : language === 'ar' ? `أجرة الصياغة اليدوية (${makingFeePercent}%):` : `Artisan Crafting Fee (${makingFeePercent}%):`}</span>
               <span>${Math.round(makingCharge).toLocaleString()}</span>
             </div>
             <div className="flex justify-between text-[#626667]">
-              <span>{language === 'fa' ? 'ارزش عقیق طبیعی و الماس:' : 'Natural Gemstone & Diamond:'}</span>
+              <span>{language === 'fa' ? 'ارزش عقیق طبیعی و الماس:' : language === 'ar' ? 'قيمة العقيق الطبيعي والألماس:' : 'Natural Gemstone & Diamond:'}</span>
               <span>${Math.round(gemstoneValue).toLocaleString()}</span>
             </div>
             
             <div className="pt-3 border-t border-zinc-300 flex justify-between items-center text-sm font-bold text-zinc-950">
-              <span>{language === 'fa' ? 'مجموع برآورد رسمی:' : 'Official Estimated Total:'}</span>
+              <span>{language === 'fa' ? 'مجموع برآورد رسمی:' : language === 'ar' ? 'إجمالي التقدير الرسمي:' : 'Official Estimated Total:'}</span>
               <span className="text-lg text-[#C4852B] font-bold">${totalEstimatedPrice.toLocaleString()}</span>
             </div>
           </div>
@@ -135,7 +156,7 @@ export default function GoldCalculatorModal({ isOpen, onClose }: CalculatorProps
             onClick={onClose}
             className="w-full py-3.5 bg-[#660000] hover:bg-[#7D0000] text-white font-bold uppercase tracking-[0.2em] rounded-xl shadow-md transition-all text-xs cursor-pointer"
           >
-            {language === 'fa' ? 'ثبت سفارش یا مشاوره خرید' : 'Book Private Consultation'}
+            {language === 'fa' ? 'ثبت سفارش یا مشاوره خرید' : language === 'ar' ? 'حجز استشارة خاصة أو طلب' : 'Book Private Consultation'}
           </button>
         </div>
 

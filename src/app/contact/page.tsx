@@ -13,14 +13,16 @@ export default function ContactPage() {
         
         <div className="max-w-3xl mx-auto text-center mb-20">
           <span className="text-[10px] text-[#C4852B] uppercase tracking-[0.3em] font-semibold mb-3 block font-mono">
-            {language === 'fa' ? 'ارتباط با برند نفیسه عبادی' : 'CONCIERGE & SUPPORT'}
+            {language === 'fa' ? 'ارتباط با برند نفیسه عبادی' : language === 'ar' ? 'خدمة العملاء والاستفسارات' : 'CONCIERGE & SUPPORT'}
           </span>
           <h1 className="text-3xl sm:text-5xl font-bold uppercase tracking-tight mb-6">
-            {language === 'fa' ? 'تماس با ما' : 'Contact Concierge'}
+            {language === 'fa' ? 'تماس با ما' : language === 'ar' ? 'اتصل بنا' : 'Contact Concierge'}
           </h1>
           <p className="text-xs md:text-sm text-[#626667] leading-relaxed">
             {language === 'fa'
               ? 'تیم امور مشتریان و مشاوره تخصصی زیورآلات نفیسه عبادی پاسخگوی تمامی پرسش‌ها و سفارش‌های اختصاصی شماست.'
+              : language === 'ar'
+              ? 'فريق استشارات مجوهرات نفيسة عبادي في خدمتكم للإجابة على جميع الاستفسارات والطلبات الخاصة.'
               : 'Our client concierge is at your service for private inquiries, bespoke jewelry commissions, and order assistance.'}
           </p>
         </div>
@@ -29,7 +31,7 @@ export default function ContactPage() {
           
           <div className="p-8 sm:p-12 rounded-3xl bg-[#F4F1EA] border border-[#C4852B]/30 shadow-sm">
             <h2 className="text-xl md:text-2xl font-bold uppercase mb-8 pb-4 border-b border-zinc-200">
-              {language === 'fa' ? 'اطلاعات دفتر مرکزی' : 'Headquarters Concierge'}
+              {language === 'fa' ? 'اطلاعات دفتر مرکزی' : language === 'ar' ? 'معلومات المقر الرئيسي' : 'Headquarters Concierge'}
             </h2>
 
             <div className="space-y-6 text-xs text-[#626667]">
@@ -38,7 +40,7 @@ export default function ContactPage() {
                   OFFICE & LOUNGE
                 </span>
                 <p className="font-semibold text-zinc-950 text-sm">
-                  {language === 'fa' ? 'تهران، خیابان فرشته، برج رز، طبقه همکف، واحد ۱۲' : 'Tehran, Fereshteh St, Rose Tower, Suite 12'}
+                  {language === 'fa' ? 'تهران، خیابان فرشته، برج رز، طبقه همکف، واحد ۱۲' : language === 'ar' ? 'طهران، شارع فرشته، برج روز، الطابق الأرضي، جناح 12' : 'Tehran, Fereshteh St, Rose Tower, Suite 12'}
                 </p>
               </div>
 
@@ -64,31 +66,31 @@ export default function ContactPage() {
 
           <div className="p-8 sm:p-12 rounded-3xl bg-white border border-zinc-200 shadow-xl">
             <h2 className="text-xl md:text-2xl font-bold uppercase mb-6 text-zinc-950">
-              {language === 'fa' ? 'ارسال پیام به مشاوران' : 'Send a Message'}
+              {language === 'fa' ? 'ارسال پیام به مشاوران' : language === 'ar' ? 'إرسال رسالة للمستشارين' : 'Send a Message'}
             </h2>
 
             {submitted ? (
               <div className="p-6 rounded-2xl bg-[#C4852B]/10 border border-[#C4852B] text-center text-xs text-[#C4852B] font-semibold">
-                ✓ {language === 'fa' ? 'پیام شما با موفقیت ارسال شد. به‌زودی با شما تماس خواهیم گرفت.' : 'Your message has been received. Our team will contact you shortly.'}
+                ✓ {language === 'fa' ? 'پیام شما با موفقیت ارسال شد. به‌زودی با شما تماس خواهیم گرفت.' : language === 'ar' ? 'تم استلام رسالتكم بنجاح. سيتواصل معكم فريقنا قريباً.' : 'Your message has been received. Our team will contact you shortly.'}
               </div>
             ) : (
               <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} className="flex flex-col gap-4 text-xs">
                 <input 
                   type="text" 
                   required
-                  placeholder={language === 'fa' ? 'نام و نام خانوادگی' : 'Full Name'} 
+                  placeholder={language === 'fa' ? 'نام و نام خانوادگی' : language === 'ar' ? 'الاسم الكامل' : 'Full Name'} 
                   className="w-full border border-zinc-300 bg-white px-4 py-3.5 rounded-xl focus:outline-none focus:border-[#C4852B]"
                 />
                 <input 
                   type="email" 
                   required
-                  placeholder={language === 'fa' ? 'آدرس ایمیل' : 'Email Address'} 
+                  placeholder={language === 'fa' ? 'آدرس ایمیل' : language === 'ar' ? 'البريد الإلكتروني' : 'Email Address'} 
                   className="w-full border border-zinc-300 bg-white px-4 py-3.5 rounded-xl focus:outline-none focus:border-[#C4852B]"
                 />
                 <textarea 
                   rows={4} 
                   required
-                  placeholder={language === 'fa' ? 'متن پیام یا سفارش اختصاصی' : 'Your message or bespoke inquiry'}
+                  placeholder={language === 'fa' ? 'متن پیام یا سفارش اختصاصی' : language === 'ar' ? 'نص الرسالة أو الطلب الخاص' : 'Your message or bespoke inquiry'}
                   className="w-full border border-zinc-300 bg-white px-4 py-3.5 rounded-xl focus:outline-none focus:border-[#C4852B]"
                 ></textarea>
 
@@ -96,7 +98,7 @@ export default function ContactPage() {
                   type="submit" 
                   className="w-full py-4 bg-[#660000] text-white font-bold uppercase tracking-[0.2em] rounded-xl hover:bg-[#7D0000] transition-colors shadow-md mt-2 cursor-pointer"
                 >
-                  {language === 'fa' ? 'ارسال پیام' : 'Send Message'}
+                  {language === 'fa' ? 'ارسال پیام' : language === 'ar' ? 'إرسال الرسالة' : 'Send Message'}
                 </button>
               </form>
             )}

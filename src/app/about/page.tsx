@@ -110,7 +110,7 @@ export default function AboutPage() {
           </h1>
           <div className="w-28 h-0.5 bg-gradient-to-r from-[#C4852B] to-[#660000] mx-auto mb-8"></div>
           <p className="text-sm md:text-base text-[#626667] leading-relaxed font-serif italic max-w-2xl mx-auto">
-            "{t.story.quote}"
+            &ldquo;{t.story.quote}&rdquo;
           </p>
         </div>
 

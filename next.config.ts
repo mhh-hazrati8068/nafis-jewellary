@@ -14,6 +14,8 @@ const nextConfig: NextConfig = {
   output: "export",
   basePath: basePath || undefined,
   assetPrefix: basePath || undefined,
+  reactStrictMode: true,
+  poweredByHeader: false,
   images: {
     unoptimized: true,
   },

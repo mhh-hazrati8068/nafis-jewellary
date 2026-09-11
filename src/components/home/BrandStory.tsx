@@ -5,7 +5,7 @@ import Link from "next/link";
 import { MotionFadeIn, TiltCard } from "@/components/ui/MotionWrappers";
 
 export default function BrandStory() {
-  const { t, language } = useAppStore();
+  const { t } = useAppStore();
 
   return (
     <section className="py-24 md:py-36 bg-[#FFFFFF] dark:bg-[#FAF9F5] text-zinc-950 border-t border-[#C4852B]/20 relative overflow-hidden transition-colors duration-500">
@@ -52,7 +52,7 @@ export default function BrandStory() {
             {/* Quote Box */}
             <div className="p-6 rounded-2xl bg-[#F4F1EA] border-l-4 border-[#660000] mb-10 shadow-sm">
               <p className="font-serif italic text-sm text-zinc-900 mb-2">
-                "{t.story.quote}"
+                &ldquo;{t.story.quote}&rdquo;
               </p>
               <span className="text-[10px] font-mono uppercase tracking-widest text-[#660000] font-bold block">
                 — {t.story.quoteAuthor}

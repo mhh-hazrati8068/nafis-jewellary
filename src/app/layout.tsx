@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Header from "@/components/layout/Header";
@@ -67,9 +67,75 @@ const clashDisplay = localFont({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  themeColor: "#C4852B",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export const metadata: Metadata = {
-  title: "Nafise Ebadi Jewellery | زیورآلات نفیسه عبادی",
-  description: "Official 2026 Brand Identity Showcase & Luxury High-Jewellery E-Commerce — Handcrafted 18K Solid Gold & Certified Natural Gemstones",
+  metadataBase: new URL("https://nafiseebadijewellery.com"),
+  title: {
+    default: "زیورآلات نفیسه عبادی | Nafise Ebadi Jewellery | مجوهرات نفيسة عبادي",
+    template: "%s | زیورآلات نفیسه عبادی",
+  },
+  description: "Official 2026 Brand Identity Showcase & Luxury High-Jewellery E-Commerce — Handcrafted 18K Solid Gold, 999 Fine Silver, Natural Agate, Neyshabur Turquoise & Certified Diamonds.",
+  keywords: [
+    "زیورآلات نفیسه عبادی",
+    "طلا دست‌ساز",
+    "نقره دست ساز",
+    "انگشتر فیروزه نیشابور",
+    "عقیق یمنی",
+    "طلای ۱۸ عیار",
+    "Nafise Ebadi Jewellery",
+    "Handcrafted Gold",
+    "Fine Silver 999",
+    "Luxury Iranian Jewelry",
+    "مجوهرات نفيسة عبادي"
+  ],
+  authors: [{ name: "Nafise Ebadi Master Atelier" }],
+  creator: "Nafise Ebadi Jewellery",
+  publisher: "Nafise Ebadi Jewellery",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    title: "Nafise Ebadi Jewellery | زیورآلات نفیسه عبادی",
+    description: "Handcrafted Luxury In Every Detail — 18K Solid Gold & Certified Natural Gemstone Creations.",
+    url: "https://nafiseebadijewellery.com",
+    siteName: "Nafise Ebadi Jewellery",
+    locale: "fa_IR",
+    alternateLocale: ["en_US", "ar_SA"],
+    type: "website",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=1200&auto=format&fit=crop",
+        width: 1200,
+        height: 630,
+        alt: "Nafise Ebadi Luxury Jewellery",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Nafise Ebadi Jewellery | زیورآلات نفیسه عبادی",
+    description: "Handcrafted 18K Solid Gold & Certified Natural Gemstones.",
+    images: ["https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=1200&auto=format&fit=crop"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -94,4 +160,3 @@ export default function RootLayout({
     </html>
   );
 }
-
