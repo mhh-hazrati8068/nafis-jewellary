@@ -3,6 +3,12 @@
 import { useAppStore } from "@/store/useAppStore";
 import { useState } from "react";
 import Link from "next/link";
+import { 
+  getProductName, 
+  getProductCategory, 
+  getProductMaterial, 
+  getProductDescription 
+} from "@/lib/dynamicTranslator";
 
 interface ProductDetailViewProps {
   productId: number;
@@ -18,17 +24,40 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
   const activeImg = selectedImage || product.image;
   const isWishlisted = wishlist.includes(product.id);
 
+  const name = getProductName(product, language);
+  const category = getProductCategory(product, language);
+  const material = getProductMaterial(product, language);
+  const description = getProductDescription(product, language);
+
+  const getWeightLabel = () => {
+    if (language === 'fa') return 'وزن تقریبی طلا / نقره';
+    if (language === 'ar') return 'الوزن التقريبي للذهب / الفضة';
+    return 'Approximate Weight';
+  };
+
+  const getWeightUnit = () => {
+    if (language === 'fa') return 'گرم';
+    if (language === 'ar') return 'جرام';
+    return 'grams';
+  };
+
+  const getMaterialLabel = () => {
+    if (language === 'fa') return 'جنس و عیار';
+    if (language === 'ar') return 'المعدن والعيار';
+    return 'Material & Carat';
+  };
+
   return (
     <div className="py-16 md:py-28 bg-[#FFFFFF] dark:bg-[#FAF9F5] text-zinc-950 min-h-screen transition-colors duration-500">
       <div className="container mx-auto px-4 md:px-12">
         
         <div className="flex items-center gap-2 text-xs text-[#626667] mb-12 uppercase tracking-widest font-mono">
-          <Link href="/" className="hover:text-[#C4852B]">Home</Link>
+          <Link href="/" className="hover:text-[#C4852B]">{language === 'fa' ? 'خانه' : language === 'ar' ? 'الرئيسية' : 'Home'}</Link>
           <span>/</span>
-          <Link href="/collections" className="hover:text-[#C4852B]">Collections</Link>
+          <Link href="/collections" className="hover:text-[#C4852B]">{t.header.collections}</Link>
           <span>/</span>
           <span className="text-zinc-950 font-semibold">
-            {language === 'fa' ? product.nameFa : product.nameEn}
+            {name}
           </span>
         </div>
 
@@ -37,11 +66,11 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
             <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-[#F4F1EA] border border-zinc-200 shadow-xl group">
               <img 
                 src={activeImg} 
-                alt={product.nameFa}
+                alt={name}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <span className="absolute top-4 right-4 bg-[#660000] text-white text-[9px] font-mono tracking-widest uppercase px-3 py-1 rounded-full shadow-md font-bold">
-                CERTIFIED 18K GOLD
+                CERTIFIED AUTHENTIC
               </span>
             </div>
 
@@ -66,7 +95,7 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
             <div>
               <div className="flex items-center justify-between mb-3">
                 <span className="text-[10px] text-[#C4852B] font-mono uppercase tracking-[0.3em] font-bold">
-                  {language === 'fa' ? product.categoryFa : product.categoryEn} • {product.carat}
+                  {category} • {product.carat}
                 </span>
 
                 <button
@@ -81,7 +110,7 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
               </div>
 
               <h1 className="text-3xl md:text-5xl font-bold tracking-tight uppercase mb-4 leading-tight text-zinc-950">
-                {language === 'fa' ? product.nameFa : product.nameEn}
+                {name}
               </h1>
 
               <div className="font-mono text-2xl font-bold text-[#C4852B] mb-6">
@@ -89,24 +118,24 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
               </div>
 
               <p className="text-xs md:text-sm text-[#626667] leading-relaxed mb-8">
-                {language === 'fa' ? product.descriptionFa : product.descriptionEn}
+                {description}
               </p>
 
               <div className="p-6 rounded-2xl bg-[#F4F1EA] border border-[#C4852B]/30 mb-8 grid grid-cols-2 gap-4 text-xs">
                 <div>
                   <span className="text-[10px] text-[#626667] uppercase tracking-widest block font-mono mb-1 font-bold">
-                    {language === 'fa' ? 'جنس و عیار' : 'Material & Carat'}
+                    {getMaterialLabel()}
                   </span>
                   <span className="font-semibold text-zinc-950">
-                    {language === 'fa' ? product.materialFa : product.materialEn}
+                    {material}
                   </span>
                 </div>
                 <div>
                   <span className="text-[10px] text-[#626667] uppercase tracking-widest block font-mono mb-1 font-bold">
-                    {language === 'fa' ? 'وزن تقریبی طلا' : 'Approximate Weight'}
+                    {getWeightLabel()}
                   </span>
                   <span className="font-semibold text-zinc-950 font-mono">
-                    {product.weightGram} {language === 'fa' ? 'گرم' : 'grams'}
+                    {product.weightGram} {getWeightUnit()}
                   </span>
                 </div>
               </div>
@@ -134,11 +163,11 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
                   for (let i = 0; i < qty; i++) {
                     addToCart({
                       id: product.id,
-                      name: language === 'fa' ? product.nameFa : product.nameEn,
+                      name: name,
                       price: product.price,
                       image: product.image,
-                      category: language === 'fa' ? product.categoryFa : product.categoryEn,
-                      material: language === 'fa' ? product.materialFa : product.materialEn
+                      category: category,
+                      material: material
                     });
                   }
                 }}

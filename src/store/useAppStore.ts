@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { Language, translations } from '@/lib/translations'
 import { Product, mockProducts } from '@/data/products'
+import { translateDynamicText } from '@/lib/dynamicTranslator'
 import { 
   UserProfile, 
   fetchAllProducts, 
@@ -36,7 +37,7 @@ interface AppState {
   direction: 'rtl' | 'ltr'
   setLanguage: (lang: Language) => void
   toggleLanguage: () => void
-  t: typeof translations['en']
+  t: typeof translations['fa']
 
   // Products state
   products: Product[]
@@ -82,24 +83,31 @@ interface AppState {
   refreshProfile: () => Promise<void>
 }
 
-// Convert Backend product to Frontend product
+// Convert Backend product to Frontend product with automatic localization
 function mapBackendToFrontend(bp: BackendProduct): Product {
   const imageUrl = bp.imageUrl 
     ? (bp.imageUrl.startsWith('http') ? bp.imageUrl : `${API_BASE_URL}${bp.imageUrl}`)
     : "https://images.unsplash.com/photo-1605100804763-247f66126e28?q=80&w=800&auto=format&fit=crop";
 
+  const stoneEn = bp.stoneName ? translateDynamicText(bp.stoneName, 'en') : '';
+  const stoneAr = bp.stoneName ? translateDynamicText(bp.stoneName, 'ar') : '';
+
   return {
     id: bp.id,
     nameFa: bp.name,
-    nameEn: bp.name,
+    nameEn: translateDynamicText(bp.name, 'en'),
+    nameAr: translateDynamicText(bp.name, 'ar'),
     price: bp.livePriceToman || 0,
     category: 'rings',
     categoryFa: bp.stoneName ? `نقره دست‌ساز (${bp.stoneName})` : 'زیورآلات نقره',
-    categoryEn: bp.stoneName ? `Handmade Silver (${bp.stoneName})` : 'Silver Jewelry',
+    categoryEn: bp.stoneName ? `Handmade Silver (${stoneEn})` : 'Silver Jewelry',
+    categoryAr: bp.stoneName ? `فضة صناعة يدوية (${stoneAr})` : 'مجوهرات فضية',
     materialFa: `نقره ۹۹۹ عیار خالص ${bp.weight ? `(${bp.weight} گرم)` : ''}`,
-    materialEn: `999 Fine Silver ${bp.weight ? `(${bp.weight}g)` : ''}`,
+    materialEn: `999 Fine Pure Silver ${bp.weight ? `(${bp.weight}g)` : ''}`,
+    materialAr: `فضة نقية عيار 999 ${bp.weight ? `(${bp.weight} جرام)` : ''}`,
     descriptionFa: `طراحی اصیل نقره با فرمول قیمت‌گذاری پویا بر پایه نرخ لحظه‌ای TGJU. موجودی: ${bp.stockQuantity} عدد`,
-    descriptionEn: `Authentic silver jewelry with live dynamic pricing based on daily TGJU silver rates. In stock: ${bp.stockQuantity}`,
+    descriptionEn: `Authentic fine silver with dynamic TGJU live pricing. In stock: ${bp.stockQuantity} pcs`,
+    descriptionAr: `فضة نقية أصيلة مع تسعير مباشر وفق أسعار السوق الحية. المتوفر: ${bp.stockQuantity} قطع`,
     image: imageUrl,
     images: [imageUrl],
     weightGram: bp.weight || 4.2,
@@ -135,8 +143,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
   t: translations['fa'],
 
   setLanguage: (lang) => {
-    const dir = lang === 'fa' ? 'rtl' : 'ltr'
+    const dir = lang === 'en' ? 'ltr' : 'rtl'
     if (typeof window !== 'undefined') {
+      localStorage.setItem('nafis_language', lang);
       document.documentElement.dir = dir
       document.documentElement.lang = lang
     }
@@ -148,7 +157,8 @@ export const useAppStore = create<AppState>()((set, get) => ({
   },
 
   toggleLanguage: () => {
-    const nextLang: Language = get().language === 'fa' ? 'en' : 'fa'
+    const current = get().language
+    const nextLang: Language = current === 'fa' ? 'en' : current === 'en' ? 'ar' : 'fa'
     get().setLanguage(nextLang)
   },
 
@@ -293,8 +303,13 @@ export const useAppStore = create<AppState>()((set, get) => ({
     const token = localStorage.getItem('nafis_token');
     const role = localStorage.getItem('nafis_role');
     const userStr = localStorage.getItem('nafis_user');
-    const themeStr = localStorage.getItem('nafis_theme');
+    const langStr = localStorage.getItem('nafis_language') as Language | null;
 
+    if (langStr && (langStr === 'fa' || langStr === 'en' || langStr === 'ar')) {
+      get().setLanguage(langStr);
+    }
+
+    const themeStr = localStorage.getItem('nafis_theme');
     if (themeStr === 'warm') {
       get().setTheme('dark');
     }

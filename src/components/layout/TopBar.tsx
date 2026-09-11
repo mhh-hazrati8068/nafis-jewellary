@@ -5,7 +5,7 @@ import { useState } from "react";
 import GoldCalculatorModal from "@/components/calculator/GoldCalculatorModal";
 
 export default function TopBar() {
-  const { silverPricePerGramToman, t, language } = useAppStore();
+  const { silverPricePerGramToman, t } = useAppStore();
   const [isCalcOpen, setIsCalcOpen] = useState(false);
 
   return (
@@ -15,17 +15,17 @@ export default function TopBar() {
           <button 
             onClick={() => setIsCalcOpen(true)}
             className="flex items-center gap-2.5 hover:opacity-80 transition-opacity group cursor-pointer"
-            title={language === 'fa' ? 'برای محاسبه وزن و قیمت کلیک کنید' : 'Click to open Gold & Gemstone Calculator'}
+            title={t.topBar.calculatorTooltip}
           >
             <span className="inline-block w-2 h-2 rounded-full bg-[#C4852B] animate-pulse"></span>
             <span className="text-zinc-600 font-sans">
-              {language === 'fa' ? 'نرخ لحظه‌ای نقره ۹۹۹:' : 'Live Silver Rate (999):'}
+              {t.topBar.silverRate}
             </span>
             <span className="font-mono text-[#C4852B] font-bold underline decoration-[#C4852B]/40 underline-offset-4">
-              {Number(silverPricePerGramToman).toLocaleString()} {language === 'fa' ? 'تومان / گرم' : 'Tomans / g'}
+              {Number(silverPricePerGramToman).toLocaleString()} {t.topBar.perGram}
             </span>
             <span className="hidden md:inline-block text-[9px] text-[#660000] bg-[#660000]/10 px-2 py-0.5 rounded-full font-mono font-bold">
-              {language === 'fa' ? 'محاسبه‌گر آنلاین ⚖️' : 'Calculator ⚖️'}
+              {t.topBar.calculator}
             </span>
           </button>
           

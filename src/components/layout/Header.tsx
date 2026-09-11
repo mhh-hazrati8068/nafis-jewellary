@@ -13,7 +13,7 @@ export default function Header() {
     toggleCart, 
     wishlist, 
     language, 
-    toggleLanguage, 
+    setLanguage, 
     theme, 
     toggleTheme, 
     toggleSearch, 
@@ -61,7 +61,7 @@ export default function Header() {
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex flex-1 items-center gap-7 text-[11px] uppercase tracking-[0.15em] font-medium text-zinc-800">
             <Link href="/shop" className="hover:text-[#C4852B] transition-colors relative py-1 group">
-              <span className="font-bold text-[#C4852B]">{language === 'fa' ? 'فروشگاه آنلاین' : 'Shop'}</span>
+              <span className="font-bold text-[#C4852B]">{t.header.shop}</span>
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#C4852B] group-hover:w-full transition-all duration-300"></span>
             </Link>
             <Link href="/rings" className="hover:text-[#C4852B] transition-colors relative py-1 group">
@@ -82,7 +82,7 @@ export default function Header() {
             </Link>
             {mounted && isAdmin && (
               <Link href="/admin" className="px-2 py-0.5 rounded bg-[#660000] text-white text-[10px] font-bold tracking-wider hover:bg-[#800000] transition-colors shadow-sm">
-                ⚙️ {language === 'fa' ? 'پنل مدیریت' : 'Admin Panel'}
+                ⚙️ {t.header.admin}
               </Link>
             )}
           </nav>
@@ -96,7 +96,7 @@ export default function Header() {
                   Nafise Ebadi
                 </span>
                 <span className="text-[8px] sm:text-[9px] tracking-[0.25em] uppercase text-[#660000] font-mono whitespace-nowrap font-bold">
-                  {language === 'fa' ? 'زیورآلات نفیسه عبادی' : 'Fine Jewellery'}
+                  {t.brandName}
                 </span>
               </div>
             </Link>
@@ -121,7 +121,7 @@ export default function Header() {
               <button
                 onClick={() => setProfileModalOpen(true)}
                 className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[#C4852B]/40 bg-[#C4852B]/10 hover:bg-[#C4852B]/20 text-zinc-900 text-xs font-medium transition-all"
-                title={language === 'fa' ? 'پروفایل و سفارش‌ها' : 'Profile & Orders'}
+                title={t.header.profile}
               >
                 <span className="w-5 h-5 rounded-full bg-[#C4852B] text-white flex items-center justify-center text-[10px] font-bold">
                   {user?.firstName ? user.firstName[0] : (isAdmin ? '👑' : '👤')}
@@ -135,13 +135,13 @@ export default function Header() {
                 onClick={() => setAuthModalOpen(true)}
                 className="p-1.5 text-zinc-800 hover:text-[#C4852B] transition-colors flex items-center gap-1"
                 aria-label="Login"
-                title={language === 'fa' ? 'ورود به حساب کاربری' : 'Sign In'}
+                title={t.header.login}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.2} stroke="currentColor" className="w-5 h-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                 </svg>
                 <span className="hidden xl:inline text-[11px] font-medium tracking-wider uppercase">
-                  {language === 'fa' ? 'ورود' : 'Login'}
+                  {t.header.login}
                 </span>
               </button>
             )}
@@ -160,14 +160,42 @@ export default function Header() {
               )}
             </button>
 
-            {/* Desktop Language Toggle */}
-            <button
-              onClick={toggleLanguage}
-              className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#C4852B]/40 bg-[#C4852B]/10 text-[#C4852B] hover:bg-[#C4852B] hover:text-white text-[11px] font-semibold uppercase tracking-wider transition-all duration-300 shadow-sm"
-            >
-              <span>🌐</span>
-              <span>{language === 'fa' ? 'English' : 'فارسی'}</span>
-            </button>
+            {/* Desktop 3-Language Selector Pill */}
+            <div className="hidden md:flex items-center p-0.5 rounded-full border border-[#C4852B]/40 bg-[#C4852B]/10 text-[11px] font-semibold tracking-wider">
+              <button
+                onClick={() => setLanguage('fa')}
+                className={`px-2 py-0.5 rounded-full transition-all duration-200 cursor-pointer ${
+                  language === 'fa'
+                    ? 'bg-[#C4852B] text-white shadow-xs font-bold'
+                    : 'text-zinc-700 hover:text-[#C4852B]'
+                }`}
+                title="فارسی"
+              >
+                فا
+              </button>
+              <button
+                onClick={() => setLanguage('en')}
+                className={`px-2 py-0.5 rounded-full transition-all duration-200 cursor-pointer ${
+                  language === 'en'
+                    ? 'bg-[#C4852B] text-white shadow-xs font-bold'
+                    : 'text-zinc-700 hover:text-[#C4852B]'
+                }`}
+                title="English"
+              >
+                EN
+              </button>
+              <button
+                onClick={() => setLanguage('ar')}
+                className={`px-2 py-0.5 rounded-full transition-all duration-200 cursor-pointer ${
+                  language === 'ar'
+                    ? 'bg-[#C4852B] text-white shadow-xs font-bold'
+                    : 'text-zinc-700 hover:text-[#C4852B]'
+                }`}
+                title="العربية"
+              >
+                عر
+              </button>
+            </div>
 
             {/* Wishlist */}
             <button 
@@ -214,13 +242,13 @@ export default function Header() {
         }`}
       >
         <nav className="flex flex-col gap-5 text-sm uppercase tracking-[0.2em] font-medium border-b border-zinc-200 pb-6">
-          <Link href="/shop" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] font-bold text-[#C4852B]">{language === 'fa' ? 'فروشگاه آنلاین' : 'Shop'}</Link>
+          <Link href="/shop" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] font-bold text-[#C4852B]">{t.header.shop}</Link>
           <Link href="/rings" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B]">{t.header.rings}</Link>
           <Link href="/necklaces" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B]">{t.header.necklaces}</Link>
           <Link href="/bracelets" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B]">{t.header.bracelets}</Link>
           <Link href="/collections" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B]">{t.header.collections}</Link>
           {isAdmin && (
-            <Link href="/admin" onClick={() => setMobileMenuOpen(false)} className="text-[#660000] font-bold">⚙️ {language === 'fa' ? 'پنل مدیریت ادمین' : 'Admin Panel'}</Link>
+            <Link href="/admin" onClick={() => setMobileMenuOpen(false)} className="text-[#660000] font-bold">⚙️ {t.header.admin}</Link>
           )}
         </nav>
         <div className="flex flex-col gap-3 text-xs">
@@ -229,7 +257,7 @@ export default function Header() {
               onClick={() => { setProfileModalOpen(true); setMobileMenuOpen(false); }}
               className="flex items-center justify-between p-3.5 rounded-lg border border-[#C4852B] bg-[#C4852B]/10 font-bold text-[#C4852B]"
             >
-              <span>{language === 'fa' ? 'حساب کاربری و سفارش‌ها' : 'Profile & Orders'}</span>
+              <span>{t.header.profile}</span>
               <span>👤</span>
             </button>
           ) : (
@@ -237,7 +265,7 @@ export default function Header() {
               onClick={() => { setAuthModalOpen(true); setMobileMenuOpen(false); }}
               className="flex items-center justify-between p-3.5 rounded-lg border border-[#C4852B] bg-[#C4852B]/10 font-bold text-[#C4852B]"
             >
-              <span>{language === 'fa' ? 'ورود / عضویت با شماره موبایل' : 'Sign In / Register'}</span>
+              <span>{language === 'fa' ? 'ورود / عضویت با شماره موبایل' : language === 'ar' ? 'تسجيل الدخول / إنشاء حساب' : 'Sign In / Register'}</span>
               <span>🔑</span>
             </button>
           )}
@@ -248,13 +276,37 @@ export default function Header() {
             <span>تم رنگی پوسته / Theme</span>
             <span>{theme === 'dark' ? '🏛️ کتان گرم (Warm Linen)' : '✨ عاجی سفید (Pure Ivory)'}</span>
           </button>
-          <button
-            onClick={() => { toggleLanguage(); setMobileMenuOpen(false); }}
-            className="flex items-center justify-between p-3.5 rounded-lg border border-[#C4852B]/40 bg-[#C4852B]/10 text-[#C4852B] font-bold"
-          >
-            <span>زبان / Language</span>
-            <span>{language === 'fa' ? 'تغییر به English' : 'Switch to فارسی'}</span>
-          </button>
+
+          {/* Mobile 3-Language Selector */}
+          <div className="flex flex-col gap-2 p-3 rounded-lg border border-[#C4852B]/30 bg-[#C4852B]/5">
+            <span className="text-[11px] font-semibold text-zinc-600">انتخاب زبان / Language / اللغة:</span>
+            <div className="grid grid-cols-3 gap-1.5">
+              <button
+                onClick={() => { setLanguage('fa'); setMobileMenuOpen(false); }}
+                className={`py-2 rounded-md text-xs font-bold transition-all ${
+                  language === 'fa' ? 'bg-[#C4852B] text-white shadow-xs' : 'bg-white text-zinc-800 border border-zinc-200'
+                }`}
+              >
+                🇮🇷 فارسی
+              </button>
+              <button
+                onClick={() => { setLanguage('en'); setMobileMenuOpen(false); }}
+                className={`py-2 rounded-md text-xs font-bold transition-all ${
+                  language === 'en' ? 'bg-[#C4852B] text-white shadow-xs' : 'bg-white text-zinc-800 border border-zinc-200'
+                }`}
+              >
+                🇬🇧 EN
+              </button>
+              <button
+                onClick={() => { setLanguage('ar'); setMobileMenuOpen(false); }}
+                className={`py-2 rounded-md text-xs font-bold transition-all ${
+                  language === 'ar' ? 'bg-[#C4852B] text-white shadow-xs' : 'bg-white text-zinc-800 border border-zinc-200'
+                }`}
+              >
+                🇸🇦 عر
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </>

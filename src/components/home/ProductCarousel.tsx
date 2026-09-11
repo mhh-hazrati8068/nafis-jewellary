@@ -3,6 +3,7 @@
 import { useAppStore } from "@/store/useAppStore";
 import Link from "next/link";
 import { MotionFadeIn, MotionStaggerContainer, MotionStaggerItem } from "@/components/ui/MotionWrappers";
+import { getProductName, getProductMaterial } from "@/lib/dynamicTranslator";
 
 export default function ProductCarousel() {
   const { products, language, addToCart, t } = useAppStore();
@@ -45,7 +46,7 @@ export default function ProductCarousel() {
                 >
                   <img 
                     src={product.image} 
-                    alt={product.nameFa}
+                    alt={getProductName(product, language)}
                     className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108"
                   />
                   
@@ -61,7 +62,7 @@ export default function ProductCarousel() {
                         e.preventDefault();
                         addToCart({
                           id: product.id,
-                          name: language === 'fa' ? product.nameFa : product.nameEn,
+                          name: getProductName(product, language),
                           price: product.price,
                           image: product.image
                         });
@@ -77,12 +78,12 @@ export default function ProductCarousel() {
                 <div className="flex flex-col flex-1 justify-between">
                   <div>
                     <span className="text-[10px] text-[#626667] uppercase tracking-widest font-mono block mb-1">
-                      {language === 'fa' ? product.materialFa : product.materialEn}
+                      {getProductMaterial(product, language)}
                     </span>
                     
                     <Link href={`/product/${product.id}`}>
                       <h3 className="font-bold text-base text-zinc-950 group-hover:text-[#C4852B] transition-colors duration-300 mb-2">
-                        {language === 'fa' ? product.nameFa : product.nameEn}
+                        {getProductName(product, language)}
                       </h3>
                     </Link>
                   </div>
@@ -95,7 +96,7 @@ export default function ProductCarousel() {
                     <button
                       onClick={() => addToCart({
                         id: product.id,
-                        name: language === 'fa' ? product.nameFa : product.nameEn,
+                        name: getProductName(product, language),
                         price: product.price,
                         image: product.image
                       })}

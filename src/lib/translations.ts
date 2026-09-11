@@ -1,13 +1,16 @@
-export type Language = 'en' | 'fa';
+export type Language = 'en' | 'fa' | 'ar';
 
 export const translations = {
   en: {
     brandName: "Nafise Ebadi Jewellery",
     topBar: {
       goldRate: "18K Gold Market Rate:",
+      silverRate: "Live Silver Rate (999):",
       perGram: "/ gram",
       shipping: "Worldwide Insured Express Delivery",
-      guarantee: "Lifetime Authenticity Guarantee"
+      guarantee: "Lifetime Authenticity Guarantee",
+      calculator: "Calculator ⚖️",
+      calculatorTooltip: "Click to open Gold & Gemstone Calculator"
     },
     header: {
       rings: "Rings",
@@ -17,7 +20,12 @@ export const translations = {
       collections: "Collections",
       branches: "Branches",
       cart: "Cart",
-      wishlist: "Wishlist"
+      wishlist: "Wishlist",
+      shop: "Online Shop",
+      admin: "Admin Panel",
+      profile: "Profile & Orders",
+      login: "Sign In",
+      searchPlaceholder: "Search rings, agate necklaces, diamonds..."
     },
     hero: {
       badge: "Nafise Ebadi 2026 Collection",
@@ -101,9 +109,12 @@ export const translations = {
     brandName: "زیورآلات نفیسه عبادی",
     topBar: {
       goldRate: "نرخ هر گرم طلای ۱۸ عیار:",
+      silverRate: "نرخ لحظه‌ای نقره ۹۹۹:",
       perGram: "تومان / گرم",
       shipping: "ارسال سریع و بیمه‌شده به سراسر ایران",
-      guarantee: "گارانتی اصالت و تعویض همیشگی"
+      guarantee: "گارانتی اصالت و تعویض همیشگی",
+      calculator: "محاسبه‌گر آنلاین ⚖️",
+      calculatorTooltip: "برای محاسبه وزن و قیمت کلیک کنید"
     },
     header: {
       rings: "انگشترها",
@@ -113,7 +124,12 @@ export const translations = {
       collections: "کالکشن‌ها",
       branches: "شعب گالری",
       cart: "سبد خرید",
-      wishlist: "علاقه‌مندی‌ها"
+      wishlist: "علاقه‌مندی‌ها",
+      shop: "فروشگاه آنلاین",
+      admin: "پنل مدیریت",
+      profile: "پروفایل و سفارش‌ها",
+      login: "ورود",
+      searchPlaceholder: "جستجوی انگشتر، گردنبند، الماس..."
     },
     hero: {
       badge: "کالکشن طلا و زیورآلات نفیسه عبادی ۲۰۲۶",
@@ -191,6 +207,110 @@ export const translations = {
       rights: "تمامی حقوق برای برند زیورآلات نفیسه عبادی محفوظ است.",
       privacy: "حریم خصوصی",
       terms: "قوانین و مقررات"
+    }
+  },
+  ar: {
+    brandName: "مجوهرات نفيسة عبادي",
+    topBar: {
+      goldRate: "سعر جرام الذهب عيار 18:",
+      silverRate: "السعر المباشر للفضة 999:",
+      perGram: "تومان / جرام",
+      shipping: "شحن سريع ومؤمّن دولياً ولكافة المناطق",
+      guarantee: "ضمان أصالة واستبدال مدى الحياة",
+      calculator: "حاسبة الأسعار ⚖️",
+      calculatorTooltip: "انقر لفتح حاسبة الذهب والأحجار الكريمة"
+    },
+    header: {
+      rings: "خواتم",
+      necklaces: "قلائد",
+      bracelets: "أساور",
+      earrings: "أقراط",
+      collections: "المجموعات",
+      branches: "فروعنا",
+      cart: "سلة التسوق",
+      wishlist: "المفضلة",
+      shop: "المتجر الإلكتروني",
+      admin: "لوحة الإدارة",
+      profile: "الحساب والطلبات",
+      login: "تسجيل الدخول",
+      searchPlaceholder: "ابحث عن الخواتم، القلائد، الألماس..."
+    },
+    hero: {
+      badge: "مجموعة مجوهرات نفيسة عبادي 2026",
+      title: "الفخامة والأصالة في أدق التفاصيل",
+      subtitle: "حيث يلتقي الفن الخالص بالذهب عيار 18 والألماس VVS والأحجار الكريمة النادرة لإشراقة أبدية.",
+      explore: "استكشف المجموعة",
+      philosophy: "فلسفة علامتنا",
+      mouseGuide: "حرك المؤشر للتفاعل ثلاثي الأبعاد"
+    },
+    features: {
+      guaranteeTitle: "ضمان مدى الحياة",
+      guaranteeDesc: "تأتي جميع القطع مع شهادة أصالة معتمدة وضمان استبدال دائم.",
+      craftedTitle: "صياغة يدوية فاخرة",
+      craftedDesc: "تصاميم عصرية مينيمال منفذة بأيدي أمهر صائغي المجوهرات.",
+      shippingTitle: "شحن آمن ومؤمّن بالكامل",
+      shippingDesc: "تغليف حصري محكم وشحن سريع مع تأمين شامل حتى باب منزلك."
+    },
+    categories: {
+      tag: "مجموعات الهوية البصرية",
+      title: "المجوهرات المميزة",
+      rings: "خواتم ودبلات ذهب",
+      ringsSub: "ذهب عيار 18 صياغة يدوية",
+      necklaces: "قلائد ذهب وعقيق",
+      necklacesSub: "أحجار طبيعية وألماس VVS نقي",
+      bracelets: "أساور وسلاسل ذهب",
+      braceletsSub: "تصاميم مينيمال حديثة",
+      discover: "استكشف القطع"
+    },
+    products: {
+      tag: "تشكيلة مختارة",
+      title: "أحدث الإبداعات",
+      viewAll: "عرض جميع المنتجات",
+      addToCart: "إضافة إلى السلة",
+      quickAdd: "إضافة سريعة +"
+    },
+    cartDrawer: {
+      title: "سلة التسوق الخاصة بك",
+      items: "منتجات",
+      freeShippingQualified: "مبارك! طلبك مؤهل للشحن المجاني!",
+      addMorePrefix: "أضف بقيمة ",
+      addMoreSuffix: " إضافية للحصول على شحن مجاني",
+      emptyTitle: "سلة التسوق فارغة حالياً",
+      emptyDesc: "استكشف مجموعاتنا من الذهب عيار 18 والألماس لإضافة قطع إلى سلتك.",
+      browse: "تصفح المجوهرات",
+      subtotal: "المجموع الفرعي",
+      taxNotice: "يتم احتساب الضرائب ورسوم الشحن عند إتمام الطلب.",
+      checkout: "إتمام الطلب والدفع"
+    },
+    story: {
+      tag: "قصة نفيسة عبادي",
+      title: "حيث يمتزج الفن الخالص بالذهب الأصيل",
+      p1: "منذ انطلاق رحلتنا الذهبية، سعينا لدمج الإبداع الفني مع الذهب عيار 18 وأحجار العقيق الطبيعية لصناعة تجربة تمنح الفخامة والجمال معنى حقيقياً في كل لحظة من حياتك.",
+      p2: "الابتكار والجرأة والكمال في التصميم هي ركائز ورشتنا لنبقى دوماً عند حسن ظن أصحاب الذوق الرفيع.",
+      button: "اكتشف تراثنا",
+      quote: "إبداع متقن في كل انحناءة ذهب، وبريق خالد في كل قيراط ألماس.",
+      quoteAuthor: "ورشة مجوهرات نفيسة عبادي"
+    },
+    footer: {
+      brandDesc: "بوتيك راقٍ لتصميم وصياغة الذهب عيار 18 والمجوهرات المرصعة بالألماس المعتمد. فخامة وأصالة تدوم.",
+      collectionsTitle: "المجموعات",
+      rings: "خواتم ذهب عيار 18",
+      necklaces: "قلائد ذهب وعقيق",
+      bracelets: "أساور صياغة يدوية",
+      earrings: "أقراط لؤلؤ طبيعي",
+      sets: "أطقم حصرية",
+      serviceTitle: "خدمة العملاء",
+      findBranch: "البحث عن فرع",
+      bookAppt: "حجز موعد زيارة",
+      shippingPolicy: "سياسة الشحن والاسترجاع",
+      careGuide: "دليل العناية بالمجوهرات",
+      circleTitle: "النادي الخاص",
+      circleDesc: "اشترك لتصلك دعوات حصرية لمعاينة المجموعات الجديدة وأخبار سوق الذهب.",
+      emailPlaceholder: "أدخل بريدك الإلكتروني",
+      subscribe: "اشتراك",
+      rights: "جميع الحقوق محفوظة لمجوهرات نفيسة عبادي.",
+      privacy: "سياسة الخصوصية",
+      terms: "الشروط والأحكام"
     }
   }
 };

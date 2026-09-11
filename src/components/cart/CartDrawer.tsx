@@ -45,7 +45,13 @@ export default function CartDrawer() {
   const handleConfirmOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!address.trim() || !postalCode.trim()) {
-      setErrorMsg(language === "fa" ? "لطفاً آدرس و کدپستی را وارد کنید" : "Please enter address and postal code");
+      setErrorMsg(
+        language === "fa" 
+          ? "لطفاً آدرس و کدپستی را وارد کنید" 
+          : language === "ar"
+          ? "يرجى إدخال العنوان والرمز البريدي"
+          : "Please enter address and postal code"
+      );
       return;
     }
 
@@ -63,7 +69,7 @@ export default function CartDrawer() {
       clearCart();
       setIsCheckingOut(false);
     } catch (err: any) {
-      setErrorMsg(err.message || "خطا در ثبت سفارش");
+      setErrorMsg(err.message || (language === "fa" ? "خطا در ثبت سفارش" : language === "ar" ? "خطأ في إنشاء الطلب" : "Checkout error"));
     } finally {
       setIsLoading(false);
     }
@@ -74,12 +80,18 @@ export default function CartDrawer() {
     setIsLoading(true);
     try {
       await payInvoice(createdInvoice.id, token);
-      alert(language === "fa" ? "پرداخت با موفقیت شبیه‌سازی شد! فاکتور تسویه گردید." : "Payment successful! Invoice settled.");
+      alert(
+        language === "fa" 
+          ? "پرداخت با موفقیت شبیه‌سازی شد! فاکتور تسویه گردید." 
+          : language === "ar"
+          ? "تمت عملية الدفع التجريبي بنجاح! تم تسوية الفاتورة."
+          : "Payment successful! Invoice settled."
+      );
       setCreatedInvoice(null);
       toggleCart(false);
       setProfileModalOpen(true);
     } catch (err: any) {
-      alert(err.message || "خطا در پرداخت");
+      alert(err.message || (language === "fa" ? "خطا در پرداخت" : language === "ar" ? "خطأ في الدفع" : "Payment failed"));
     } finally {
       setIsLoading(false);
     }
@@ -112,7 +124,7 @@ export default function CartDrawer() {
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-brand-en tracking-wider uppercase font-bold text-zinc-950">
               {createdInvoice 
-                ? (language === "fa" ? "فاکتور صادر شده" : "Generated Invoice") 
+                ? (language === "fa" ? "فاکتور صادر شده" : language === "ar" ? "الفاتورة الصادرة" : "Generated Invoice") 
                 : t.cartDrawer.title}
             </h2>
             {!createdInvoice && (
@@ -136,36 +148,44 @@ export default function CartDrawer() {
               <div className="p-4 bg-green-50 border border-green-200 rounded-xl text-center">
                 <span className="text-3xl block mb-1">🧾</span>
                 <h3 className="font-bold text-green-900 text-sm">
-                  {language === "fa" ? `فاکتور شماره #${createdInvoice.id} با موفقیت صادر شد` : `Invoice #${createdInvoice.id} Created`}
+                  {language === "fa" 
+                    ? `فاکتور شماره #${createdInvoice.id} با موفقیت صادر شد` 
+                    : language === "ar"
+                    ? `تم إصدار الفاتورة رقم #${createdInvoice.id} بنجاح`
+                    : `Invoice #${createdInvoice.id} Created`}
                 </h3>
                 <p className="text-[11px] text-green-700 mt-1">
-                  {language === "fa" ? "سفارش شما در پایگاه‌داده ثبت گردید." : "Your order is saved in the database."}
+                  {language === "fa" 
+                    ? "سفارش شما در پایگاه‌داده ثبت گردید." 
+                    : language === "ar"
+                    ? "تم تسجيل طلبك بنجاح في قاعدة البيانات."
+                    : "Your order is saved in the database."}
                 </p>
               </div>
 
               <div className="p-4 bg-white border border-zinc-200 rounded-xl space-y-2 text-xs">
                 <div className="flex justify-between py-1 border-b border-zinc-100 text-zinc-600">
-                  <span>{language === "fa" ? "خریدار:" : "Customer:"}</span>
+                  <span>{language === "fa" ? "خریدار:" : language === "ar" ? "العميل:" : "Customer:"}</span>
                   <span className="font-mono">{createdInvoice.user?.phoneNumber}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-zinc-100 text-zinc-600">
-                  <span>{language === "fa" ? "آدرس:" : "Address:"}</span>
+                  <span>{language === "fa" ? "آدرس:" : language === "ar" ? "العنوان:" : "Address:"}</span>
                   <span className="text-right">{createdInvoice.shippingAddress}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-zinc-100 text-zinc-600">
-                  <span>{language === "fa" ? "کد پستی:" : "Postal Code:"}</span>
+                  <span>{language === "fa" ? "کد پستی:" : language === "ar" ? "الرمز البريدي:" : "Postal Code:"}</span>
                   <span className="font-mono">{createdInvoice.postalCode}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-zinc-100 text-zinc-600">
-                  <span>{language === "fa" ? "جمع اقلام:" : "Subtotal:"}</span>
+                  <span>{language === "fa" ? "جمع اقلام:" : language === "ar" ? "مجموع المنتجات:" : "Subtotal:"}</span>
                   <span className="font-mono">{Number(createdInvoice.subTotalToman).toLocaleString()} تومان</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-zinc-100 text-zinc-600">
-                  <span>{language === "fa" ? "مالیات بر ارزش افزوده (۱۰٪):" : "VAT (10%):"}</span>
+                  <span>{language === "fa" ? "مالیات بر ارزش افزوده (۱۰٪):" : language === "ar" ? "ضريبة القيمة المضافة (10%):" : "VAT (10%):"}</span>
                   <span className="font-mono">{Number(createdInvoice.taxAmountToman).toLocaleString()} تومان</span>
                 </div>
                 <div className="flex justify-between py-1.5 font-bold text-sm text-[#C4852B]">
-                  <span>{language === "fa" ? "مبلغ کل قابل پرداخت:" : "Total Payable:"}</span>
+                  <span>{language === "fa" ? "مبلغ کل قابل پرداخت:" : language === "ar" ? "الإجمالي المستحق:" : "Total Payable:"}</span>
                   <span className="font-mono">{Number(createdInvoice.finalTotalToman).toLocaleString()} تومان</span>
                 </div>
               </div>
@@ -177,13 +197,15 @@ export default function CartDrawer() {
                 disabled={isLoading}
                 className="w-full py-3.5 bg-green-600 hover:bg-green-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl text-center shadow-lg transition-all cursor-pointer"
               >
-                {isLoading ? "در حال اتصال به درگاه..." : "💳 پرداخت تستی و تسویه فاکتور (Mock Pay)"}
+                {isLoading 
+                  ? (language === "fa" ? "در حال اتصال به درگاه..." : language === "ar" ? "جاري الاتصال ببوابة الدفع..." : "Connecting to Gateway...") 
+                  : (language === "fa" ? "💳 پرداخت تستی و تسویه فاکتور (Mock Pay)" : language === "ar" ? "💳 دفع تجريبي وتسوية الفاتورة" : "💳 Mock Pay & Settle Invoice")}
               </button>
               <button
                 onClick={() => { toggleCart(false); setCreatedInvoice(null); setProfileModalOpen(true); }}
                 className="w-full py-2.5 bg-zinc-200 hover:bg-zinc-300 text-zinc-800 font-bold text-xs rounded-xl transition-all cursor-pointer"
               >
-                {language === "fa" ? "مشاهده در سوابق سفارشات" : "View in Order History"}
+                {language === "fa" ? "مشاهده در سوابق سفارشات" : language === "ar" ? "عرض سجل الطلبات" : "View in Order History"}
               </button>
             </div>
           </div>
@@ -193,14 +215,14 @@ export default function CartDrawer() {
             <div className="space-y-4">
               <div className="flex items-center justify-between pb-2 border-b border-zinc-200">
                 <span className="text-xs font-bold text-zinc-900">
-                  {language === "fa" ? "اطلاعات ارسال سفارش" : "Shipping Details"}
+                  {language === "fa" ? "اطلاعات ارسال سفارش" : language === "ar" ? "تفاصيل الشحن والتوصيل" : "Shipping Details"}
                 </span>
                 <button
                   type="button"
                   onClick={() => setIsCheckingOut(false)}
                   className="text-[11px] text-[#C4852B] hover:underline cursor-pointer"
                 >
-                  {language === "fa" ? "بازگشت به سبد" : "Back to Cart"}
+                  {language === "fa" ? "بازگشت به سبد" : language === "ar" ? "العودة للسلة" : "Back to Cart"}
                 </button>
               </div>
 
@@ -212,21 +234,21 @@ export default function CartDrawer() {
 
               <div>
                 <label className="block text-xs font-medium text-zinc-700 mb-1">
-                  {language === "fa" ? "نشانی دقیق پستی" : "Shipping Address"}
+                  {language === "fa" ? "نشانی دقیق پستی" : language === "ar" ? "عنوان التوصيل الدقيق" : "Shipping Address"}
                 </label>
                 <textarea
                   rows={3}
                   required
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder={language === "fa" ? "استان، شهر، خیابان، پلاک، واحد..." : "City, Street, Building..."}
+                  placeholder={language === "fa" ? "استان، شهر، خیابان، پلاک، واحد..." : language === "ar" ? "المدينة، الشارع، المبنى، الشقة..." : "City, Street, Building..."}
                   className="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-xs focus:outline-none focus:border-[#C4852B] text-zinc-900"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-zinc-700 mb-1">
-                  {language === "fa" ? "کد پستی" : "Postal Code"}
+                  {language === "fa" ? "کد پستی" : language === "ar" ? "الرمز البريدي" : "Postal Code"}
                 </label>
                 <input
                   type="text"
@@ -241,15 +263,15 @@ export default function CartDrawer() {
 
               <div className="p-3 bg-[#F4F1EA] rounded-lg text-xs space-y-1">
                 <div className="flex justify-between text-zinc-600">
-                  <span>{language === "fa" ? "مجموع سبد:" : "Subtotal:"}</span>
+                  <span>{language === "fa" ? "مجموع سبد:" : language === "ar" ? "المجموع الفرعي:" : "Subtotal:"}</span>
                   <span className="font-mono">{subtotalToman.toLocaleString()} تومان</span>
                 </div>
                 <div className="flex justify-between text-zinc-600">
-                  <span>{language === "fa" ? "مالیات بر ارزش افزوده (۱۰٪):" : "VAT (10%):"}</span>
+                  <span>{language === "fa" ? "مالیات بر ارزش افزوده (۱۰٪):" : language === "ar" ? "ضريبة القيمة المضافة (10%):" : "VAT (10%):"}</span>
                   <span className="font-mono">{taxToman.toLocaleString()} تومان</span>
                 </div>
                 <div className="flex justify-between font-bold text-zinc-900 pt-1 border-t border-zinc-200">
-                  <span>{language === "fa" ? "مبلغ نهایی فاکتور:" : "Final Total:"}</span>
+                  <span>{language === "fa" ? "مبلغ نهایی فاکتور:" : language === "ar" ? "الإجمالي النهائي:" : "Final Total:"}</span>
                   <span className="font-mono text-[#C4852B]">{finalTotalToman.toLocaleString()} تومان</span>
                 </div>
               </div>
@@ -261,8 +283,8 @@ export default function CartDrawer() {
               className="w-full py-4 bg-[#660000] hover:bg-[#7D0000] text-white font-bold text-xs uppercase tracking-[0.2em] rounded-xl text-center shadow-lg transition-all cursor-pointer disabled:opacity-50 mt-4"
             >
               {isLoading 
-                ? (language === "fa" ? "در حال صدور فاکتور..." : "Generating Invoice...") 
-                : (language === "fa" ? "تأیید و صدور فاکتور نهایی" : "Confirm & Create Invoice")}
+                ? (language === "fa" ? "در حال صدور فاکتور..." : language === "ar" ? "جاري إصدار الفاتورة..." : "Generating Invoice...") 
+                : (language === "fa" ? "تأیید و صدور فاکتور نهایی" : language === "ar" ? "تأكيد وإصدار الفاتورة" : "Confirm & Create Invoice")}
             </button>
           </form>
         ) : (
@@ -347,14 +369,16 @@ export default function CartDrawer() {
                 </div>
                 
                 <p className="text-[10px] text-[#626667] text-center">
-                  {language === "fa" ? "محاسبه خودکار ۱۰٪ مالیات بر ارزش افزوده در مرحله صدور فاکتور" : "10% VAT automatically calculated at checkout"}
+                  {language === "fa" ? "محاسبه خودکار ۱۰٪ مالیات بر ارزش افزوده در مرحله صدور فاکتور" : language === "ar" ? "احتساب تلقائي لضريبة القيمة المضافة 10% عند إتمام الطلب" : "10% VAT automatically calculated at checkout"}
                 </p>
 
                 <button 
                   onClick={handleStartCheckout}
                   className="w-full py-4 bg-[#660000] text-white font-bold text-xs uppercase tracking-[0.2em] rounded-xl text-center shadow-lg hover:bg-[#7D0000] transition-all cursor-pointer"
                 >
-                  {token ? (language === "fa" ? "ثبت سفارش و صدور فاکتور" : "Proceed to Checkout") : (language === "fa" ? "ورود به حساب و ثبت سفارش" : "Login to Checkout")}
+                  {token 
+                    ? (language === "fa" ? "ثبت سفارش و صدور فاکتور" : language === "ar" ? "تأكيد الطلب وإصدار الفاتورة" : "Proceed to Checkout") 
+                    : (language === "fa" ? "ورود به حساب و ثبت سفارش" : language === "ar" ? "تسجيل الدخول وإتمام الطلب" : "Login to Checkout")}
                 </button>
               </div>
             )}
