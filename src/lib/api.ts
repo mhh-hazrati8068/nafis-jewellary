@@ -1,5 +1,5 @@
-// API client for Silver Shop Spring Boot Backend (http://188.212.99.215:8080)
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://188.212.99.215';
+// API client for Silver Shop Spring Boot Backend
+export const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://nafiseebadijewellery.com').replace(/\/+$/, '');
 
 export interface BackendProduct {
   id: number;

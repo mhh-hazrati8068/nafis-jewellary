@@ -1,4 +1,4 @@
-const SERVER = 'http://188.212.99.215:8080';
+const SERVER = 'http://nafiseebadijewellery.com';
 
 async function run() {
   console.log('--- 1. Testing Admin Login ---');
