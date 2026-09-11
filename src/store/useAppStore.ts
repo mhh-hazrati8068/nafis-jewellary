@@ -230,7 +230,8 @@ export const useAppStore = create<AppState>()((set, get) => ({
   goldPricePerGram: 85.50,
 
   fetchSilverPrice: async () => {
-    const price = await getLiveSilverPriceApi();
+    const { token } = get();
+    const price = await getLiveSilverPriceApi(token);
     if (price && price > 0) {
       set({ silverPricePerGramToman: price });
     }

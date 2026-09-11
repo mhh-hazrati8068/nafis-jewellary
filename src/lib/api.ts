@@ -178,7 +178,7 @@ export async function createAdminCategory(name: string, token?: string | null): 
   return res.json();
 }
 
-// ---------------- PRODUCTS API ----------------
+// ---------------- PRODUCTS & SILVER PRICE API ----------------
 export async function fetchAllProducts(categoryId?: number | null, token?: string | null): Promise<BackendProduct[]> {
   try {
     const url = categoryId 
@@ -194,7 +194,7 @@ export async function fetchAllProducts(categoryId?: number | null, token?: strin
     }
     return res.json();
   } catch (err) {
-    console.warn('Backend API offline or unreachable, using fallback data:', err);
+    console.warn('Backend products offline or unreachable, using fallback catalog:', err);
     return [];
   }
 }
@@ -213,24 +213,88 @@ export async function fetchProductById(id: number | string, token?: string | nul
   }
 }
 
-export async function fetchLiveSilverPrice(): Promise<number> {
+export async function fetchLiveSilverPrice(token?: string | null): Promise<number> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/products/silver-price`, {
       method: 'GET',
-      headers: { 'Accept': 'application/json' },
+      headers: getAuthHeaders(token),
       cache: 'no-store',
     });
     if (res.ok) {
-      const data: SilverPriceResponse = await res.json();
-      return data.pricePerGramToman || 475000;
+      const text = await res.text();
+      if (!text) return 474820;
+      try {
+        const data = JSON.parse(text);
+        if (typeof data === 'number') return data;
+        if (data && typeof data.pricePerGramToman === 'number') return data.pricePerGramToman;
+        if (data && typeof data.price === 'number') return data.price;
+        if (data && typeof data.silverPrice === 'number') return data.silverPrice;
+      } catch {
+        const num = parseFloat(text);
+        if (!isNaN(num) && num > 0) return num;
+      }
     }
-  } catch (err) {
-    console.warn('Failed to fetch live silver price:', err);
+  } catch {
+    // Graceful fallback when TGJU or server endpoint is offline
   }
-  return 475000;
+  return 474820;
 }
 
-// ---------------- INVOICES & CHECKOUT API ----------------
+// ---------------- CART API (Postman: 5. Cart) ----------------
+export async function fetchBackendCart(token?: string | null): Promise<InvoiceItem[]> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/cart`, {
+      method: 'GET',
+      headers: getAuthHeaders(token),
+    });
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
+}
+
+export async function addToBackendCart(productId: number, quantity: number, token?: string | null): Promise<string> {
+  const res = await fetch(`${API_BASE_URL}/api/cart/add`, {
+    method: 'POST',
+    headers: {
+      ...getAuthHeaders(token),
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ productId, quantity }),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(err || 'Failed to add item to cart');
+  }
+  return res.text();
+}
+
+export async function removeFromBackendCart(productId: number, token?: string | null): Promise<string> {
+  const res = await fetch(`${API_BASE_URL}/api/cart/remove/${productId}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(token),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(err || 'Failed to remove item from cart');
+  }
+  return res.text();
+}
+
+export async function clearBackendCart(token?: string | null): Promise<string> {
+  const res = await fetch(`${API_BASE_URL}/api/cart/clear`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(token),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(err || 'Failed to clear cart');
+  }
+  return res.text();
+}
+
+// ---------------- INVOICES & CHECKOUT API (Postman: 6. Invoices) ----------------
 export async function createCheckout(
   cartItemsMap: Record<number, number>,
   address: string,
