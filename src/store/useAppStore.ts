@@ -10,7 +10,9 @@ import {
   adminLogin as adminLoginApi,
   getUserProfile,
   API_BASE_URL,
-  BackendProduct
+  BackendProduct,
+  BackendCategory,
+  fetchCategories as fetchCategoriesApi
 } from '@/lib/api'
 
 export type { Product }
@@ -33,12 +35,18 @@ interface AppState {
   toggleLanguage: () => void
   t: typeof translations['fa']
 
+  // Categories state
+  categories: BackendCategory[]
+  selectedCategoryId: number | null
+  setSelectedCategoryId: (catId: number | null) => void
+  fetchCategories: () => Promise<void>
+
   // Products state
   products: Product[]
   backendProducts: BackendProduct[]
   isLoadingProducts: boolean
   getProductById: (id: number) => Product | undefined
-  fetchProducts: () => Promise<void>
+  fetchProducts: (categoryId?: number | null) => Promise<void>
 
   // Search modal state
   isSearchOpen: boolean
@@ -77,6 +85,15 @@ interface AppState {
   refreshProfile: () => Promise<void>
 }
 
+function inferCategorySlug(name: string, categoryName?: string, categoryId?: number): 'rings' | 'necklaces' | 'bracelets' | 'earrings' {
+  const combined = `${name} ${categoryName || ''}`.toLowerCase();
+  if (categoryId === 1 || combined.includes('دستبند') || combined.includes('bracelet')) return 'bracelets';
+  if (categoryId === 2 || combined.includes('انگشتر') || combined.includes('ring') || combined.includes('حلقه')) return 'rings';
+  if (categoryId === 3 || combined.includes('گردنبند') || combined.includes('آویز') || combined.includes('necklace') || combined.includes('pendant')) return 'necklaces';
+  if (categoryId === 4 || combined.includes('گوشواره') || combined.includes('earring')) return 'earrings';
+  return 'rings';
+}
+
 // Convert Backend product to Frontend product with automatic localization
 function mapBackendToFrontend(bp: BackendProduct): Product {
   const imageUrl = bp.imageUrl 
@@ -85,6 +102,7 @@ function mapBackendToFrontend(bp: BackendProduct): Product {
 
   const stoneEn = bp.stoneName ? translateDynamicText(bp.stoneName, 'en') : '';
   const stoneAr = bp.stoneName ? translateDynamicText(bp.stoneName, 'ar') : '';
+  const catSlug = inferCategorySlug(bp.name, bp.categoryName, bp.categoryId);
 
   return {
     id: bp.id,
@@ -92,10 +110,10 @@ function mapBackendToFrontend(bp: BackendProduct): Product {
     nameEn: translateDynamicText(bp.name, 'en'),
     nameAr: translateDynamicText(bp.name, 'ar'),
     price: bp.livePriceToman || 0,
-    category: 'rings',
-    categoryFa: bp.stoneName ? `نقره دست‌ساز (${bp.stoneName})` : 'زیورآلات نقره',
-    categoryEn: bp.stoneName ? `Handmade Silver (${stoneEn})` : 'Silver Jewelry',
-    categoryAr: bp.stoneName ? `فضة صناعة يدوية (${stoneAr})` : 'مجوهرات فضية',
+    category: catSlug,
+    categoryFa: bp.categoryName || (catSlug === 'rings' ? 'انگشتر' : catSlug === 'necklaces' ? 'گردنبند' : catSlug === 'bracelets' ? 'دستبند' : 'گوشواره'),
+    categoryEn: translateDynamicText(bp.categoryName || catSlug, 'en'),
+    categoryAr: translateDynamicText(bp.categoryName || catSlug, 'ar'),
     materialFa: `نقره ۹۹۹ عیار خالص ${bp.weight ? `(${bp.weight} گرم)` : ''}`,
     materialEn: `999 Fine Pure Silver ${bp.weight ? `(${bp.weight}g)` : ''}`,
     materialAr: `فضة نقية عيار 999 ${bp.weight ? `(${bp.weight} جرام)` : ''}`,
@@ -136,17 +154,42 @@ export const useAppStore = create<AppState>()((set, get) => ({
     get().setLanguage(nextLang)
   },
 
+  // Categories
+  categories: [
+    { id: 1, name: "دستبند" },
+    { id: 2, name: "انگشتر" },
+    { id: 3, name: "گردنبند" },
+    { id: 4, name: "گوشواره" }
+  ],
+  selectedCategoryId: null,
+  setSelectedCategoryId: (catId) => {
+    set({ selectedCategoryId: catId });
+    get().fetchProducts(catId);
+  },
+  fetchCategories: async () => {
+    try {
+      const { token } = get();
+      const cats = await fetchCategoriesApi(token);
+      if (cats && cats.length > 0) {
+        set({ categories: cats });
+      }
+    } catch (err) {
+      console.warn('Could not load categories:', err);
+    }
+  },
+
   // Products
   products: initialProducts,
   backendProducts: [],
   isLoadingProducts: false,
   getProductById: (id) => get().products.find((p) => p.id === id),
 
-  fetchProducts: async () => {
+  fetchProducts: async (categoryId?: number | null) => {
     set({ isLoadingProducts: true })
     try {
       const { token } = get();
-      const backendItems = await fetchAllProducts(token);
+      const targetCatId = categoryId !== undefined ? categoryId : get().selectedCategoryId;
+      const backendItems = await fetchAllProducts(targetCatId, token);
       if (backendItems && backendItems.length > 0) {
         const mapped = backendItems.map(mapBackendToFrontend);
         set({
@@ -155,7 +198,19 @@ export const useAppStore = create<AppState>()((set, get) => ({
           isLoadingProducts: false,
         });
       } else {
-        set({ products: initialProducts, isLoadingProducts: false });
+        // Fallback filter if backend returns empty for category
+        if (targetCatId) {
+          const filtered = initialProducts.filter(p => {
+            if (targetCatId === 1 && p.category === 'bracelets') return true;
+            if (targetCatId === 2 && p.category === 'rings') return true;
+            if (targetCatId === 3 && p.category === 'necklaces') return true;
+            if (targetCatId === 4 && p.category === 'earrings') return true;
+            return false;
+          });
+          set({ products: filtered.length > 0 ? filtered : initialProducts, isLoadingProducts: false });
+        } else {
+          set({ products: initialProducts, isLoadingProducts: false });
+        }
       }
     } catch {
       set({ products: initialProducts, isLoadingProducts: false });

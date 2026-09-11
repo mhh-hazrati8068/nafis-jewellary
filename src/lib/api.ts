@@ -1,6 +1,11 @@
 // API client for Silver Shop Spring Boot Backend
 export const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://nafiseebadijewellery.com').replace(/\/+$/, '');
 
+export interface BackendCategory {
+  id: number;
+  name: string;
+}
+
 export interface BackendProduct {
   id: number;
   name: string;
@@ -8,9 +13,11 @@ export interface BackendProduct {
   stockQuantity: number;
   imageUrl?: string;
   stoneName?: string;
-  badge?: 'NONE' | 'SPECIAL_OFFER' | 'BEST_SELLER' | 'NEW_ARRIVAL';
+  badge?: 'NONE' | 'SPECIAL_OFFER' | 'BEST_SELLER' | 'NEW_ARRIVAL' | string;
+  categoryId?: number;
+  categoryName?: string;
   weight?: number;
-  pricingMethod?: 'METHOD_1_SILVER_MAKING_STONE' | 'METHOD_2_SILVER_MAKING' | 'METHOD_3_FIXED_PRICE' | 'METHOD_4_STONE_ONLY';
+  pricingMethod?: 'METHOD_1_SILVER_MAKING_STONE' | 'METHOD_2_SILVER_MAKING' | 'METHOD_3_FIXED_PRICE' | 'METHOD_4_STONE_ONLY' | string;
   makingChargePercentage?: number;
   stonePrice?: number;
   fixedPrice?: number;
@@ -132,10 +139,52 @@ export async function updateUserProfile(profile: Partial<UserProfile>, token?: s
   return res.text();
 }
 
-// ---------------- PRODUCTS API ----------------
-export async function fetchAllProducts(token?: string | null): Promise<BackendProduct[]> {
+// ---------------- CATEGORIES API ----------------
+export async function fetchCategories(token?: string | null): Promise<BackendCategory[]> {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/products`, {
+    const res = await fetch(`${API_BASE_URL}/api/categories`, {
+      method: 'GET',
+      headers: getAuthHeaders(token),
+      cache: 'no-store',
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) return data;
+    }
+  } catch (err) {
+    console.warn('Categories API unreachable, using standard categories:', err);
+  }
+  return [
+    { id: 1, name: "دستبند" },
+    { id: 2, name: "انگشتر" },
+    { id: 3, name: "گردنبند" },
+    { id: 4, name: "گوشواره" }
+  ];
+}
+
+export async function createAdminCategory(name: string, token?: string | null): Promise<BackendCategory> {
+  const res = await fetch(`${API_BASE_URL}/api/admin/categories`, {
+    method: 'POST',
+    headers: {
+      ...getAuthHeaders(token),
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ name }),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(err || 'Failed to create category');
+  }
+  return res.json();
+}
+
+// ---------------- PRODUCTS API ----------------
+export async function fetchAllProducts(categoryId?: number | null, token?: string | null): Promise<BackendProduct[]> {
+  try {
+    const url = categoryId 
+      ? `${API_BASE_URL}/api/products?categoryId=${categoryId}` 
+      : `${API_BASE_URL}/api/products`;
+    const res = await fetch(url, {
       method: 'GET',
       headers: getAuthHeaders(token),
       cache: 'no-store',
@@ -254,11 +303,15 @@ export async function saveAdminProduct(
   isEdit = false,
   id?: number,
   stoneId?: number,
+  categoryId?: number,
   token?: string | null
 ): Promise<BackendProduct> {
   let url = isEdit ? `${API_BASE_URL}/api/admin/products/${id}` : `${API_BASE_URL}/api/admin/products`;
-  if (stoneId) {
-    url += `?stoneId=${stoneId}`;
+  const queryParams: string[] = [];
+  if (stoneId) queryParams.push(`stoneId=${stoneId}`);
+  if (categoryId) queryParams.push(`categoryId=${categoryId}`);
+  if (queryParams.length > 0) {
+    url += `?${queryParams.join('&')}`;
   }
 
   const res = await fetch(url, {

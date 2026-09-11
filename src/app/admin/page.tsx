@@ -5,9 +5,12 @@ import Link from "next/link";
 import { useAppStore } from "@/store/useAppStore";
 import { 
   BackendProduct, 
+  BackendCategory,
   Invoice, 
   fetchAdminProducts, 
   fetchAdminStones, 
+  fetchCategories,
+  createAdminCategory,
   saveAdminProduct, 
   deleteAdminProduct, 
   fetchAdminInvoices, 
@@ -15,15 +18,22 @@ import {
   forceUpdateSilverPrice,
   API_BASE_URL
 } from "@/lib/api";
+
 export default function AdminDashboardPage() {
   const { token, isAdmin, loginAsAdmin, silverPricePerGramToman, fetchSilverPrice, fetchProducts, logout } = useAppStore();
 
-  const [activeTab, setActiveTab] = useState<"products" | "invoices">("products");
+  const [activeTab, setActiveTab] = useState<"products" | "invoices" | "categories">("products");
   const [products, setProducts] = useState<BackendProduct[]>([]);
   const [stones, setStones] = useState<BackendProduct[]>([]);
+  const [categories, setCategories] = useState<BackendCategory[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdatingPrice, setIsUpdatingPrice] = useState(false);
+
+  // New Category State
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [isCreatingCategory, setIsCreatingCategory] = useState(false);
+  const [categoryMsg, setCategoryMsg] = useState<{ text: string; type: "success" | "error" } | null>(null);
 
   // Direct Admin Login state
   const [adminUser, setAdminUser] = useState("");
@@ -37,6 +47,7 @@ export default function AdminDashboardPage() {
 
   // Form Fields
   const [name, setName] = useState("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [pricingMethod, setPricingMethod] = useState<string>("METHOD_1_SILVER_MAKING_STONE");
   const [weight, setWeight] = useState<string>("4.5");
   const [makingChargePercentage, setMakingChargePercentage] = useState<string>("15");
@@ -54,14 +65,16 @@ export default function AdminDashboardPage() {
     if (!token) return;
     setIsLoading(true);
     try {
-      if (activeTab === "products") {
-        const [prodList, stoneList] = await Promise.all([
-          fetchAdminProducts(token),
-          fetchAdminStones(token)
-        ]);
-        setProducts(prodList);
-        setStones(stoneList);
-      } else {
+      const [prodList, stoneList, catList] = await Promise.all([
+        fetchAdminProducts(token),
+        fetchAdminStones(token),
+        fetchCategories(token)
+      ]);
+      setProducts(prodList);
+      setStones(stoneList);
+      setCategories(catList);
+
+      if (activeTab === "invoices") {
         const invList = await fetchAdminInvoices(token);
         setInvoices(invList);
       }
@@ -81,16 +94,17 @@ export default function AdminDashboardPage() {
     if (isAdmin && token) {
       const loadInitialData = async () => {
         try {
-          if (activeTab === "products") {
-            const [prodList, stoneList] = await Promise.all([
-              fetchAdminProducts(token),
-              fetchAdminStones(token)
-            ]);
-            if (!ignore) {
-              setProducts(prodList);
-              setStones(stoneList);
-            }
-          } else {
+          const [prodList, stoneList, catList] = await Promise.all([
+            fetchAdminProducts(token),
+            fetchAdminStones(token),
+            fetchCategories(token)
+          ]);
+          if (!ignore) {
+            setProducts(prodList);
+            setStones(stoneList);
+            setCategories(catList);
+          }
+          if (activeTab === "invoices") {
             const invList = await fetchAdminInvoices(token);
             if (!ignore) {
               setInvoices(invList);
@@ -115,9 +129,28 @@ export default function AdminDashboardPage() {
     };
   }, [isAdmin, token, activeTab, logout]);
 
+  const handleCreateCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCategoryName.trim()) return;
+    setIsCreatingCategory(true);
+    setCategoryMsg(null);
+    try {
+      await createAdminCategory(newCategoryName.trim(), token);
+      setNewCategoryName("");
+      setCategoryMsg({ text: "دسته‌بندی با موفقیت افزوده شد.", type: "success" });
+      await loadData();
+    } catch (err: unknown) {
+      const errorText = err instanceof Error ? err.message : "خطا در افزودن دسته‌بندی";
+      setCategoryMsg({ text: errorText, type: "error" });
+    } finally {
+      setIsCreatingCategory(false);
+    }
+  };
+
   const handleOpenAddModal = () => {
     setEditingProduct(null);
     setName("");
+    setSelectedCategoryId("");
     setPricingMethod("METHOD_1_SILVER_MAKING_STONE");
     setWeight("4.5");
     setMakingChargePercentage("15");
@@ -135,6 +168,7 @@ export default function AdminDashboardPage() {
   const handleOpenEditModal = (prod: BackendProduct) => {
     setEditingProduct(prod);
     setName(prod.name || "");
+    setSelectedCategoryId(prod.categoryId ? String(prod.categoryId) : "");
     setPricingMethod(prod.pricingMethod || "METHOD_1_SILVER_MAKING_STONE");
     setWeight(prod.weight ? String(prod.weight) : "4.5");
     setMakingChargePercentage(prod.makingChargePercentage ? String(prod.makingChargePercentage) : "15");
@@ -171,16 +205,22 @@ export default function AdminDashboardPage() {
       formData.append("badge", badge);
       formData.append("isVisible", String(isVisible));
 
+      if (selectedCategoryId) {
+        formData.append("categoryId", selectedCategoryId);
+      }
+
       if (imageFile) {
         formData.append("image", imageFile);
       }
 
       const stoneIdNumber = selectedStoneId ? Number(selectedStoneId) : undefined;
+      const categoryIdNumber = selectedCategoryId ? Number(selectedCategoryId) : undefined;
       await saveAdminProduct(
         formData, 
         !!editingProduct, 
         editingProduct?.id, 
         stoneIdNumber, 
+        categoryIdNumber,
         token
       );
 
@@ -372,6 +412,16 @@ export default function AdminDashboardPage() {
             📦 انبار و محصولات ({products.length})
           </button>
           <button
+            onClick={() => setActiveTab("categories")}
+            className={`pb-3 px-4 text-sm font-bold border-b-2 transition-all cursor-pointer ${
+              activeTab === "categories"
+                ? "border-[#C4852B] text-[#C4852B]"
+                : "border-transparent text-zinc-500 hover:text-zinc-800"
+            }`}
+          >
+            🏷️ دسته‌بندی‌ها ({categories.length})
+          </button>
+          <button
             onClick={() => setActiveTab("invoices")}
             className={`pb-3 px-4 text-sm font-bold border-b-2 transition-all cursor-pointer ${
               activeTab === "invoices"
@@ -413,6 +463,7 @@ export default function AdminDashboardPage() {
                       <tr>
                         <th className="py-3 px-4">تصویر</th>
                         <th className="py-3 px-4">نام محصول</th>
+                        <th className="py-3 px-4">دسته‌بندی</th>
                         <th className="py-3 px-4">روش قیمت‌گذاری</th>
                         <th className="py-3 px-4">وزن (گرم)</th>
                         <th className="py-3 px-4">اجرت (%)</th>
@@ -427,6 +478,7 @@ export default function AdminDashboardPage() {
                         const imgUrl = p.imageUrl 
                           ? (p.imageUrl.startsWith("http") ? p.imageUrl : `${API_BASE_URL}${p.imageUrl}`)
                           : null;
+                        const catLabel = p.categoryName || categories.find(c => c.id === p.categoryId)?.name || "-";
                         return (
                           <tr key={p.id} className="hover:bg-zinc-50/80 transition-colors">
                             <td className="py-3 px-4">
@@ -437,6 +489,11 @@ export default function AdminDashboardPage() {
                               )}
                             </td>
                             <td className="py-3 px-4 font-bold text-zinc-900">{p.name}</td>
+                            <td className="py-3 px-4">
+                              <span className="px-2 py-0.5 rounded-md bg-[#C4852B]/10 text-[#C4852B] text-[11px] font-semibold">
+                                {catLabel}
+                              </span>
+                            </td>
                             <td className="py-3 px-4 font-mono text-[11px] text-zinc-600">{p.pricingMethod}</td>
                             <td className="py-3 px-4 font-mono">{p.weight || 0}</td>
                             <td className="py-3 px-4 font-mono">{p.makingChargePercentage || 0}%</td>
@@ -469,6 +526,67 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* CATEGORIES TAB */}
+        {activeTab === "categories" && (
+          <div className="space-y-6">
+            <div className="p-6 bg-white dark:bg-[#FAF9F5] border border-zinc-200 rounded-2xl shadow-sm space-y-4">
+              <h2 className="text-base font-bold text-zinc-950 font-serif">
+                ➕ ایجاد دسته‌بندی جدید (POST /api/admin/categories)
+              </h2>
+              <p className="text-xs text-zinc-600">
+                دسته‌بندی‌های جدید به کاربران امکان فیلتر هوشمند محصولات بر اساس رسته کالایی را می‌دهند.
+              </p>
+
+              {categoryMsg && (
+                <div className={`p-3 text-xs rounded-xl ${
+                  categoryMsg.type === "success" 
+                    ? "bg-green-50 text-green-800 border border-green-200" 
+                    : "bg-red-50 text-red-800 border border-red-200"
+                }`}>
+                  {categoryMsg.text}
+                </div>
+              )}
+
+              <form onSubmit={handleCreateCategory} className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="text"
+                  required
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  placeholder="نام دسته‌بندی جدید (مانند: پابند، نیم‌ست، سینه ریز...)"
+                  className="flex-1 px-4 py-2.5 bg-zinc-50 dark:bg-white border border-zinc-300 rounded-xl text-xs text-zinc-950 focus:outline-none focus:border-[#C4852B]"
+                />
+                <button
+                  type="submit"
+                  disabled={isCreatingCategory}
+                  className="px-6 py-2.5 bg-[#C4852B] hover:bg-[#A36C20] text-white text-xs font-bold rounded-xl shadow-md transition-all cursor-pointer disabled:opacity-50"
+                >
+                  {isCreatingCategory ? "در حال ثبت..." : "افزودن دسته‌بندی"}
+                </button>
+              </form>
+            </div>
+
+            <div className="bg-white dark:bg-[#FAF9F5] border border-zinc-200 rounded-2xl shadow-sm overflow-hidden p-6 space-y-4">
+              <h3 className="text-sm font-bold text-zinc-950">
+                دسته‌بندی‌های فعال سیستم ({categories.length})
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                {categories.map((cat) => (
+                  <div key={cat.id} className="p-4 bg-zinc-50 dark:bg-[#F4F1EA] rounded-xl border border-zinc-200 flex items-center justify-between">
+                    <div>
+                      <span className="text-xs font-bold text-zinc-900 block">{cat.name}</span>
+                      <span className="text-[10px] text-zinc-500 font-mono">شناسه: {cat.id}</span>
+                    </div>
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#C4852B]/10 text-[#C4852B] text-[10px] font-bold">
+                      فعال
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
@@ -575,16 +693,18 @@ export default function AdminDashboardPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-zinc-700 mb-1">روش قیمت‌گذاری</label>
+                    <label className="block text-xs font-medium text-zinc-700 mb-1">دسته‌بندی (Category)</label>
                     <select
-                      value={pricingMethod}
-                      onChange={(e) => setPricingMethod(e.target.value)}
+                      value={selectedCategoryId}
+                      onChange={(e) => setSelectedCategoryId(e.target.value)}
                       className="w-full px-3 py-2 bg-zinc-50 dark:bg-white border border-zinc-300 rounded-lg text-xs text-zinc-900"
                     >
-                      <option value="METHOD_1_SILVER_MAKING_STONE">روش ۱: نقره + اجرت + نگین متصل</option>
-                      <option value="METHOD_2_SILVER_MAKING">روش ۲: نقره + اجرت (بدون نگین)</option>
-                      <option value="METHOD_3_FIXED_PRICE">روش ۳: قیمت ثابت</option>
-                      <option value="METHOD_4_STONE_ONLY">روش ۴: سنگ / نگین مستقل</option>
+                      <option value="">-- بدون دسته‌بندی --</option>
+                      {categories.map((cat) => (
+                        <option key={cat.id} value={cat.id}>
+                          {cat.name} (شناسه: {cat.id})
+                        </option>
+                      ))}
                     </select>
                   </div>
 
@@ -601,6 +721,20 @@ export default function AdminDashboardPage() {
                       <option value="NEW_ARRIVAL">جدید (NEW_ARRIVAL)</option>
                     </select>
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-zinc-700 mb-1">روش قیمت‌گذاری</label>
+                  <select
+                    value={pricingMethod}
+                    onChange={(e) => setPricingMethod(e.target.value)}
+                    className="w-full px-3 py-2 bg-zinc-50 dark:bg-white border border-zinc-300 rounded-lg text-xs text-zinc-900"
+                  >
+                    <option value="METHOD_1_SILVER_MAKING_STONE">روش ۱: نقره + اجرت + نگین متصل</option>
+                    <option value="METHOD_2_SILVER_MAKING">روش ۲: نقره + اجرت (بدون نگین)</option>
+                    <option value="METHOD_3_FIXED_PRICE">روش ۳: قیمت ثابت</option>
+                    <option value="METHOD_4_STONE_ONLY">روش ۴: سنگ / نگین مستقل</option>
+                  </select>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
