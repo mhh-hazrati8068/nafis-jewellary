@@ -125,6 +125,11 @@ export const metadata: Metadata = {
     description: "Handcrafted 18K Solid Gold & Certified Natural Gemstones.",
     images: ["https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=1200&auto=format&fit=crop"],
   },
+  icons: {
+    icon: "/logo.jpg",
+    shortcut: "/logo.jpg",
+    apple: "/logo.jpg",
+  },
   robots: {
     index: true,
     follow: true,
