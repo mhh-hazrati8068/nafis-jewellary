@@ -65,7 +65,7 @@ export default function CartDrawer() {
         itemsMap[item.id] = item.quantity;
       });
 
-      const invoice = await createCheckout(itemsMap, address, postalCode, token);
+      const invoice = await createCheckout(itemsMap, address, postalCode, token, cart);
       setCreatedInvoice(invoice);
       clearCart();
       setIsCheckingOut(false);
