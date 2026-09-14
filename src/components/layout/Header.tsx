@@ -43,19 +43,30 @@ export default function Header() {
   } = useAppStore();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
   useEffect(() => {
     loadUserFromStorage();
     fetchProducts();
     fetchSilverPrice();
+
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 15);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [loadUserFromStorage, fetchProducts, fetchSilverPrice]);
 
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-[#C4852B]/20 bg-[#FFFFFF]/95 dark:bg-[#FAF9F5]/95 backdrop-blur-md shadow-[0_2px_15px_rgba(0,0,0,0.03)] transition-all duration-300">
+      <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+        isScrolled 
+          ? "bg-[#FFFFFF]/98 dark:bg-[#FAF9F5]/98 backdrop-blur-lg shadow-[0_4px_25px_rgba(0,0,0,0.07)] border-b border-[#C4852B]/30" 
+          : "bg-[#FFFFFF]/95 dark:bg-[#FAF9F5]/95 backdrop-blur-md shadow-[0_2px_15px_rgba(0,0,0,0.02)] border-b border-[#C4852B]/20"
+      }`}>
         <div className="container mx-auto px-4 sm:px-6 md:px-8 h-20 flex items-center justify-between gap-4">
           
           {/* Mobile Navigation Toggle */}
