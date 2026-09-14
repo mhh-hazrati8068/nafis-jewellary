@@ -5,13 +5,19 @@ import Link from "next/link";
 import Image from "next/image";
 import BrandLogo from "@/components/layout/BrandLogo";
 import { MotionFadeIn, MotionStaggerContainer, MotionStaggerItem, TiltCard } from "@/components/ui/MotionWrappers";
+import { 
+  SilverPurityIcon, 
+  TurquoiseMineralIcon, 
+  SilversmithHammerIcon, 
+  SilverShieldIcon 
+} from "@/components/icons/JewelryIcons";
 
 export default function AboutPage() {
   const { language, t } = useAppStore();
 
   const values = [
     {
-      icon: "✨",
+      icon: <SilverPurityIcon className="w-6 h-6 text-[#A06314]" />,
       titleFa: "نقره ۹۲۵ استرلینگ عیار خالص",
       titleEn: "Certified 925 Sterling Silver",
       titleAr: "فضة استرليني 925 نقية معتمدة",
@@ -20,7 +26,7 @@ export default function AboutPage() {
       descAr: "تُصاغ جميع قطعنا من الفضة الاسترليني 925 النقية مع طبقة حماية متطورة للمحافظة على البريق الخالد.",
     },
     {
-      icon: "💠",
+      icon: <TurquoiseMineralIcon className="w-6 h-6 text-[#A06314]" />,
       titleFa: "سنگ‌های اصیل فیروزه نیشابور و عقیق",
       titleEn: "Authentic Neyshabur Turquoise & Agate",
       titleAr: "أحجار الفيروز النيسابوري والعقيق الطبيعي",
@@ -29,7 +35,7 @@ export default function AboutPage() {
       descAr: "أحجار كريمة طبيعية 100% مستخرجة من أقدم المناجم ومرفقة بشهادات فحص گوهرشناسی معتمدة.",
     },
     {
-      icon: "🔨",
+      icon: <SilversmithHammerIcon className="w-6 h-6 text-[#A06314]" />,
       titleFa: "هنر دست استادکاران نقره‌ساز",
       titleEn: "Master Silversmith Craftsmanship",
       titleAr: "صياغة يدوية بأيدي أمهر الحرفيين",
@@ -38,7 +44,7 @@ export default function AboutPage() {
       descAr: "دمج فنون النقش اليدوي والترصيع الدقيق مع الخطوط الهندسية العصرية الراقية.",
     },
     {
-      icon: "🛡️",
+      icon: <SilverShieldIcon className="w-6 h-6 text-[#A06314]" />,
       titleFa: "گارانتی اصالت و خدمات پس از فروش",
       titleEn: "Lifetime Warranty & Polishing Care",
       titleAr: "ضمان أصالة دائم وخدمات العناية",
@@ -199,9 +205,9 @@ export default function AboutPage() {
                 className="p-6 sm:p-7 rounded-3xl bg-white dark:bg-[#FAF9F5] border border-[#C4852B]/30 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
               >
                 <div>
-                  <span className="text-3xl mb-4 block p-3 w-fit rounded-2xl bg-[#C4852B]/10">
+                  <div className="w-12 h-12 mb-4 rounded-2xl bg-[#C4852B]/10 border border-[#C4852B]/25 flex items-center justify-center text-[#A06314] shadow-2xs">
                     {v.icon}
-                  </span>
+                  </div>
                   <h3 className="font-bold text-base text-zinc-950 mb-2 leading-snug">
                     {language === 'fa' ? v.titleFa : language === 'ar' ? v.titleAr : v.titleEn}
                   </h3>

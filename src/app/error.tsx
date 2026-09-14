@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import BrandLogo from "@/components/layout/BrandLogo";
+import { FleurDeLisLuxuryIcon } from "@/components/icons/JewelryIcons";
 
 export default function GlobalError({
   error,
@@ -23,7 +24,9 @@ export default function GlobalError({
           <BrandLogo variant="gold" size="md" showSubline={false} />
         </div>
 
-        <span className="text-4xl mb-4">⚜️</span>
+        <div className="w-14 h-14 rounded-2xl bg-[#660000]/10 text-[#660000] flex items-center justify-center mb-4">
+          <FleurDeLisLuxuryIcon className="w-8 h-8" />
+        </div>
 
         <h2 className="text-xl sm:text-2xl font-bold uppercase mb-3 text-zinc-950">
           خطایی رخ داده است / Something went wrong

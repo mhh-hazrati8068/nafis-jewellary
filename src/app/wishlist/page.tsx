@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getProductName, getProductMaterial } from "@/lib/dynamicTranslator";
+import { HeartLuxuryIcon, ShoppingBagLuxuryIcon } from "@/components/icons/JewelryIcons";
 
 export default function WishlistPage() {
   const { wishlist, products, toggleWishlist, addToCart, language, t, fetchProducts } = useAppStore();
@@ -74,8 +75,8 @@ export default function WishlistPage() {
         {wishlistProducts.length === 0 ? (
           /* Empty State */
           <div className="max-w-md mx-auto text-center p-10 sm:p-12 rounded-3xl bg-[#F4F1EA] border border-[#C4852B]/30 shadow-sm flex flex-col items-center">
-            <div className="w-16 h-16 rounded-full bg-[#C4852B]/15 text-[#660000] flex items-center justify-center text-3xl mb-5 shadow-2xs">
-              ❤️
+            <div className="w-16 h-16 rounded-full bg-[#660000]/10 text-[#660000] flex items-center justify-center mb-5 shadow-2xs">
+              <HeartLuxuryIcon className="w-8 h-8 fill-[#660000]/20" />
             </div>
             <h3 className="text-xl font-bold text-zinc-950 mb-2">
               {t.wishlistPage.emptyTitle}
@@ -104,7 +105,7 @@ export default function WishlistPage() {
                   onClick={handleAddAllToCart}
                   className="px-5 py-2.5 bg-[#660000] text-white text-xs font-bold rounded-xl hover:bg-[#7D0000] transition-colors shadow-xs cursor-pointer flex items-center gap-1.5"
                 >
-                  <span>🛍️</span>
+                  <ShoppingBagLuxuryIcon className="w-4 h-4" />
                   <span>{t.wishlistPage.addAllToCart}</span>
                 </button>
               </div>
@@ -173,7 +174,11 @@ export default function WishlistPage() {
                               : "bg-[#660000] hover:bg-[#7D0000] text-white shadow-xs"
                           }`}
                         >
-                          <span>{isJustAdded ? "✓" : "🛍️"}</span>
+                          {isJustAdded ? (
+                            <span>✓</span>
+                          ) : (
+                            <ShoppingBagLuxuryIcon className="w-4 h-4" />
+                          )}
                           <span>{isJustAdded ? t.wishlistPage.addedToCart : t.products.addToCart}</span>
                         </button>
                       </div>
@@ -184,7 +189,6 @@ export default function WishlistPage() {
             </div>
           </div>
         )}
-
       </div>
     </div>
   );

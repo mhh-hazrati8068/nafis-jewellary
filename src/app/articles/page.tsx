@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useAppStore } from "@/store/useAppStore";
 import { Article, fetchArticles, API_BASE_URL } from "@/lib/api";
+import { JournalBookIcon } from "@/components/icons/JewelryIcons";
 
 const FALLBACK_ARTICLES: Article[] = [
   {
@@ -160,7 +161,9 @@ export default function ArticlesPage() {
           </div>
         ) : filteredArticles.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-3xl border border-zinc-200/80 p-8 max-w-md mx-auto shadow-sm">
-            <div className="text-4xl mb-3">📖</div>
+            <div className="w-16 h-16 rounded-3xl bg-[#660000]/5 text-[#660000] flex items-center justify-center mx-auto mb-4">
+              <JournalBookIcon className="w-8 h-8" />
+            </div>
             <h3 className="text-base font-bold text-zinc-900 mb-2">{t.articles.empty}</h3>
             <p className="text-xs text-zinc-500 mb-6">
               {searchQuery ? "مقاله‌ای با این عبارت جستجو یافت نشد." : "به زودی مقالات جدید اضافه خواهند شد."}

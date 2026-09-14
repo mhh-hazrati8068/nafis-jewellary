@@ -5,6 +5,7 @@ import { useAppStore } from "@/store/useAppStore";
 import { Invoice, fetchMyOrders, payInvoice, updateUserProfile } from "@/lib/api";
 import IranLocationSelector from "@/components/ui/IranLocationSelector";
 import JalaliDatePicker from "@/components/ui/JalaliDatePicker";
+import { OfficialReceiptIcon, CreditCardPayIcon, UserAvatarIcon } from "@/components/icons/JewelryIcons";
 
 function ProfileModalContent() {
   const { setProfileModalOpen, user, token, logout, language, refreshProfile, setActiveReceiptInvoice } = useAppStore();
@@ -263,7 +264,9 @@ function ProfileModalContent() {
                 </div>
               ) : orders.length === 0 ? (
                 <div className="py-12 text-center text-xs text-[#626667]">
-                  <span className="text-3xl block mb-2">🧾</span>
+                  <span className="w-14 h-14 rounded-2xl bg-[#660000]/5 text-[#660000] flex items-center justify-center mx-auto mb-3">
+                    <OfficialReceiptIcon className="w-7 h-7" />
+                  </span>
                   <p>{language === "fa" ? "هنوز سفارشی ثبت نکرده‌اید." : language === "ar" ? "لم تقم بتسجيل أي طلب بعد." : "No orders found."}</p>
                 </div>
               ) : (
@@ -315,16 +318,17 @@ function ProfileModalContent() {
                         onClick={() => setActiveReceiptInvoice(invoice)}
                         className="flex-1 py-2 bg-[#C4852B] hover:bg-[#A76E1F] text-white font-bold text-xs rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs"
                       >
-                        <span>🧾</span>
+                        <OfficialReceiptIcon className="w-4 h-4" />
                         <span>{language === "fa" ? "مشاهده رسید رسمی سازمان" : language === "ar" ? "عرض الإيصال الرسمي" : "Official Receipt"}</span>
                       </button>
 
                       {!invoice.isPaid && (
                         <button
                           onClick={() => handlePay(invoice.id)}
-                          className="flex-1 py-2 bg-green-600 hover:bg-green-700 text-white font-bold text-xs rounded-lg transition-colors cursor-pointer shadow-2xs"
+                          className="flex-1 py-2 bg-green-600 hover:bg-green-700 text-white font-bold text-xs rounded-lg transition-colors cursor-pointer shadow-2xs flex items-center justify-center gap-1.5"
                         >
-                          {language === "fa" ? "💳 پرداخت" : language === "ar" ? "💳 دفع" : "💳 Pay"}
+                          <CreditCardPayIcon className="w-4 h-4" />
+                          <span>{language === "fa" ? "پرداخت" : language === "ar" ? "دفع" : "Pay"}</span>
                         </button>
                       )}
                     </div>

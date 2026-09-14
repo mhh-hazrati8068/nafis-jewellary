@@ -3,6 +3,7 @@
 import Link from "next/link";
 import BrandLogo from "@/components/layout/BrandLogo";
 import { useAppStore } from "@/store/useAppStore";
+import { SparkleStarIcon } from "@/components/icons/JewelryIcons";
 
 export default function NotFound() {
   const { language } = useAppStore();
@@ -27,7 +28,7 @@ export default function NotFound() {
       <div className="max-w-lg w-full text-center flex flex-col items-center">
         <div className="mb-6 relative">
           <BrandLogo variant="gold" size="lg" showSubline={false} />
-          <span className="absolute -top-3 -right-3 text-2xl">✨</span>
+          <SparkleStarIcon className="w-5 h-5 absolute -top-3 -right-3 text-[#C4852B]" />
         </div>
 
         <span className="text-6xl sm:text-8xl font-brand-en font-bold text-[#C4852B] tracking-widest block mb-4">

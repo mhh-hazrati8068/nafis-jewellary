@@ -4,6 +4,7 @@ import { useAppStore } from "@/store/useAppStore";
 import { useState } from "react";
 import { createCheckout, payInvoice, Invoice } from "@/lib/api";
 import IranLocationSelector from "@/components/ui/IranLocationSelector";
+import { OfficialReceiptIcon, CreditCardPayIcon, ShoppingBagLuxuryIcon } from "@/components/icons/JewelryIcons";
 
 export default function CartDrawer() {
   const { 
@@ -155,7 +156,9 @@ export default function CartDrawer() {
           <div className="flex-1 p-6 overflow-y-auto flex flex-col justify-between">
             <div className="space-y-4">
               <div className="p-4 bg-green-50 border border-green-200 rounded-xl text-center">
-                <span className="text-3xl block mb-1">🧾</span>
+                <span className="w-10 h-10 rounded-2xl bg-green-100 text-green-800 flex items-center justify-center mx-auto mb-2">
+                  <OfficialReceiptIcon className="w-6 h-6" />
+                </span>
                 <h3 className="font-bold text-green-900 text-sm">
                   {language === "fa" 
                     ? `فاکتور شماره #${createdInvoice.id} با موفقیت صادر شد` 
@@ -207,18 +210,19 @@ export default function CartDrawer() {
                 }}
                 className="w-full py-3.5 bg-[#C4852B] hover:bg-[#A76E1F] text-white font-bold text-xs uppercase tracking-wider rounded-xl text-center shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
               >
-                <span>🧾</span>
+                <OfficialReceiptIcon className="w-4 h-4" />
                 <span>{language === "fa" ? "مشاهده و چاپ رسید رسمی سازمان" : language === "ar" ? "عرض وطباعة الإيصال الرسمي" : "View & Print Official Organization Receipt"}</span>
               </button>
 
               <button
                 onClick={handlePayment}
                 disabled={isLoading}
-                className="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl text-center shadow-md transition-all cursor-pointer"
+                className="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl text-center shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
               >
-                {isLoading 
+                <CreditCardPayIcon className="w-4 h-4" />
+                <span>{isLoading 
                   ? (language === "fa" ? "در حال اتصال به درگاه..." : language === "ar" ? "جاري الاتصال ببوابة الدفع..." : "Connecting to Gateway...") 
-                  : (language === "fa" ? "💳 پرداخت آنلاین و تسویه فاکتور" : language === "ar" ? "💳 الدفع الإلكتروني وتسوية الفاتورة" : "💳 Pay Online & Settle Invoice")}
+                  : (language === "fa" ? "پرداخت آنلاین و تسویه فاکتور" : language === "ar" ? "الدفع الإلكتروني وتسوية الفاتورة" : "Pay Online & Settle Invoice")}</span>
               </button>
               <button
                 onClick={() => { toggleCart(false); setCreatedInvoice(null); setProfileModalOpen(true); }}
@@ -324,7 +328,9 @@ export default function CartDrawer() {
             <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
               {cart.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center text-[#626667]">
-                  <span className="text-4xl mb-3">🛍️</span>
+                  <span className="w-16 h-16 rounded-3xl bg-[#660000]/5 text-[#660000] flex items-center justify-center mb-4">
+                    <ShoppingBagLuxuryIcon className="w-8 h-8" />
+                  </span>
                   <p className="text-sm font-semibold mb-1">{t.cartDrawer.emptyTitle}</p>
                   <p className="text-xs mb-6">{t.cartDrawer.emptyDesc}</p>
                   <button 

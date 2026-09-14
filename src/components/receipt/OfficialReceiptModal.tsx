@@ -5,6 +5,7 @@ import { useAppStore } from "@/store/useAppStore";
 import { Invoice } from "@/lib/api";
 import { numberToPersianWords, toPersianDigits } from "@/lib/numberToPersianWords";
 import BrandLogo from "@/components/layout/BrandLogo";
+import { OfficialReceiptIcon, PrinterIcon, SparkleStarIcon } from "@/components/icons/JewelryIcons";
 
 interface Props {
   invoice?: Invoice | null;
@@ -123,7 +124,9 @@ export default function OfficialReceiptModal({ invoice: propInvoice, isOpen: pro
         {/* Top Action Bar (hidden when printing) */}
         <div className="no-print p-4 sm:p-5 border-b border-zinc-200 dark:border-zinc-300 flex items-center justify-between bg-[#F4F1EA] text-zinc-900">
           <div className="flex items-center gap-3">
-            <span className="text-xl">🧾</span>
+            <span className="w-8 h-8 rounded-xl bg-[#660000]/10 flex items-center justify-center text-[#660000]">
+              <OfficialReceiptIcon className="w-5 h-5" />
+            </span>
             <div>
               <h3 className="text-sm font-bold font-sans text-zinc-950">
                 رسید رسمی سازمان زیورآلات نفیسه عبادی
@@ -161,7 +164,7 @@ export default function OfficialReceiptModal({ invoice: propInvoice, isOpen: pro
               className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#C4852B] hover:bg-[#A76E1F] text-white rounded-xl text-xs font-bold shadow-sm transition-all cursor-pointer"
               title="چاپ یا ذخیره PDF"
             >
-              <span>🖨️</span>
+              <PrinterIcon className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">چاپ / PDF</span>
             </button>
 
@@ -448,16 +451,17 @@ export default function OfficialReceiptModal({ invoice: propInvoice, isOpen: pro
         {/* Modal Footer Controls */}
         <div className="no-print p-4 sm:p-5 border-t border-zinc-200 dark:border-zinc-300 bg-[#FAF9F5] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2 text-[#626667] text-[11px]">
-            <span>✨</span>
+            <SparkleStarIcon className="w-4 h-4 text-[#C4852B] shrink-0" />
             <span>این فاکتور با مهر و امضای رسمی سازمانی زیورآلات نفیسه عبادی صادر گردیده است.</span>
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <button
               onClick={handlePrint}
-              className="flex-1 sm:flex-none px-6 py-2.5 bg-[#660000] hover:bg-[#7D0000] text-white font-bold rounded-xl transition-all shadow-md cursor-pointer text-center"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-[#660000] hover:bg-[#7D0000] text-white font-bold rounded-xl transition-all shadow-md cursor-pointer text-center"
             >
-              🖨️ چاپ و صدور PDF رسمی
+              <PrinterIcon className="w-4 h-4" />
+              <span>چاپ و صدور PDF رسمی</span>
             </button>
             <button
               onClick={handleClose}

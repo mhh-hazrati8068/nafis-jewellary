@@ -8,7 +8,7 @@ export const translations = {
       perGram: "/ gram",
       shipping: "Worldwide Insured Express Delivery",
       guarantee: "Lifetime 925 Silver Authenticity Guarantee",
-      calculator: "Calculator ⚖️",
+      calculator: "Silver Calculator",
       calculatorTooltip: "Click to open Silver & Gemstone Calculator"
     },
     header: {
@@ -140,7 +140,7 @@ export const translations = {
       perGram: "تومان / گرم",
       shipping: "ارسال سریع و بیمه‌شده به سراسر ایران",
       guarantee: "گارانتی اصالت و شناسنامه نقره ۹۲۵",
-      calculator: "محاسبه‌گر آنلاین نقره ⚖️",
+      calculator: "محاسبه‌گر آنلاین نقره",
       calculatorTooltip: "برای محاسبه وزن و قیمت نقره و نگین کلیک کنید"
     },
     header: {
@@ -272,7 +272,7 @@ export const translations = {
       perGram: "تومان / جرام",
       shipping: "شحن سريع ومؤمّن دولياً ولكافة المناطق",
       guarantee: "ضمان أصالة الفضة الاسترليني 925 مدى الحياة",
-      calculator: "حاسبة الفضة ⚖️",
+      calculator: "حاسبة الفضة",
       calculatorTooltip: "انقر لفتح حاسبة الفضة والأحجار الكريمة"
     },
     header: {

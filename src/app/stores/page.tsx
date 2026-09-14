@@ -1,6 +1,7 @@
 "use client";
 
 import { useAppStore } from "@/store/useAppStore";
+import { StorePinIcon, PhoneCallLuxuryIcon, ClockTimeIcon } from "@/components/icons/JewelryIcons";
 
 export default function StoresPage() {
   const { language } = useAppStore();
@@ -70,15 +71,21 @@ export default function StoresPage() {
 
                 <div className="space-y-4 text-xs text-[#626667]">
                   <div className="flex items-start gap-3">
-                    <span className="text-[#C4852B]">📍</span>
-                    <span>{language === 'fa' ? b.addressFa : language === 'ar' ? b.addressAr : b.addressEn}</span>
+                    <span className="w-5 h-5 flex items-center justify-center rounded-lg bg-[#C4852B]/10 text-[#C4852B] shrink-0">
+                      <StorePinIcon className="w-3.5 h-3.5" />
+                    </span>
+                    <span className="pt-0.5">{language === 'fa' ? b.addressFa : language === 'ar' ? b.addressAr : b.addressEn}</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-[#C4852B]">📞</span>
+                    <span className="w-5 h-5 flex items-center justify-center rounded-lg bg-[#C4852B]/10 text-[#C4852B] shrink-0">
+                      <PhoneCallLuxuryIcon className="w-3.5 h-3.5" />
+                    </span>
                     <span className="font-mono text-zinc-950 font-semibold">{b.phone}</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-[#C4852B]">🕒</span>
+                    <span className="w-5 h-5 flex items-center justify-center rounded-lg bg-[#C4852B]/10 text-[#C4852B] shrink-0">
+                      <ClockTimeIcon className="w-3.5 h-3.5" />
+                    </span>
                     <span>{language === 'fa' ? b.hoursFa : language === 'ar' ? b.hoursAr : b.hoursEn}</span>
                   </div>
                 </div>

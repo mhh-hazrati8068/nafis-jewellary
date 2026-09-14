@@ -15,7 +15,10 @@ import {
   EarringsIcon, 
   SparkleStarIcon, 
   SilverShieldIcon,
-  AllCollectionsIcon
+  AllCollectionsIcon,
+  AdminCrownLuxuryIcon,
+  AdminGearLuxuryIcon,
+  UserAvatarIcon
 } from "@/components/icons/JewelryIcons";
 
 const emptySubscribe = () => () => {};
@@ -117,8 +120,9 @@ export default function Header() {
 
             {/* Admin Badge if authorized */}
             {mounted && isAdmin && (
-              <Link href="/admin" className="px-2.5 py-1 rounded-full bg-[#660000] text-white text-[10px] font-bold tracking-wider hover:bg-[#800000] transition-colors shadow-xs">
-                ⚙️ {t.header.admin}
+              <Link href="/admin" className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#660000] text-white text-[10px] font-bold tracking-wider hover:bg-[#800000] transition-colors shadow-xs">
+                <AdminGearLuxuryIcon className="w-3.5 h-3.5" />
+                <span>{t.header.admin}</span>
               </Link>
             )}
           </nav>
@@ -148,7 +152,13 @@ export default function Header() {
                 title={t.header.profile}
               >
                 <span className="w-5 h-5 rounded-full bg-[#C4852B] text-white flex items-center justify-center text-[10px] font-bold">
-                  {user?.firstName ? user.firstName[0] : (isAdmin ? '👑' : '👤')}
+                  {user?.firstName ? (
+                    user.firstName[0]
+                  ) : isAdmin ? (
+                    <AdminCrownLuxuryIcon className="w-3 h-3 text-white" />
+                  ) : (
+                    <UserAvatarIcon className="w-3 h-3 text-white" />
+                  )}
                 </span>
                 <span className="hidden lg:inline text-[11px] font-mono font-bold">
                   {user?.firstName || user?.phoneNumber || (isAdmin ? 'Admin' : 'User')}

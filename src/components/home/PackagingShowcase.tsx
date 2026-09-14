@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import BrandLogo from "@/components/layout/BrandLogo";
 import { MotionFadeIn, TiltCard } from "@/components/ui/MotionWrappers";
+import { SparkleStarIcon } from "@/components/icons/JewelryIcons";
 
 type TabType = "box" | "bag" | "certificate" | "card";
 
@@ -204,8 +205,10 @@ export default function PackagingShowcase() {
 
               {/* Action Note */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">✨</span>
+                <div className="flex items-center gap-2.5">
+                  <span className="w-7 h-7 rounded-lg bg-[#C4852B]/10 text-[#C4852B] flex items-center justify-center shrink-0">
+                    <SparkleStarIcon className="w-4 h-4" />
+                  </span>
                   <span className="text-[11px] text-[#626667]">
                     {language === 'fa' ? 'شامل تمامی سفارش‌های بالاتر از $200' : language === 'ar' ? 'مشمول مجاناً للطلبات التي تتجاوز 200$' : 'Complimentary on orders above $200'}
                   </span>

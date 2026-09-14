@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAppStore } from "@/store/useAppStore";
 import { Article, fetchArticleBySlug, API_BASE_URL } from "@/lib/api";
+import { JournalBookIcon } from "@/components/icons/JewelryIcons";
 
 const FALLBACK_ARTICLES: Record<string, Article> = {
   "silver-and-gemstone-care-guide": {
@@ -140,7 +141,9 @@ export default function ArticleDetailView({ slug }: { slug: string }) {
   if (!article) {
     return (
       <main className="min-h-screen bg-[#FAF9F5] flex flex-col items-center justify-center py-32 px-4 text-center">
-        <div className="text-4xl mb-4">📖</div>
+        <div className="w-16 h-16 rounded-3xl bg-[#660000]/5 text-[#660000] flex items-center justify-center mb-4">
+          <JournalBookIcon className="w-8 h-8" />
+        </div>
         <h1 className="text-xl font-bold text-zinc-900 mb-2">مقاله مورد نظر یافت نشد</h1>
         <p className="text-xs text-zinc-500 mb-6">احتمالاً این مقاله حذف شده یا آدرس آن تغییر یافته است.</p>
         <Link

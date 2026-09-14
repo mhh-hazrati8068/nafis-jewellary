@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { sendOtp } from "@/lib/api";
+import { WarningAlertLuxuryIcon, InfoCircleLuxuryIcon, KeyAuthIcon } from "@/components/icons/JewelryIcons";
 
 export default function AuthModal() {
   const { isAuthModalOpen, setAuthModalOpen, loginWithOtp, language } = useAppStore();
@@ -113,13 +114,13 @@ export default function AuthModal() {
         {/* Error / Success Notifications */}
         {errorMsg && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg flex items-center gap-2">
-            <span>⚠️</span>
+            <WarningAlertLuxuryIcon className="w-4 h-4 shrink-0 text-red-600" />
             <span>{errorMsg}</span>
           </div>
         )}
         {successMsg && (
           <div className="mb-4 p-3 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-lg flex items-center gap-2">
-            <span>ℹ️</span>
+            <InfoCircleLuxuryIcon className="w-4 h-4 shrink-0 text-amber-700" />
             <span>{successMsg}</span>
           </div>
         )}

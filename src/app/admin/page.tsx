@@ -22,6 +22,15 @@ import {
   deleteAdminArticle,
   API_BASE_URL
 } from "@/lib/api";
+import { 
+  AdminCrownLuxuryIcon, 
+  CategoryTagIcon, 
+  OfficialReceiptIcon, 
+  JournalBookIcon, 
+  PackagingBoxIcon, 
+  WarningAlertLuxuryIcon,
+  SilverPurityIcon
+} from "@/components/icons/JewelryIcons";
 
 export default function AdminDashboardPage() {
   const { token, isAdmin, loginAsAdmin, silverPricePerGramToman, fetchSilverPrice, fetchProducts, logout, setActiveReceiptInvoice } = useAppStore();
@@ -394,8 +403,8 @@ export default function AdminDashboardPage() {
       <div className="min-h-[80vh] flex items-center justify-center px-4 py-16 bg-[#FAF9F5]">
         <div className="w-full max-w-md bg-white border border-[#660000]/30 rounded-3xl shadow-2xl p-8 space-y-6">
           <div className="text-center space-y-2">
-            <div className="w-14 h-14 mx-auto rounded-full bg-[#660000]/10 text-[#660000] flex items-center justify-center text-2xl font-bold font-serif">
-              👑
+            <div className="w-14 h-14 mx-auto rounded-full bg-[#660000]/10 text-[#660000] flex items-center justify-center">
+              <AdminCrownLuxuryIcon className="w-7 h-7" />
             </div>
             <h1 className="text-xl font-bold text-zinc-950 font-serif">
               ورود به پنل مدیریت
@@ -407,7 +416,7 @@ export default function AdminDashboardPage() {
 
           {adminLoginError && (
             <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-center gap-2">
-              <span>⚠️</span>
+              <WarningAlertLuxuryIcon className="w-4 h-4 shrink-0 text-red-600" />
               <span>{adminLoginError}</span>
             </div>
           )}
@@ -466,8 +475,9 @@ export default function AdminDashboardPage() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 bg-white dark:bg-[#FAF9F5] border border-[#C4852B]/30 rounded-2xl shadow-sm">
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-[#660000]/10 text-[#660000] text-[10px] font-bold">
-                👑 ADMIN DASHBOARD
+              <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#660000]/10 text-[#660000] text-[10px] font-bold">
+                <AdminCrownLuxuryIcon className="w-3 h-3" />
+                <span>ADMIN DASHBOARD</span>
               </span>
               <span className="text-xs text-zinc-400">•</span>
               <span className="text-xs text-zinc-600 font-mono">
@@ -485,7 +495,16 @@ export default function AdminDashboardPage() {
               disabled={isUpdatingPrice}
               className="px-4 py-2 bg-[#C4852B]/10 hover:bg-[#C4852B]/20 text-[#C4852B] border border-[#C4852B]/40 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
             >
-              <span>{isUpdatingPrice ? "⏳" : "🔄"}</span>
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                strokeWidth={2} 
+                stroke="currentColor" 
+                className={`w-3.5 h-3.5 ${isUpdatingPrice ? "animate-spin" : ""}`}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+              </svg>
               <span>{isUpdatingPrice ? "در حال دریافت..." : "بروزرسانی زنده نرخ نقره"}</span>
             </button>
 
@@ -502,43 +521,47 @@ export default function AdminDashboardPage() {
         <div className="flex border-b border-zinc-300 gap-4 flex-wrap">
           <button
             onClick={() => setActiveTab("products")}
-            className={`pb-3 px-4 text-sm font-bold border-b-2 transition-all cursor-pointer ${
+            className={`pb-3 px-4 text-sm font-bold border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
               activeTab === "products"
                 ? "border-[#C4852B] text-[#C4852B]"
                 : "border-transparent text-zinc-500 hover:text-zinc-800"
             }`}
           >
-            📦 انبار و محصولات ({products.length})
+            <PackagingBoxIcon className="w-4 h-4" />
+            <span>انبار و محصولات ({products.length})</span>
           </button>
           <button
             onClick={() => setActiveTab("categories")}
-            className={`pb-3 px-4 text-sm font-bold border-b-2 transition-all cursor-pointer ${
+            className={`pb-3 px-4 text-sm font-bold border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
               activeTab === "categories"
                 ? "border-[#C4852B] text-[#C4852B]"
                 : "border-transparent text-zinc-500 hover:text-zinc-800"
             }`}
           >
-            🏷️ دسته‌بندی‌ها ({categories.length})
+            <CategoryTagIcon className="w-4 h-4" />
+            <span>دسته‌بندی‌ها ({categories.length})</span>
           </button>
           <button
             onClick={() => setActiveTab("invoices")}
-            className={`pb-3 px-4 text-sm font-bold border-b-2 transition-all cursor-pointer ${
+            className={`pb-3 px-4 text-sm font-bold border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
               activeTab === "invoices"
                 ? "border-[#C4852B] text-[#C4852B]"
                 : "border-transparent text-zinc-500 hover:text-zinc-800"
             }`}
           >
-            🧾 فاکتورها و سفارشات ({invoices.length})
+            <OfficialReceiptIcon className="w-4 h-4" />
+            <span>فاکتورها و سفارشات ({invoices.length})</span>
           </button>
           <button
             onClick={() => setActiveTab("articles")}
-            className={`pb-3 px-4 text-sm font-bold border-b-2 transition-all cursor-pointer ${
+            className={`pb-3 px-4 text-sm font-bold border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
               activeTab === "articles"
                 ? "border-[#C4852B] text-[#C4852B]"
                 : "border-transparent text-zinc-500 hover:text-zinc-800"
             }`}
           >
-            📝 مقالات و وبلاگ ({articles.length})
+            <JournalBookIcon className="w-4 h-4" />
+            <span>مقالات و وبلاگ ({articles.length})</span>
           </button>
         </div>
 
@@ -750,7 +773,7 @@ export default function AdminDashboardPage() {
                             onClick={() => setActiveReceiptInvoice(inv)}
                             className="px-3 py-1.5 bg-[#C4852B] hover:bg-[#A76E1F] text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
                           >
-                            <span>🧾</span>
+                            <OfficialReceiptIcon className="w-4 h-4" />
                             <span>رسید رسمی</span>
                           </button>
 
