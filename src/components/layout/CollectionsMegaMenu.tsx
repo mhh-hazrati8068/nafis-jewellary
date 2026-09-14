@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useAppStore } from "@/store/useAppStore";
 import { getProductName, getProductMaterial, translateDynamicText } from "@/lib/dynamicTranslator";
+import { getCategorySvgIcon, SparkleStarIcon, SilverShieldIcon } from "@/components/icons/JewelryIcons";
 
 export default function CollectionsMegaMenu() {
   const { categories, products, fetchCategories, fetchProducts, language, t } = useAppStore();
@@ -26,16 +27,6 @@ export default function CollectionsMegaMenu() {
     timeoutRef.current = setTimeout(() => {
       setIsOpen(false);
     }, 180);
-  };
-
-  // Helper to map category name to icon
-  const getCategoryIcon = (name: string, id: number) => {
-    const lower = (name || "").toLowerCase();
-    if (lower.includes("انگشتر") || lower.includes("حلقه") || lower.includes("ring") || id === 2) return "💍";
-    if (lower.includes("گردنبند") || lower.includes("آویز") || lower.includes("necklace") || id === 3) return "📿";
-    if (lower.includes("دستبند") || lower.includes("bracelet") || id === 1) return "✨";
-    if (lower.includes("گوشواره") || lower.includes("earring") || id === 4) return "💎";
-    return "💠";
   };
 
   // Helper to get category link
@@ -98,7 +89,7 @@ export default function CollectionsMegaMenu() {
       {/* Nav Link Trigger */}
       <Link
         href="/collections"
-        className={`flex items-center gap-1 py-2 font-semibold text-[13px] transition-colors relative group cursor-pointer ${
+        className={`flex items-center gap-1.5 py-2 font-semibold text-[13px] transition-colors relative group cursor-pointer ${
           isOpen ? "text-[#C4852B]" : "text-zinc-800 hover:text-[#C4852B]"
         }`}
         aria-haspopup="true"
@@ -141,13 +132,13 @@ export default function CollectionsMegaMenu() {
             <div>
               <div className="flex items-center justify-between pb-3 mb-2 border-b border-zinc-100">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#A06314] flex items-center gap-1.5 font-sans">
-                  <span>✨</span>
+                  <SparkleStarIcon className="w-3.5 h-3.5 text-[#C4852B]" />
                   <span>
                     {language === "fa"
-                      ? "دسته‌بندی‌های رسمی فروشگاه"
+                      ? "دسته‌بندی‌های رسمی کارگاه"
                       : language === "ar"
                       ? "تصنيفات المتجر الرسمية"
-                      : "Official API Categories"}
+                      : "Official Collections"}
                   </span>
                 </span>
                 <Link
@@ -166,7 +157,6 @@ export default function CollectionsMegaMenu() {
                   const catName = getLocalizedCategoryName(cat.name);
                   const catDesc = getLocalizedCategoryDesc(cat.description, cat.name);
                   const catHref = getCategoryHref(cat.name, cat.id);
-                  const icon = getCategoryIcon(cat.name, cat.id);
 
                   return (
                     <Link
@@ -181,9 +171,13 @@ export default function CollectionsMegaMenu() {
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <span className="text-xl shrink-0 p-1.5 rounded-xl bg-white/80 shadow-2xs">
-                          {icon}
-                        </span>
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border transition-all duration-250 ${
+                          isHovered 
+                            ? "bg-[#C4852B] text-white border-[#C4852B] shadow-sm scale-105" 
+                            : "bg-white dark:bg-[#FAF9F5] text-[#A06314] border-[#C4852B]/25 group-hover:border-[#C4852B]/50"
+                        }`}>
+                          {getCategorySvgIcon(cat.name, cat.id, "w-4.5 h-4.5")}
+                        </div>
                         <div className="flex flex-col">
                           <span
                             className={`font-bold text-[13px] leading-snug transition-colors ${
@@ -213,8 +207,11 @@ export default function CollectionsMegaMenu() {
 
             {/* Bottom Quick Links Banner */}
             <div className="pt-3 mt-2 border-t border-zinc-100 flex items-center justify-between text-[11px]">
-              <span className="text-zinc-500 font-medium">
-                {language === "fa" ? "🛡️ ضمانت اصالت نقره ۹۲۵ و فاکتور رسمی" : language === "ar" ? "🛡️ ضمان أصالة الفضة 925" : "🛡️ Certified 925 Silver Authenticity"}
+              <span className="text-zinc-600 font-medium flex items-center gap-1.5">
+                <SilverShieldIcon className="w-3.5 h-3.5 text-[#C4852B]" />
+                <span>
+                  {language === "fa" ? "ضمانت اصالت نقره ۹۲۵ و فاکتور رسمی" : language === "ar" ? "ضمان أصالة الفضة 925" : "Certified 925 Silver Authenticity"}
+                </span>
               </span>
               <Link
                 href="/about"

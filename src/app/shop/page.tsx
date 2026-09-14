@@ -4,6 +4,7 @@ import { useAppStore } from "@/store/useAppStore";
 import Link from "next/link";
 import { useEffect } from "react";
 import { getProductName, getProductMaterial, translateDynamicText } from "@/lib/dynamicTranslator";
+import { getCategorySvgIcon, AllCollectionsIcon } from "@/components/icons/JewelryIcons";
 
 export default function ShopPage() {
   const { 
@@ -56,29 +57,32 @@ export default function ShopPage() {
           {/* All category pill */}
           <button
             onClick={() => setSelectedCategoryId(null)}
-            className={`px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all border cursor-pointer ${
+            className={`px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all border cursor-pointer flex items-center gap-2 ${
               selectedCategoryId === null 
                 ? "bg-[#660000] text-white border-[#660000] shadow-sm" 
                 : "bg-white text-zinc-700 border-zinc-300 hover:border-[#C4852B]"
             }`}
           >
-            {allLabel}
+            <AllCollectionsIcon className="w-3.5 h-3.5" />
+            <span>{allLabel}</span>
           </button>
 
           {/* Dynamic categories from backend */}
           {categories.map((cat) => {
             const catName = language === 'fa' ? cat.name : translateDynamicText(cat.name, language);
+            const isSelected = selectedCategoryId === cat.id;
             return (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategoryId(cat.id)}
-                className={`px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all border cursor-pointer ${
-                  selectedCategoryId === cat.id 
+                className={`px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all border cursor-pointer flex items-center gap-2 ${
+                  isSelected 
                     ? "bg-[#660000] text-white border-[#660000] shadow-sm" 
                     : "bg-white text-zinc-700 border-zinc-300 hover:border-[#C4852B]"
                 }`}
               >
-                {catName}
+                {getCategorySvgIcon(cat.name, cat.id, "w-3.5 h-3.5")}
+                <span>{catName}</span>
               </button>
             );
           })}

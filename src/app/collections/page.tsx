@@ -3,6 +3,7 @@
 import { useAppStore } from "@/store/useAppStore";
 import Link from "next/link";
 import { getProductName, getProductMaterial } from "@/lib/dynamicTranslator";
+import { RingIcon, NecklaceIcon, BraceletIcon } from "@/components/icons/JewelryIcons";
 
 export default function CollectionsPage() {
   const { products, language, addToCart, t } = useAppStore();
@@ -98,9 +99,14 @@ export default function CollectionsPage() {
                   </div>
 
                   <div className="flex flex-col justify-center">
-                    <span className="text-[10px] text-[#C4852B] font-mono tracking-widest uppercase mb-2 font-bold">
-                      {subtitle}
-                    </span>
+                    <div className="flex items-center gap-2 mb-2">
+                      {col.id === 'rings' && <RingIcon className="w-4.5 h-4.5 text-[#C4852B]" />}
+                      {col.id === 'necklaces' && <NecklaceIcon className="w-4.5 h-4.5 text-[#C4852B]" />}
+                      {col.id === 'bracelets' && <BraceletIcon className="w-4.5 h-4.5 text-[#C4852B]" />}
+                      <span className="text-[10px] text-[#C4852B] font-mono tracking-widest uppercase font-bold">
+                        {subtitle}
+                      </span>
+                    </div>
                     <h2 className="text-2xl md:text-4xl font-bold uppercase mb-4 text-zinc-950">
                       {title}
                     </h2>

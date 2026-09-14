@@ -8,6 +8,15 @@ import LanguageDropdown from "@/components/layout/LanguageDropdown";
 import CollectionsMegaMenu from "@/components/layout/CollectionsMegaMenu";
 import AuthModal from "@/components/auth/AuthModal";
 import ProfileModal from "@/components/auth/ProfileModal";
+import { 
+  RingIcon, 
+  NecklaceIcon, 
+  BraceletIcon, 
+  EarringsIcon, 
+  SparkleStarIcon, 
+  SilverShieldIcon,
+  AllCollectionsIcon
+} from "@/components/icons/JewelryIcons";
 
 const emptySubscribe = () => () => {};
 
@@ -90,11 +99,11 @@ export default function Header() {
             )}
           </nav>
 
-          {/* Brand Logo & Brand Name (English on Top, Persian/Native on Bottom) */}
+          {/* Brand Logo & Brand Name (English on Top, Persian/Native on Bottom - Image only on Mobile) */}
           <div className="flex-1 flex justify-center text-center">
             <Link href="/" className="flex items-center gap-3 group py-1">
               <BrandLogo size="md" showSubline={false} />
-              <div className="flex flex-col items-start text-left rtl:text-right rtl:items-end justify-center">
+              <div className="hidden sm:flex flex-col items-start text-left rtl:text-right rtl:items-end justify-center">
                 {/* English Brand Name on TOP */}
                 <span className="font-brand-en font-black uppercase text-base sm:text-lg md:text-xl text-zinc-950 group-hover:text-[#C4852B] transition-colors whitespace-nowrap leading-tight tracking-[0.14em]">
                   NAFISE EBADI
@@ -209,40 +218,80 @@ export default function Header() {
       >
         <nav className="flex flex-col gap-3 text-sm font-semibold text-zinc-900 border-b border-zinc-200 pb-6 font-sans">
           <Link href="/shop" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] font-bold text-[#C4852B] py-1.5 flex items-center justify-between">
-            <span>{t.header.shop}</span>
-            <span>🛍️</span>
+            <span className="flex items-center gap-2">
+              <SparkleStarIcon className="w-4 h-4 text-[#C4852B]" />
+              {t.header.shop}
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-zinc-400">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007Z" />
+            </svg>
           </Link>
 
           {/* Collections Accordion / Sublinks for Mobile */}
           <div className="flex flex-col gap-1 py-1">
             <Link href="/collections" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] font-bold text-zinc-900 py-1.5 flex items-center justify-between">
-              <span>{t.header.collections}</span>
-              <span>✨</span>
+              <span className="flex items-center gap-2">
+                <AllCollectionsIcon className="w-4 h-4 text-[#A06314]" />
+                {t.header.collections}
+              </span>
+              <span className="text-[11px] text-zinc-400 font-mono">۴ دسته‌بندی</span>
             </Link>
-            <div className="ps-4 flex flex-col gap-1.5 text-xs text-zinc-600 border-s-2 border-[#C4852B]/30 ms-2">
-              <Link href="/rings" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1">💍 {t.header.rings}</Link>
-              <Link href="/necklaces" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1">📿 {t.header.necklaces}</Link>
-              <Link href="/bracelets" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1">✨ {t.header.bracelets}</Link>
-              <Link href="/earrings" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1">💎 {t.header.earrings}</Link>
+            <div className="ps-4 flex flex-col gap-1.5 text-xs text-zinc-700 border-s-2 border-[#C4852B]/30 ms-2">
+              <Link href="/rings" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1.5 flex items-center gap-2.5">
+                <RingIcon className="w-4 h-4 text-[#A06314]" />
+                <span>{t.header.rings}</span>
+              </Link>
+              <Link href="/necklaces" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1.5 flex items-center gap-2.5">
+                <NecklaceIcon className="w-4 h-4 text-[#A06314]" />
+                <span>{t.header.necklaces}</span>
+              </Link>
+              <Link href="/bracelets" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1.5 flex items-center gap-2.5">
+                <BraceletIcon className="w-4 h-4 text-[#A06314]" />
+                <span>{t.header.bracelets}</span>
+              </Link>
+              <Link href="/earrings" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1.5 flex items-center gap-2.5">
+                <EarringsIcon className="w-4 h-4 text-[#A06314]" />
+                <span>{t.header.earrings}</span>
+              </Link>
             </div>
           </div>
 
           <Link href="/wishlist" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1.5 flex items-center justify-between">
-            <span>{t.header.wishlist}</span>
-            <span>❤️</span>
+            <span className="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-[#660000]">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+              </svg>
+              {t.header.wishlist}
+            </span>
+            {wishlist.length > 0 && (
+              <span className="px-2 py-0.5 rounded-full bg-[#660000] text-white text-[10px] font-bold">
+                {wishlist.length}
+              </span>
+            )}
           </Link>
           <Link href="/articles" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1.5 flex items-center justify-between">
-            <span>{t.header.journal}</span>
-            <span>📖</span>
+            <span className="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-zinc-500">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+              </svg>
+              {t.header.journal}
+            </span>
           </Link>
           <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1.5 flex items-center justify-between">
-            <span>{t.header.aboutUs}</span>
-            <span>🏛️</span>
+            <span className="flex items-center gap-2">
+              <SilverShieldIcon className="w-4 h-4 text-[#A06314]" />
+              {t.header.aboutUs}
+            </span>
           </Link>
           {isAdmin && (
             <Link href="/admin" onClick={() => setMobileMenuOpen(false)} className="text-[#660000] font-bold py-1.5 flex items-center justify-between">
-              <span>⚙️ {t.header.admin}</span>
-              <span>👑</span>
+              <span className="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 0 1 0 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 0 1 0-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281Z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
+                {t.header.admin}
+              </span>
             </Link>
           )}
         </nav>
