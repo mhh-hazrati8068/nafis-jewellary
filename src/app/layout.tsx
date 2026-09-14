@@ -114,10 +114,10 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=1200&auto=format&fit=crop",
+        url: "https://nafiseebadijewellery.com/images/brand_atelier_story.jpg",
         width: 1200,
         height: 630,
-        alt: "Nafise Ebadi Luxury Jewellery",
+        alt: "Nafise Ebadi Luxury Handcrafted Silver Jewellery",
       },
     ],
   },
@@ -125,7 +125,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Nafise Ebadi Jewellery | زیورآلات نفیسه عبادی",
     description: "Handcrafted 925 Sterling Silver & Certified Natural Gemstones.",
-    images: ["https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=1200&auto=format&fit=crop"],
+    images: ["https://nafiseebadijewellery.com/images/brand_atelier_story.jpg"],
   },
   icons: {
     icon: "/logo.jpg",
@@ -155,7 +155,7 @@ const jsonLd = {
       "alternateName": "Nafise Ebadi Fine Silver Jewellery",
       "url": "https://nafiseebadijewellery.com",
       "logo": "https://nafiseebadijewellery.com/logo.jpg",
-      "image": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=1200&auto=format&fit=crop",
+      "image": "https://nafiseebadijewellery.com/images/brand_atelier_story.jpg",
       "description": "فروشگاه تخصصی زیورآلات دست‌ساز نقره استرلینگ ۹۲۵ و سنگ‌های طبیعی اصیل فیروزه نیشابور و عقیق طبیعی همراه با شناسنامه معتبر.",
       "priceRange": "$$",
       "currenciesAccepted": "IRT, IRR",

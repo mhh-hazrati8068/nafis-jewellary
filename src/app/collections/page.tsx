@@ -17,10 +17,10 @@ export default function CollectionsPage() {
       subtitleFa: "پیوند سنگ فیروزه نیشابور و نقره استرلینگ",
       subtitleEn: "Neyshabur Turquoise & Fine Silver Fusion",
       subtitleAr: "تناغم الفيروز النيسابوري والفضة الإسترلينية",
-      descriptionFa: "مجموعه‌ای باشکوه از انگشترهای دست‌ساز نقره خالص ۹۲۵ که با الهام از خطوط اصیل هویت تصویری برند نفیسه عبادی خلق شده‌اند.",
-      descriptionEn: "A magnificent collection of handcrafted solid 925 sterling silver rings inspired by the architectural guidelines of the Nafise Ebadi visual identity.",
-      descriptionAr: "تشكيلة ساحرة من الخواتم الصياغة اليدوية بالفضة الإسترلينية 925 المستوحاة من المعايير المعمارية للهوية البصرية لمجوهرات نفيسة عبادي.",
-      image: "https://images.unsplash.com/photo-1605100804763-247f66126e28?q=80&w=1000&auto=format&fit=crop",
+      descriptionFa: "مجموعه‌ای باشکوه از انگشترهای دست‌ساز نقره خالص ۹۲۵ و فیروزه اصیل نیشابور که با ظرافت استادکاران زرگر خلق شده‌اند.",
+      descriptionEn: "A magnificent collection of handcrafted solid 925 sterling silver rings set with natural Neyshabur turquoise, celebrating heritage craftsmanship.",
+      descriptionAr: "تشكيلة ساحرة من الخواتم الصياغة اليدوية بالفضة الإسترلينية 925 وأحجار الفيروز النيسابوري الفاخرة.",
+      image: "/images/campaign_turquoise_ring.jpg",
       items: products.filter(p => p.category === 'rings')
     },
     {
@@ -31,10 +31,10 @@ export default function CollectionsPage() {
       subtitleFa: "درخشش نقره ۹۲۵ و عقیق سرخ طبیعی",
       subtitleEn: "Authentic Agate & 925 Silver Elegance",
       subtitleAr: "بريق الفضة الإسترلينية والأحجار الكريمة",
-      descriptionFa: "آویزهای مدال سنگ عقیق سرخ و نقره ۹۲۵ دست‌ساز با تراش اختصاصی برای درخشش در مراسم‌های فاخر.",
-      descriptionEn: "Red agate gemstone pendant necklaces framed in 925 sterling silver, crafted for high-fashion editorial moments.",
+      descriptionFa: "آویزهای مدال سنگ عقیق سرخ و نقره ۹۲۵ دست‌ساز با تراش اختصاصی و قلم‌زنی سنتی برای درخشش در مجالس فاخر.",
+      descriptionEn: "Red agate gemstone pendant necklaces framed in 925 sterling silver, crafted with traditional Persian engraving.",
       descriptionAr: "قلائد ومداليات بحجر العقيق الأحمر الطبيعي وصياغة فضية يدوية دقيقة للمناسبات الفاخرة.",
-      image: "https://images.unsplash.com/photo-1599643477877-530eb83abc8e?q=80&w=1000&auto=format&fit=crop",
+      image: "/images/campaign_agate_necklace.jpg",
       items: products.filter(p => p.category === 'necklaces')
     },
     {
@@ -45,10 +45,10 @@ export default function CollectionsPage() {
       subtitleFa: "بافت‌های اختصاصی با قفل ایمن",
       subtitleEn: "Custom Weave & Precision Silver Work",
       subtitleAr: "حبكات خاصة وأقفال فائقة الأمان",
-      descriptionFa: "دستبندهای نقره ۹۲۵ با زنجیره‌های محکم و صیقلی که بر اساس استاندارد عیار سازمانی طراحی شده‌اند.",
-      descriptionEn: "Solid 925 silver bracelets with custom precision links engineered according to official brand standards.",
+      descriptionFa: "دستبندهای نقره ۹۲۵ با زنجیره‌های محکم و صیقل آینه‌ای زرگری، مجهز به قفل‌های ایمن و ارگونومیک.",
+      descriptionEn: "Solid 925 silver bracelets with custom precision links and mirror polishing, engineered with secure safety clasps.",
       descriptionAr: "أساور وسلاسل فضية مصقولة ومتينة مصممة وفق أعلى معايير الجودة والعيار الدقيق.",
-      image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=1000&auto=format&fit=crop",
+      image: "/images/campaign_silver_bracelet.jpg",
       items: products.filter(p => p.category === 'bracelets')
     }
   ];

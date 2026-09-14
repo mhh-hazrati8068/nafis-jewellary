@@ -18,10 +18,10 @@ export default function BrandStory() {
           
           {/* Editorial Visual Frame */}
           <TiltCard className="relative group">
-            <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-[#C4852B]/30 luxury-card-hover">
+            <div className="relative aspect-[4/3] sm:aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-[#C4852B]/30 luxury-card-hover">
               <img 
-                src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=1000&auto=format&fit=crop" 
-                alt="Brand Workshop" 
+                src="/images/brand_atelier_story.jpg" 
+                alt="کارگاه تخصصی نقره‌سازی و گوهرنشانی فیروزه نیشابور - زیورآلات نفیسه عبادی" 
                 className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>

@@ -44,7 +44,7 @@ export default function PackagingShowcase() {
       specsFa: ["پوشش مخمل لطیف ضدکدرشدگی نقره", "نشان نقره‌کوب برجسته نفیس", "قفل مغناطیسی نرم و ابریشمی", "مناسب هدیه و یادبود ماندگار"],
       specsEn: ["Anti-tarnish interior velvet", "Embossed luxury silver crest", "Soft magnetic safety enclosure", "Signature gift keepsake box"],
       specsAr: ["مخمل داخلي مضاد للأكسدة", "ختم فضي بارز وفاخر", "إغلاق مغناطيسي ناعم", "علبة هدايا تذكارية أنيقة"],
-      image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=1000&auto=format&fit=crop"
+      image: "/images/luxury_jewelry_box.jpg"
     },
     {
       id: "bag",
@@ -60,7 +60,7 @@ export default function PackagingShowcase() {
       specsFa: ["مقوای کتان ۳۰۰ گرم فابریانو", "بندهای ابریشم دست‌بافته مقاوم", "کف تقویت‌شده ضد ضربه", "طراحی ارگونومیک و چشم‌نواز"],
       specsEn: ["300gsm Fabriano linen board", "Braided silk rope handles", "Reinforced protective base", "Ergonomic luxury presentation"],
       specsAr: ["ورق فابريانو كتاني 300 غرام", "حبال حريرية منسوجة متينة", "قاعدة مقواة ضد الصدمات", "تصميم فخم ومريح للحمل"],
-      image: "https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=1000&auto=format&fit=crop"
+      image: "/images/luxury_boutique_bag.jpg"
     },
     {
       id: "certificate",
@@ -76,7 +76,7 @@ export default function PackagingShowcase() {
       specsFa: ["تاییدیه رسمی خلوص نقره استرلینگ ۹۲۵", "شناسنامه فیروزه نیشابور و عقیق معدنی", "ثبت آنلاین شماره سریال محصول", "مهر و هولوگرام زرین اصالت"],
       specsEn: ["925 Sterling silver purity verification", "Natural turquoise & agate grading report", "Online serial code registry", "Gold hologram security seal"],
       specsAr: ["تأكيد نقاوة الفضة 925", "شهادة فحص الفيروز والعقيق الطبيعي", "تسجيل الرقم التسلسلي أونلاين", "ختم أمان هولوغرام ذهبي"],
-      image: "https://images.unsplash.com/photo-1607344645866-009c320c5ab8?q=80&w=1000&auto=format&fit=crop"
+      image: "/images/luxury_certificate_seal.jpg"
     },
     {
       id: "card",
@@ -92,7 +92,7 @@ export default function PackagingShowcase() {
       specsFa: ["دستمال نانو مخصوص جلای نقره", "راهنمای تخصصی مراقبت از سنگ‌ها", "حفظ درخشش بدون ایجاد خط و خش", "پشتیبانی و مشاوره گالری"],
       specsEn: ["Ultra-soft silver polishing cloth", "Gemstone care instructions", "Non-abrasive luster restoration", "Dedicated boutique support"],
       specsAr: ["منديل نانو فائق النعومة لتلميع الفضة", "تعليمات خاصة للعناية بالأحجار", "إعادة اللمعان دون خدوش", "استشارات ودعم البوتيك الدائم"],
-      image: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=1000&auto=format&fit=crop"
+      image: "/images/luxury_care_kit.jpg"
     }
   ];
 

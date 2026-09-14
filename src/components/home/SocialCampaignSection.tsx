@@ -11,110 +11,45 @@ export default function SocialCampaignSection() {
   const campaignCards = [
     {
       id: "hands-rings",
-      titleFa: "انگشترهای فاخر نقره با گوهرنشانی اصیل",
-      titleEn: "Artisanal Handcrafted Silver Rings",
-      categoryFa: "انگشتر نقره ۹۲۵ و سنگ عقیق",
-      categoryEn: "925 Silver & Natural Agate Ring",
-      bgClass: "bg-white text-zinc-950",
-      borderClass: "border-[#C4852B]/30",
-      logoVariant: "gold" as const,
+      titleFa: "انگشترهای فاخر نقره با گوهرنشانی فیروزه نیشابور",
+      titleEn: "Mastercrafted 925 Silver Rings with Natural Turquoise",
+      categoryFa: "انگشتر نقره دست‌ساز و سنگ‌های قیمتی",
+      categoryEn: "Handcrafted Silver Ring Collection",
+      href: "/rings",
+      image: "/images/campaign_turquoise_ring.jpg",
+      altFa: "انگشتر نقره ۹۲۵ دست‌ساز با سنگ فیروزه اصل نیشابور",
+      altEn: "Handcrafted 925 sterling silver ring with natural Neyshabur turquoise",
       badgeText: "SIGNATURE 01",
-      svgContent: (
-        <svg viewBox="0 0 300 320" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-          {/* Minimalist vector hand */}
-          <path
-            d="M90 280 L110 180 C110 160 115 130 118 100 C120 75 130 75 132 105 L135 150 L142 80 C144 60 156 60 158 85 L160 155 L168 95 C170 75 182 75 184 100 L185 165 L192 120 C194 105 204 105 206 125 C208 150 205 180 200 210 C195 240 180 280 180 280 Z"
-            fill="#FFFFFF"
-            stroke="#1A1816"
-            strokeWidth="2.5"
-            strokeLinejoin="round"
-          />
-          {/* Silver Ring on Ring Finger */}
-          <g transform="translate(162, 135)">
-            <ellipse cx="6" cy="4" rx="14" ry="7" fill="#C4852B" stroke="#A76E1F" strokeWidth="1.5" />
-            <circle cx="6" cy="2" r="5" fill="#660000" stroke="#C4852B" strokeWidth="1.2" />
-            <circle cx="4.5" cy="0.5" r="1.2" fill="#FFAAAA" />
-          </g>
-        </svg>
-      )
+      tagFa: "فیروزه اصل نیشابور",
+      tagEn: "Neyshabur Turquoise",
     },
     {
       id: "hands-pendant",
-      titleFa: "آویز و مدال‌های قلم‌زنی نقره دست‌ساز",
-      titleEn: "Hand-Engraved Silver Pendants & Medallions",
-      categoryFa: "گردنبند و مدال عقیق طبیعی سرخ",
-      categoryEn: "Natural Red Agate Silver Pendant",
-      bgClass: "bg-[#660000] text-white",
-      borderClass: "border-[#C4852B]/50",
-      logoVariant: "white" as const,
+      titleFa: "آویز و مدال‌های قلم‌زنی نقره با عقیق سرخ طبیعی",
+      titleEn: "Hand-Engraved Silver Pendants & Natural Agate",
+      categoryFa: "گردنبند و مدال‌های سنتی و مدرن",
+      categoryEn: "Artisanal Silver Pendants",
+      href: "/necklaces",
+      image: "/images/campaign_agate_necklace.jpg",
+      altFa: "گردنبند و مدال قلم‌زنی نقره با سنگ عقیق طبیعی سرخ",
+      altEn: "Hand-engraved sterling silver necklace with natural red agate",
       badgeText: "SIGNATURE 02",
-      svgContent: (
-        <svg viewBox="0 0 300 320" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-          {/* Hands holding the pendant */}
-          <path
-            d="M40 90 C80 110 110 140 125 180 C130 195 140 195 145 180 C160 140 190 110 230 90 L250 140 C200 170 170 210 150 270 L120 270 C100 210 70 170 20 140 Z"
-            fill="#FFFFFF"
-            stroke="#C4852B"
-            strokeWidth="2.5"
-            strokeLinejoin="round"
-          />
-          {/* Hanging Chain and Agate Stone */}
-          <path
-            d="M100 60 Q135 150 135 170"
-            stroke="#C4852B"
-            strokeWidth="2.5"
-            strokeDasharray="4 2"
-            fill="none"
-          />
-          <path
-            d="M170 60 Q135 150 135 170"
-            stroke="#C4852B"
-            strokeWidth="2.5"
-            strokeDasharray="4 2"
-            fill="none"
-          />
-          {/* Agate Medallion */}
-          <g transform="translate(135, 185)">
-            <ellipse cx="0" cy="0" rx="22" ry="28" fill="#C4852B" stroke="#FFDF73" strokeWidth="2" />
-            <ellipse cx="0" cy="0" rx="16" ry="22" fill="#660000" />
-            <ellipse cx="-4" cy="-6" rx="6" ry="10" fill="#990000" opacity="0.8" />
-            <circle cx="-5" cy="-8" r="2.5" fill="#FFFFFF" opacity="0.8" />
-          </g>
-        </svg>
-      )
+      tagFa: "عقیق طبیعی سرخ",
+      tagEn: "Natural Red Agate",
     },
     {
       id: "hands-clasp",
-      titleFa: "دستبندها و النگوهای نقره با صیقل آینه‌ای",
-      titleEn: "Mirror-Finish Silver Bracelets & Bangles",
-      categoryFa: "دستبند زنجیری نقره استرلینگ ۹۲۵",
-      categoryEn: "925 Sterling Silver Link Bracelet",
-      bgClass: "bg-[#C4852B] text-white",
-      borderClass: "border-white/40",
-      logoVariant: "white" as const,
+      titleFa: "دستبندها و النگوهای نقره با صیقل آینه‌ای زرگری",
+      titleEn: "Mirror-Finish Sterling Silver Bracelets & Bangles",
+      categoryFa: "دستبند زنجیری و النگوی نقره استرلینگ",
+      categoryEn: "925 Silver Link Bracelets",
+      href: "/bracelets",
+      image: "/images/campaign_silver_bracelet.jpg",
+      altFa: "دستبند زنجیری و النگوی نقره استرلینگ ۹۲۵",
+      altEn: "Mirror-finish 925 sterling silver link bracelet and bangle",
       badgeText: "SIGNATURE 03",
-      svgContent: (
-        <svg viewBox="0 0 300 320" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-          {/* Clasping hands vector */}
-          <path
-            d="M30 180 C60 160 100 165 130 190 L170 190 C200 165 240 160 270 180 L250 240 C210 210 180 220 150 240 L120 210 C90 220 60 210 20 240 Z"
-            fill="#FFFFFF"
-            stroke="#1A1816"
-            strokeWidth="2.5"
-            strokeLinejoin="round"
-          />
-          {/* Gold Bracelet on Wrist */}
-          <g transform="translate(65, 175)">
-            <path
-              d="M0 0 C10 -8 25 -8 35 0 C25 8 10 8 0 0 Z"
-              fill="#FAF9F5"
-              stroke="#660000"
-              strokeWidth="3.5"
-            />
-            <circle cx="17.5" cy="0" r="4" fill="#660000" />
-          </g>
-        </svg>
-      )
+      tagFa: "نقره عیار ۹۲۵ استرلینگ",
+      tagEn: "925 Sterling Silver",
     }
   ];
 
@@ -150,38 +85,50 @@ export default function SocialCampaignSection() {
           {campaignCards.map((card) => (
             <MotionStaggerItem key={card.id}>
               <TiltCard className="h-full">
-                <div
-                  className={`group flex flex-col rounded-3xl overflow-hidden border ${card.borderClass} ${card.bgClass} shadow-xl luxury-card-hover p-6 md:p-8 relative justify-between min-h-[440px] h-full`}
+                <Link
+                  href={card.href}
+                  className="group flex flex-col rounded-3xl overflow-hidden border border-[#C4852B]/30 bg-[#1A1816] shadow-2xl relative min-h-[480px] h-full justify-between transition-all duration-500 hover:border-[#C4852B] hover:shadow-[0_20px_40px_rgba(196,133,43,0.2)] block"
                 >
+                  {/* Photo Container */}
+                  <div className="absolute inset-0 z-0 overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={card.image}
+                      alt={language === 'fa' ? card.altFa : card.altEn}
+                      className="w-full h-full object-cover object-center transform group-hover:scale-110 transition-transform duration-700 ease-out"
+                    />
+                    {/* Gradient Overlay for Text Legibility */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-black/30 group-hover:via-zinc-950/20 transition-colors duration-500"></div>
+                  </div>
+
                   {/* Header Badge */}
-                  <div className="flex items-center justify-between z-10 mb-4">
-                    <span className="font-mono text-[9px] tracking-[0.25em] uppercase font-bold opacity-80">
+                  <div className="flex items-center justify-between z-10 p-6">
+                    <span className="font-mono text-[10px] tracking-[0.25em] uppercase font-bold text-white bg-[#660000]/80 backdrop-blur-md px-3 py-1 rounded-full border border-[#C4852B]/40">
                       {card.badgeText}
                     </span>
-                    <span className="text-[9px] font-mono tracking-widest uppercase opacity-75">
-                      NAFISE EBADI
+                    <span className="text-[9px] font-mono tracking-widest uppercase text-white/80 bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
+                      {language === 'fa' ? card.tagFa : card.tagEn}
                     </span>
                   </div>
 
-                  {/* Center Vector Illustration */}
-                  <div className="relative aspect-square w-full max-w-[240px] mx-auto flex items-center justify-center my-4 group-hover:scale-105 transition-transform duration-500">
-                    {card.svgContent}
-                  </div>
-
-                  {/* Bottom Info & Floating Logo */}
-                  <div className="flex items-end justify-between pt-4 border-t border-current/15 z-10">
-                    <div>
-                      <span className="text-[9px] font-mono uppercase tracking-wider block opacity-75 mb-1">
-                        {language === 'fa' ? card.categoryFa : card.categoryEn}
+                  {/* Bottom Info & Action */}
+                  <div className="p-6 pt-12 z-10 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-[#C4852B] block mb-1 font-semibold">
+                      {language === 'fa' ? card.categoryFa : card.categoryEn}
+                    </span>
+                    <h3 className="font-bold text-lg md:text-xl text-white mb-4 group-hover:text-[#FFDF73] transition-colors leading-snug">
+                      {language === 'fa' ? card.titleFa : card.titleEn}
+                    </h3>
+                    
+                    <div className="flex items-center justify-between pt-3 border-t border-white/20">
+                      <span className="text-xs font-semibold text-white/90 group-hover:text-white flex items-center gap-2">
+                        <span>{language === 'fa' ? 'مشاهده کالکشن' : 'View Collection'}</span>
+                        <span className="transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform">→</span>
                       </span>
-                      <h3 className="font-bold text-base md:text-lg">
-                        {language === 'fa' ? card.titleFa : card.titleEn}
-                      </h3>
+                      <BrandLogo variant="white" size="sm" showSubline={false} />
                     </div>
-
-                    <BrandLogo variant={card.logoVariant} size="sm" showSubline={false} />
                   </div>
-                </div>
+                </Link>
               </TiltCard>
             </MotionStaggerItem>
           ))}
@@ -202,3 +149,4 @@ export default function SocialCampaignSection() {
     </section>
   );
 }
+
