@@ -13,8 +13,8 @@ export default function SocialCampaignSection() {
       id: "hands-rings",
       titleFa: "تصویرسازی اختصاصی دست و انگشتر",
       titleEn: "Minimalist Hand & Ring Staging",
-      categoryFa: "انگشتر طلای ۱۸ عیار و عقیق",
-      categoryEn: "18K Gold & Agate Ring",
+      categoryFa: "انگشتر نقره ۹۲۵ و سنگ عقیق",
+      categoryEn: "925 Silver & Agate Ring",
       bgClass: "bg-white text-zinc-950",
       borderClass: "border-[#C4852B]/30",
       logoVariant: "gold" as const,
@@ -29,7 +29,7 @@ export default function SocialCampaignSection() {
             strokeWidth="2.5"
             strokeLinejoin="round"
           />
-          {/* Gold Ring on Ring Finger */}
+          {/* Silver Ring on Ring Finger */}
           <g transform="translate(162, 135)">
             <ellipse cx="6" cy="4" rx="14" ry="7" fill="#C4852B" stroke="#A76E1F" strokeWidth="1.5" />
             <circle cx="6" cy="2" r="5" fill="#660000" stroke="#C4852B" strokeWidth="1.2" />
@@ -40,10 +40,10 @@ export default function SocialCampaignSection() {
     },
     {
       id: "hands-pendant",
-      titleFa: "آویز مدال عقیق و طلا",
-      titleEn: "Agate Gemstone & Gold Pendant",
-      categoryFa: "گردنبند عقیق طبیعی سرخ",
-      categoryEn: "Natural Red Agate Pendant",
+      titleFa: "آویز مدال عقیق و نقره دست‌ساز",
+      titleEn: "Agate Gemstone & Silver Pendant",
+      categoryFa: "گردنبند عقیق طبیعی سرخ و نقره",
+      categoryEn: "Natural Red Agate Silver Pendant",
       bgClass: "bg-[#660000] text-white",
       borderClass: "border-[#C4852B]/50",
       logoVariant: "white" as const,
@@ -58,7 +58,7 @@ export default function SocialCampaignSection() {
             strokeWidth="2.5"
             strokeLinejoin="round"
           />
-          {/* Hanging Gold Chain and Agate Stone */}
+          {/* Hanging Chain and Agate Stone */}
           <path
             d="M100 60 Q135 150 135 170"
             stroke="#C4852B"
@@ -85,10 +85,10 @@ export default function SocialCampaignSection() {
     },
     {
       id: "hands-clasp",
-      titleFa: "پیوند دست‌ها و دستبند طلا",
-      titleEn: "Unity & Solid Gold Bracelet",
-      categoryFa: "دستبند زنجیری طلای ۱۸ عیار",
-      categoryEn: "18K Gold Link Bracelet",
+      titleFa: "پیوند دست‌ها و دستبند نقره",
+      titleEn: "Unity & 925 Silver Link Bracelet",
+      categoryFa: "دستبند زنجیری نقره استرلینگ ۹۲۵",
+      categoryEn: "925 Sterling Silver Link Bracelet",
       bgClass: "bg-[#C4852B] text-white",
       borderClass: "border-white/40",
       logoVariant: "white" as const,

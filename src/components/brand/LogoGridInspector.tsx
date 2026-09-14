@@ -84,8 +84,8 @@ export default function LogoGridInspector() {
             </h4>
             <p className="leading-relaxed">
               {language === 'fa' 
-                ? 'مونوگرام ne از ترکیب حروف پیوسته با قوس‌های نرم دایره‌ای و خطوط مستقیم با زاویه ۴۵ درجه شکل گرفته است. بافت هاشور داخلی نماد تاروپود طلا و درخشش فلزات گرانبهاست.'
-                : 'The ne monogram blends flowing circular arcs with 45-degree linear crosshatching. The inner texture symbolizes gold thread weaves and diamond brilliance.'}
+                ? 'مونوگرام ne از ترکیب حروف پیوسته با قوس‌های نرم دایره‌ای و خطوط مستقیم با زاویه ۴۵ درجه شکل گرفته است. بافت هاشور داخلی نماد تاروپود نقره دست‌ساز و درخشش سنگ‌های قیمتی است.'
+                : 'The ne monogram blends flowing circular arcs with 45-degree linear crosshatching. The inner texture symbolizes fine silver craftsmanship and gemstone brilliance.'}
             </p>
             <div className="p-4 rounded-xl bg-white border border-zinc-200 space-y-2">
               <div className="flex justify-between font-mono text-[11px]">

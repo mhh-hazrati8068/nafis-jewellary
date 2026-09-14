@@ -29,7 +29,7 @@ export default function BrandStory() {
 
             {/* Floating Luxury Stamp */}
             <div className="absolute -bottom-6 -right-6 md:bottom-8 md:-right-8 p-6 bg-[#660000] text-white rounded-2xl shadow-2xl max-w-[200px] border border-[#C4852B]/40 hidden sm:block animate-pulse">
-              <span className="font-mono text-2xl font-bold text-[#C4852B] block mb-1">18K GOLD</span>
+              <span className="font-mono text-2xl font-bold text-[#C4852B] block mb-1">925 SILVER</span>
               <p className="text-[10px] uppercase tracking-widest leading-tight">Handcrafted Artisan Certificate</p>
             </div>
           </TiltCard>

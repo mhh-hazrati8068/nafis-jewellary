@@ -10,15 +10,15 @@ export default function CollectionsPage() {
   const collections = [
     {
       id: "rings",
-      titleFa: "کالکشن انگشترهای ۱۸ عیار و نقره",
-      titleEn: "Fine Gold & Silver Ring Collection",
-      titleAr: "مجموعة خواتم الذهب عيار 18 والفضة",
-      subtitleFa: "پیوند سنگ عقیق و الماس پاک VVS",
-      subtitleEn: "VVS Diamond & Natural Agate Fusion",
-      subtitleAr: "تناغم العقيق الطبيعي والألماس النقي",
-      descriptionFa: "مجموعه‌ای باشکوه از انگشترهای دست‌ساز طلای خالص ۱۸ عیار و نقره که با الهام از خطوط معمارانه هویت تصویری برند نفیسه عبادی خلق شده‌اند.",
-      descriptionEn: "A magnificent collection of handcrafted solid 18K gold and fine silver rings inspired by the architectural guidelines of the Nafise Ebadi visual identity.",
-      descriptionAr: "تشكيلة ساحرة من الخواتم الصياغة اليدوية بالذهب والفضة النقية المستوحاة من المعايير المعمارية للهوية البصرية لمجوهرات نفيسة عبادي.",
+      titleFa: "کالکشن انگشترهای نقره ۹۲۵ و فیروزه",
+      titleEn: "Fine 925 Silver & Turquoise Ring Collection",
+      titleAr: "مجموعة خواتم الفضة 925 والفيروز النيسابوري",
+      subtitleFa: "پیوند سنگ فیروزه نیشابور و نقره استرلینگ",
+      subtitleEn: "Neyshabur Turquoise & Fine Silver Fusion",
+      subtitleAr: "تناغم الفيروز النيسابوري والفضة الإسترلينية",
+      descriptionFa: "مجموعه‌ای باشکوه از انگشترهای دست‌ساز نقره خالص ۹۲۵ که با الهام از خطوط اصیل هویت تصویری برند نفیسه عبادی خلق شده‌اند.",
+      descriptionEn: "A magnificent collection of handcrafted solid 925 sterling silver rings inspired by the architectural guidelines of the Nafise Ebadi visual identity.",
+      descriptionAr: "تشكيلة ساحرة من الخواتم الصياغة اليدوية بالفضة الإسترلينية 925 المستوحاة من المعايير المعمارية للهوية البصرية لمجوهرات نفيسة عبادي.",
       image: "https://images.unsplash.com/photo-1605100804763-247f66126e28?q=80&w=1000&auto=format&fit=crop",
       items: products.filter(p => p.category === 'rings')
     },
@@ -27,26 +27,26 @@ export default function CollectionsPage() {
       titleFa: "کالکشن گردنبند و آویزهای عقیق",
       titleEn: "Necklace & Agate Pendant Collection",
       titleAr: "مجموعة قلائد ومداليات العقيق",
-      subtitleFa: "درخشش طلای زرد و سنگ‌های اصل",
-      subtitleEn: "Authentic Agate & Yellow Gold Elegance",
-      subtitleAr: "بريق الذهب الأصفر والأحجار الكريمة",
-      descriptionFa: "آویزهای مدال سنگ عقیق سرخ و طلای دست‌ساز با تراش اختصاصی برای درخشش در مراسم‌های فاخر.",
-      descriptionEn: "Red agate gemstone pendant necklaces framed in 18K yellow gold, crafted for high-fashion editorial moments.",
-      descriptionAr: "قلائد ومداليات بحجر العقيق الأحمر الطبيعي وصياغة يدوية دقيقة للمناسبات الفاخرة.",
+      subtitleFa: "درخشش نقره ۹۲۵ و عقیق سرخ طبیعی",
+      subtitleEn: "Authentic Agate & 925 Silver Elegance",
+      subtitleAr: "بريق الفضة الإسترلينية والأحجار الكريمة",
+      descriptionFa: "آویزهای مدال سنگ عقیق سرخ و نقره ۹۲۵ دست‌ساز با تراش اختصاصی برای درخشش در مراسم‌های فاخر.",
+      descriptionEn: "Red agate gemstone pendant necklaces framed in 925 sterling silver, crafted for high-fashion editorial moments.",
+      descriptionAr: "قلائد ومداليات بحجر العقيق الأحمر الطبيعي وصياغة فضية يدوية دقيقة للمناسبات الفاخرة.",
       image: "https://images.unsplash.com/photo-1599643477877-530eb83abc8e?q=80&w=1000&auto=format&fit=crop",
       items: products.filter(p => p.category === 'necklaces')
     },
     {
       id: "bracelets",
-      titleFa: "کالکشن دستبندهای زنجیری",
-      titleEn: "Chain & Link Bracelet Collection",
-      titleAr: "مجموعة الأساور والسلاسل",
+      titleFa: "کالکشن دستبندهای زنجیری نقره",
+      titleEn: "Silver Chain & Link Bracelet Collection",
+      titleAr: "مجموعة الأساور والسلاسل الفضية",
       subtitleFa: "بافت‌های اختصاصی با قفل ایمن",
-      subtitleEn: "Custom Weave & Precision Gold Work",
+      subtitleEn: "Custom Weave & Precision Silver Work",
       subtitleAr: "حبكات خاصة وأقفال فائقة الأمان",
-      descriptionFa: "دستبندهای طلا و نقره با زنجیره‌های محکم و صیقلی که بر اساس استاندارد وزن و عیار سازمانی طراحی شده‌اند.",
-      descriptionEn: "Solid gold and silver bracelets with custom precision links engineered according to official brand standards.",
-      descriptionAr: "أساور وسلاسل مصقولة ومتينة مصممة وفق أعلى معايير الجودة والعيار الدقيق.",
+      descriptionFa: "دستبندهای نقره ۹۲۵ با زنجیره‌های محکم و صیقلی که بر اساس استاندارد عیار سازمانی طراحی شده‌اند.",
+      descriptionEn: "Solid 925 silver bracelets with custom precision links engineered according to official brand standards.",
+      descriptionAr: "أساور وسلاسل فضية مصقولة ومتينة مصممة وفق أعلى معايير الجودة والعيار الدقيق.",
       image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=1000&auto=format&fit=crop",
       items: products.filter(p => p.category === 'bracelets')
     }
@@ -59,9 +59,9 @@ export default function CollectionsPage() {
   };
 
   const getPageDesc = () => {
-    if (language === 'fa') return 'ورود به دنیای هنر و زیورآلات نفیسه عبادی؛ هر کالکشن روایتی منحصر‌به‌فرد از اصالت طلای ۱۸ عیار، سنگ عقیق و الماس پاک است.';
-    if (language === 'ar') return 'ادخل عالم الإبداع مع مجوهرات نفيسة عبادي؛ كل مجموعة تروي حكاية فريدة من فخامة الذهب والأحجار الكريمة النادرة.';
-    return 'Enter the world of Nafise Ebadi Jewellery; each collection presents an artistic narrative of 18K solid gold and gemstones.';
+    if (language === 'fa') return 'ورود به دنیای هنر و زیورآلات نفیسه عبادی؛ هر کالکشن روایتی منحصر‌به‌فرد از اصالت نقره ۹۲۵، سنگ عقیق و فیروزه نیشابور است.';
+    if (language === 'ar') return 'ادخل عالم الإبداع مع مجوهرات نفيسة عبادي؛ كل مجموعة تروي حكاية فريدة من فخامة الفضة الإسترلينية 925 والأحجار الكريمة النادرة.';
+    return 'Enter the world of Nafise Ebadi Jewellery; each collection presents an artistic narrative of 925 sterling silver and gemstones.';
   };
 
   return (

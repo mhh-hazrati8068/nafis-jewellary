@@ -2,7 +2,7 @@
 
 import { useAppStore } from "@/store/useAppStore";
 import { useState } from "react";
-import GoldCalculatorModal from "@/components/calculator/GoldCalculatorModal";
+import SilverCalculatorModal from "@/components/calculator/SilverCalculatorModal";
 
 export default function TopBar() {
   const { silverPricePerGramToman, t } = useAppStore();
@@ -40,7 +40,7 @@ export default function TopBar() {
         </div>
       </div>
 
-      <GoldCalculatorModal isOpen={isCalcOpen} onClose={() => setIsCalcOpen(false)} />
+      <SilverCalculatorModal isOpen={isCalcOpen} onClose={() => setIsCalcOpen(false)} />
     </>
   );
 }

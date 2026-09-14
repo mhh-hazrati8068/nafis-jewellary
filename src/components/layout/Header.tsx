@@ -79,6 +79,10 @@ export default function Header() {
               <span>{t.header.collections}</span>
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#C4852B] group-hover:w-full transition-all duration-300"></span>
             </Link>
+            <Link href="/articles" className="hover:text-[#C4852B] transition-colors relative py-1 group">
+              <span>{t.header.journal}</span>
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#C4852B] group-hover:w-full transition-all duration-300"></span>
+            </Link>
             {mounted && isAdmin && (
               <Link href="/admin" className="px-2 py-0.5 rounded bg-[#660000] text-white text-[10px] font-bold tracking-wider hover:bg-[#800000] transition-colors shadow-sm">
                 ⚙️ {t.header.admin}
@@ -232,6 +236,7 @@ export default function Header() {
           <Link href="/necklaces" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B]">{t.header.necklaces}</Link>
           <Link href="/bracelets" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B]">{t.header.bracelets}</Link>
           <Link href="/collections" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B]">{t.header.collections}</Link>
+          <Link href="/articles" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B]">{t.header.journal}</Link>
           {isAdmin && (
             <Link href="/admin" onClick={() => setMobileMenuOpen(false)} className="text-[#660000] font-bold">⚙️ {t.header.admin}</Link>
           )}

@@ -30,9 +30,9 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
   const description = getProductDescription(product, language);
 
   const getWeightLabel = () => {
-    if (language === 'fa') return 'وزن تقریبی طلا / نقره';
-    if (language === 'ar') return 'الوزن التقريبي للذهب / الفضة';
-    return 'Approximate Weight';
+    if (language === 'fa') return 'وزن نقره خالص ۹۲۵';
+    if (language === 'ar') return 'وزن الفضة الاسترليني 925';
+    return '925 Sterling Silver Weight';
   };
 
   const getWeightUnit = () => {

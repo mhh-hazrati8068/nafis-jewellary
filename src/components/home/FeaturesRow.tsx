@@ -11,7 +11,7 @@ export default function FeaturesRow() {
       number: "01",
       title: t.features.guaranteeTitle,
       description: t.features.guaranteeDesc,
-      tag: "CERTIFIED 18K GOLD"
+      tag: "CERTIFIED 925 SILVER"
     },
     {
       number: "02",

@@ -3,9 +3,12 @@ import { Language } from './translations';
 // High-precision Jewelry Domain Dictionary for instant client-side translation
 const JEWELRY_DICTIONARY: Record<string, { en: string; ar: string }> = {
   // Categories & Jewelry Types
-  'انگشتر و حلقه طلا': { en: 'Gold Rings & Bands', ar: 'خواتم ودبلات ذهب' },
-  'گردنبند طلا و سنگ عقیق': { en: 'Gold & Agate Necklaces', ar: 'قلائد ذهب وعقيق' },
+  'انگشتر و حلقه نقره': { en: 'Silver Rings & Bands', ar: 'خواتم ودبلات فضة' },
+  'انگشتر و حلقه نقره ۹۲۵': { en: '925 Silver Rings & Bands', ar: 'خواتم ودبلات فضة 925' },
+  'گردنبند نقره و سنگ عقیق': { en: 'Silver & Agate Necklaces', ar: 'قلائد فضة وعقيق' },
+  'گردنبند نقره و فیروزه': { en: 'Silver & Turquoise Necklaces', ar: 'قلائد فضة وفيروز' },
   'دستبند و زنجیر': { en: 'Bracelets & Chains', ar: 'أساور وسلاسل' },
+  'دستبند نقره': { en: 'Silver Bracelet', ar: 'سوار فضة' },
   'انگشتر': { en: 'Ring', ar: 'خاتم' },
   'انگشترها': { en: 'Rings', ar: 'الخواتم' },
   'گردنبند': { en: 'Necklace', ar: 'قلادة' },
@@ -23,19 +26,15 @@ const JEWELRY_DICTIONARY: Record<string, { en: string; ar: string }> = {
   'کالکشن': { en: 'Collection', ar: 'مجموعة' },
 
   // Metals & Purity
-  'طلای ۱۸ عیار': { en: '18K Gold', ar: 'ذهب عيار 18' },
-  'طلای ناب ۱۸ عیار': { en: 'Pure 18K Gold', ar: 'ذهب عيار 18 خالص' },
-  'طلای سفید و زرد': { en: 'White & Yellow Gold', ar: 'ذهب أبيض وأصفر' },
-  'طلای سفید': { en: 'White Gold', ar: 'ذهب أبيض' },
-  'طلای زرد': { en: 'Yellow Gold', ar: 'ذهب أصفر' },
+  'نقره استرلینگ ۹۲۵': { en: '925 Sterling Silver', ar: 'فضة إسترليني 925' },
+  'نقره ۹۲۵ دست‌ساز': { en: 'Handcrafted 925 Silver', ar: 'فضة 925 صياغة يدوية' },
   'نقره ۹۹۹ عیار خالص': { en: '999 Fine Pure Silver', ar: 'فضة عيار 999 نقية' },
   'نقره ۹۲۵': { en: '925 Sterling Silver', ar: 'فضة إسترليني 925' },
   'نقره ۹۹۹': { en: '999 Fine Silver', ar: 'فضة عيار 999' },
   'نقره دست‌ساز': { en: 'Handcrafted Silver', ar: 'فضة صناعة يدوية' },
   'زیورآلات نقره': { en: 'Silver Jewelry', ar: 'مجوهرات فضية' },
   'نقره': { en: 'Silver', ar: 'فضة' },
-  'طلا': { en: 'Gold', ar: 'ذهب' },
-  'عیار': { en: 'Carat', ar: 'عيار' },
+  'عیار': { en: 'Purity / Grade', ar: 'عيار' },
 
   // Gemstones & Minerals
   'سنگ فیروزه نیشابور اصل': { en: 'Genuine Neyshabur Turquoise', ar: 'فيروز نيسابوري أصلي' },

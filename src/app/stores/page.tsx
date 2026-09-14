@@ -45,10 +45,10 @@ export default function StoresPage() {
           </h1>
           <p className="text-xs md:text-sm text-[#626667] leading-relaxed">
             {language === 'fa'
-              ? 'جهت مشاوره اختصاصی، رزرو وقت قبلی و مشاهده مستقیم مجموعه‌های طلا و جواهرات به گالری‌های ما مراجعه فرمایید.'
+              ? 'جهت مشاوره اختصاصی، رزرو وقت قبلی و مشاهده مستقیم مجموعه‌های نقره دست‌ساز و سنگ‌های اصیل به گالری‌های ما مراجعه فرمایید.'
               : language === 'ar'
-              ? 'تفضلوا بزيارة معارضنا البوتيكية للاستشارات الخاصة ومشاهدة مجموعات الذهب الخالص عيار 18 قيراطاً مباشرة.'
-              : 'Visit our flagship boutiques for private consultations and private viewing of 18K gold creations.'}
+              ? 'تفضلوا بزيارة معارضنا البوتيكية للاستشارات الخاصة ومشاهدة مجموعات الفضة الإسترلينية 925 والأحجار الطبيعية مباشرة.'
+              : 'Visit our flagship boutiques for private consultations and private viewing of handcrafted 925 silver creations.'}
           </p>
         </div>
 

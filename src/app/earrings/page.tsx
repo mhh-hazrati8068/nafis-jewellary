@@ -21,7 +21,7 @@ export default function EarringsPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 border-b border-[#C4852B]/20 pb-8">
           <div>
             <span className="text-[10px] text-[#C4852B] font-mono tracking-widest uppercase mb-2 block font-bold">
-              PEARL & GOLD EARRINGS
+              PEARL & 925 SILVER EARRINGS
             </span>
             <h1 className="text-3xl md:text-5xl font-bold uppercase">{t.header.earrings}</h1>
           </div>

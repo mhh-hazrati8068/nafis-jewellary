@@ -61,6 +61,7 @@ export default function Footer() {
             <li><Link href="/contact" className="hover:text-[#C4852B] transition-colors">{t.footer.bookAppt}</Link></li>
             <li><Link href="/shipping" className="hover:text-[#C4852B] transition-colors">{t.footer.shippingPolicy}</Link></li>
             <li><Link href="/care" className="hover:text-[#C4852B] transition-colors">{t.footer.careGuide}</Link></li>
+            <li><Link href="/articles" className="hover:text-[#C4852B] transition-colors">{t.footer.journal}</Link></li>
           </ul>
         </div>
 

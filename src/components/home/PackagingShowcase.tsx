@@ -34,15 +34,15 @@ export default function PackagingShowcase() {
       tagFa: "بسته‌بندی رسمی هدایا",
       tagEn: "OFFICIAL GIFT PACKAGING",
       tagAr: "علب الهدايا الرسمية",
-      titleFa: "جعبه چرمی فاخر با نشان طلاکوب",
-      titleEn: "Luxury Leatherette Box with Gold Foil Stamp",
-      titleAr: "صندوق جلدي فاخر بختم الذهب البارز",
-      descFa: "طراحی شده بر اساس صفحه ۲۱ راهنمای هویت سازمانی؛ دارای روکش زرشکی مات (#660000)، پوشش مخمل مشکی ضدخش، و مونوگرام زرین ne طلاکوب برجسته.",
-      descEn: "Engineered according to page 21 of the corporate guidelines; featuring a matte burgundy finish (#660000), anti-tarnish black velvet interior, and embossed 18K gold foil monogram.",
-      descAr: "مصمم وفقاً لمعايير الهوية المؤسسية؛ بلمسة مخملية بورغندي (#660000) ومونوغرام ذهبي بارز لشعار ne.",
-      specsFa: ["پوشش مخمل لطیف مشکی", "نشان طلاکوب حرارتی ne", "قفل مغناطیسی نرم و ابریشمی", "گارانتی طلای ۱۸ عیار"],
-      specsEn: ["Anti-tarnish interior velvet", "Thermal gold-embossed ne crest", "Soft magnetic enclosure", "18K Purity guarantee insert"],
-      specsAr: ["مخمل داخلي أسود فاخر", "ختم حراري ذهبي لشعار ne", "إغلاق مغناطيسي ناعم", "شهادة ضمان عيار 18 قيراط"],
+      titleFa: "جعبه چرمی فاخر با نشان نقره‌کوب",
+      titleEn: "Luxury Leatherette Box with Silver Accent",
+      titleAr: "صندوق جلدي فاخر بختم الفضة البارز",
+      descFa: "طراحی شده بر اساس صفحه ۲۱ راهنمای هویت سازمانی؛ دارای روکش زرشکی مات (#660000)، پوشش مخمل مشکی ضدخش، و مونوگرام زرین ne نقره‌کوب برجسته.",
+      descEn: "Engineered according to page 21 of the corporate guidelines; featuring a matte burgundy finish (#660000), anti-tarnish black velvet interior, and embossed ne monogram.",
+      descAr: "مصمم وفقاً لمعايير الهوية المؤسسية؛ بلمسة مخملية بورغندي (#660000) ومونوغرام بارز لشعار ne.",
+      specsFa: ["پوشش مخمل لطیف مشکی", "نشان کوب حرارتی ne", "قفل مغناطیسی نرم و ابریشمی", "گارانتی نقره ۹۲۵ دست‌ساز"],
+      specsEn: ["Anti-tarnish interior velvet", "Thermal-embossed ne crest", "Soft magnetic enclosure", "925 Silver Purity guarantee insert"],
+      specsAr: ["مخمل داخلي أسود فاخر", "ختم حراري لشعار ne", "إغلاق مغناطيسي ناعم", "شهادة ضمان الفضة 925"],
       image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=1000&auto=format&fit=crop"
     },
     {
@@ -50,15 +50,15 @@ export default function PackagingShowcase() {
       tagFa: "ساک خرید تشریفاتی",
       tagEn: "EDITORIAL SHOPPING TOTE",
       tagAr: "حقيبة التسوق الفاخرة",
-      titleFa: "ساک خرید لوکس با بند ابریشم زرین",
-      titleEn: "Boutique Shopping Bag with Braided Gold Rope",
-      titleAr: "حقيبة بوتيك راقية بحبال حريرية مذهبة",
-      descFa: "ساخته شده از مقوای کتان ۳۰۰ گرمی به رنگ زغالی تیره و زرشکی، کناره‌های تزئین‌شده با هاشور ۴۵ درجه طلایی و بندهای ابریشمی دست‌بافت طلا.",
-      descEn: "Crafted from 300gsm textured linen cardstock in deep charcoal and burgundy, flanked by 45° diagonal gold crosshatch sides and hand-braided gold silk handles.",
-      descAr: "مصنوعة من كرتون كتان 300 غرام بلون الفحم والبورغندي مع حبال حريرية مذهبة منسوجة يدوياً.",
-      specsFa: ["مقوای کتان ۳۰۰ گرم فابریانو", "بندهای ابریشم طلا بافته‌شده", "هاشور اختصاصی ۴۵ درجه در عطف", "کف تقویت‌شده ضد ضربه"],
-      specsEn: ["300gsm Fabriano linen board", "Braided gold silk rope handles", "Signature 45° crosshatch side gussets", "Reinforced protective base"],
-      specsAr: ["ورق فابريانو كتاني 300 غرام", "حبال حريرية مذهبة منسوجة", "نقوش هندسية مذهبة بزاوية 45°", "قاعدة مقواة لحماية القطع"],
+      titleFa: "ساک خرید لوکس با بند ابریشم بافته",
+      titleEn: "Boutique Shopping Bag with Braided Silk Rope",
+      titleAr: "حقيبة بوتيك راقية بحبال حريرية منسوجة",
+      descFa: "ساخته شده از مقوای کتان ۳۰۰ گرمی به رنگ زغالی تیره و زرشکی، کناره‌های تزئین‌شده با هاشور ۴۵ درجه و بندهای ابریشمی دست‌بافت.",
+      descEn: "Crafted from 300gsm textured linen cardstock in deep charcoal and burgundy, flanked by 45° diagonal crosshatch sides and hand-braided silk handles.",
+      descAr: "مصنوعة من كرتون كتان 300 غرام بلون الفحم والبورغندي مع حبال حريرية منسوجة يدوياً.",
+      specsFa: ["مقوای کتان ۳۰۰ گرم فابریانو", "بندهای ابریشم دست‌بافته", "هاشور اختصاصی ۴۵ درجه در عطف", "کف تقویت‌شده ضد ضربه"],
+      specsEn: ["300gsm Fabriano linen board", "Braided silk rope handles", "Signature 45° crosshatch side gussets", "Reinforced protective base"],
+      specsAr: ["ورق فابريانو كتاني 300 غرام", "حبال حريرية منسوجة", "نقوش هندسية بزاوية 45°", "قاعدة مقواة لحماية القطع"],
       image: "https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=1000&auto=format&fit=crop"
     },
     {
@@ -66,15 +66,15 @@ export default function PackagingShowcase() {
       tagFa: "شناسنامه و گواهی اصالت",
       tagEn: "CERTIFICATE OF AUTHENTICITY",
       tagAr: "شهادة الأصالة والعيار",
-      titleFa: "شناسنامه عیار طلا و گوهرشناسی",
-      titleEn: "18K Gold Purity & Gemstone Registry Certificate",
-      titleAr: "شهادة نقاوة الذهب عيار 18 وتوثيق الأحجار",
-      descFa: "سند بین‌المللی ضمانت عیار ۷۵۰، شماره سریال حکاکی شده، مهر برجسته طلایی و مشخصات میکروسکوپی سنگ عقیق طبیعی و الماس.",
-      descEn: "International 750 gold purity certificate, serialized micro-engraving validation, embossed gold seal, and natural agate stone origin registry.",
-      descAr: "وثيقة دولية لضمان عيار 750 ورقم تسلسلي محفور مع ختم ذهبي وتوثيق مجهري لحجر العقيق والألماس.",
-      specsFa: ["مهر برجسته هولوگرام طلا", "ثبت آنلاین شماره سریال محصول", "تاییدیه خلوص عیار ۷۵۰ (18K)", "شناسنامه الماس پاک VVS"],
-      specsEn: ["Embossed gold hologram seal", "Online serial code lookup", "750 (18K) purity verification", "VVS diamond grading report"],
-      specsAr: ["ختم هولوغرام ذهبي بارز", "إمكانية التحقق من الرقم التسلسلي أونلاين", "تأكيد نقاوة عيار 750 (18K)", "شهادة نقاء ألماس VVS"],
+      titleFa: "شناسنامه عیار نقره ۹۲۵ و گوهرشناسی",
+      titleEn: "925 Sterling Silver & Gemstone Registry Certificate",
+      titleAr: "شهادة نقاوة الفضة 925 وتوثيق الأحجار",
+      descFa: "سند رسمی ضمانت عیار نقره ۹۲۵، شماره سریال حکاکی شده، مهر هولوگرام و مشخصات گوهرشناسی سنگ فیروزه نیشابور و عقیق طبیعی.",
+      descEn: "Official 925 sterling silver purity certificate, serialized validation, hologram seal, and natural gemstone origin registry.",
+      descAr: "وثيقة رسمية لضمان عيار الفضة 925 ورقم تسلسلي محفور مع ختم التوثيق لحجر الفيروز والعقيق الطبيعي.",
+      specsFa: ["مهر برجسته هولوگرام اصالت", "ثبت آنلاین شماره سریال محصول", "تاییدیه خلوص نقره استرلینگ ۹۲۵", "شناسنامه فیروزه و عقیق طبیعی"],
+      specsEn: ["Embossed hologram seal", "Online serial code lookup", "925 Sterling silver verification", "Natural gemstone grading report"],
+      specsAr: ["ختم هولوغرام بارز", "التحقق من الرقم التسلسلي أونلاين", "تأكيد نقاوة الفضة 925", "شهادة الأحجار الطبيعية"],
       image: "https://images.unsplash.com/photo-1607344645866-009c320c5ab8?q=80&w=1000&auto=format&fit=crop"
     },
     {
@@ -82,15 +82,15 @@ export default function PackagingShowcase() {
       tagFa: "ست اداری و کارت ویزیت",
       tagEn: "CORPORATE STATIONERY",
       tagAr: "البطاقات والمطبوعات الرسمية",
-      titleFa: "کارت ویزیت کتان با لبه‌های ورق طلا",
-      titleEn: "Cotton Business Card with Gilded Gold Edges",
-      titleAr: "بطاقة عمل قطنية بحواف مذهبة بماء الذهب",
-      descFa: "کارت ویزیت ۳۵۰ گرمی دورو زرشکی و شیری با لبه‌های آبکاری طلای ۲۴ عیار، تایپوگرافی هماهنگ فارسی کلمه و انگلیسی کلش دیسپلی.",
-      descEn: "350gsm duplex cotton board in burgundy and ivory featuring 24K gilded gold foil bevel edges and dual Kalameh / Clash Display typography.",
-      descAr: "بطاقة قطنية فاخرة 350 غرام بحواف مذهبة عيار 24 مع خط كَلَمه العربي وخط Clash Display الإنجليزي.",
-      specsFa: ["مقوای کتان ۳۵۰ گرمی دو لایه", "لبه‌های ورق طلای براق (Gilded)", "تایپوگرافی رسمی Kalameh", "هاشور ظریف طلایی سازمانی"],
-      specsEn: ["350gsm duplex cotton stock", "24K mirror gilded edges", "Official Clash Display font", "Subtle corporate gold hatch"],
-      specsAr: ["ورق قطني 350 غرام طبقتين", "حواف مطلية بورق الذهب اللامع", "تنسيق خط كَلَمه الرسمي", "هاشور هندسي ذهبي راقٍ"],
+      titleFa: "کارت ویزیت کتان با لبه‌های متالیک",
+      titleEn: "Cotton Business Card with Metallic Edges",
+      titleAr: "بطاقة عمل قطنية بحواف فاخرة",
+      descFa: "کارت ویزیت ۳۵۰ گرمی دورو زرشکی و شیری با لبه‌های متالیک صیقلی، تایپوگرافی هماهنگ فارسی کلمه و انگلیسی کلش دیسپلی.",
+      descEn: "350gsm duplex cotton board in burgundy and ivory featuring precision metallic foil edges and dual Kalameh / Clash Display typography.",
+      descAr: "بطاقة قطنية فاخرة 350 غرام بحواف معدنية صقيلة مع خط كَلَمه العربي وخط Clash Display الإنجليزي.",
+      specsFa: ["مقوای کتان ۳۵۰ گرمی دو لایه", "لبه‌های متالیک براق", "تایپوگرافی رسمی Kalameh", "هاشور ظریف سازمانی"],
+      specsEn: ["350gsm duplex cotton stock", "Polished metallic edges", "Official Clash Display font", "Subtle corporate hatch"],
+      specsAr: ["ورق قطني 350 غرام طبقتين", "حواف معدنية مصقولة", "تنسيق خط كَلَمه الرسمي", "هاشور هندسي راقٍ"],
       image: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=1000&auto=format&fit=crop"
     }
   ];
@@ -117,10 +117,10 @@ export default function PackagingShowcase() {
             <div className="w-24 h-0.5 bg-gradient-to-r from-[#C4852B] to-[#660000] mx-auto mb-6"></div>
             <p className="text-xs sm:text-sm text-[#626667] leading-relaxed">
               {language === 'fa'
-                ? 'هر اثر دست‌ساز طلا در بسته‌بندی زرشکی اختصاصی، با ساک خرید پارچه‌ای، کارت شناسنامه عیار و مهر طلاکوب تحویل می‌گردد.'
+                ? 'هر اثر دست‌ساز نقره ۹۲۵ در بسته‌بندی زرشکی اختصاصی، با ساک خرید پارچه‌ای، کارت شناسنامه عیار و مهر نقره‌کوب تحویل می‌گردد.'
                 : language === 'ar'
-                ? 'يتم تسليم كل قطعة مصوغة يدوياً في تغليف بورغندي فاخر، مع حقيبة بوتيك أنيقة وشهادة عيار مختومة بالذهب.'
-                : 'Each handcrafted gold creation is delivered in custom burgundy packaging with certified serial registration and gold foil seal.'}
+                ? 'يتم تسليم كل قطعة فضية مصوغة يدوياً في تغليف بورغندي فاخر، مع حقيبة بوتيك أنيقة وشهادة عيار 925 معتمدة.'
+                : 'Each handcrafted 925 silver creation is delivered in custom burgundy packaging with certified serial registration and silver seal.'}
             </p>
           </MotionFadeIn>
         </div>

@@ -80,19 +80,20 @@ export const metadata: Metadata = {
     default: "زیورآلات نفیسه عبادی | Nafise Ebadi Jewellery | مجوهرات نفيسة عبادي",
     template: "%s | زیورآلات نفیسه عبادی",
   },
-  description: "Official 2026 Brand Identity Showcase & Luxury High-Jewellery E-Commerce — Handcrafted 18K Solid Gold, 999 Fine Silver, Natural Agate, Neyshabur Turquoise & Certified Diamonds.",
+  description: "Official 2026 Brand Identity Showcase & Luxury Silver Jewellery E-Commerce — Handcrafted 925 Sterling Silver, Natural Agate, Neyshabur Turquoise & Certified Gemstones.",
   keywords: [
     "زیورآلات نفیسه عبادی",
-    "طلا دست‌ساز",
+    "نقره ۹۲۵ دست‌ساز",
     "نقره دست ساز",
     "انگشتر فیروزه نیشابور",
     "عقیق یمنی",
-    "طلای ۱۸ عیار",
+    "نقره استرلینگ",
     "Nafise Ebadi Jewellery",
-    "Handcrafted Gold",
-    "Fine Silver 999",
+    "Handcrafted 925 Silver",
+    "Fine Sterling Silver",
     "Luxury Iranian Jewelry",
-    "مجوهرات نفيسة عبادي"
+    "مجوهرات نفيسة عبادي",
+    "فضة استرليني 925"
   ],
   authors: [{ name: "Nafise Ebadi Master Atelier" }],
   creator: "Nafise Ebadi Jewellery",
@@ -104,7 +105,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Nafise Ebadi Jewellery | زیورآلات نفیسه عبادی",
-    description: "Handcrafted Luxury In Every Detail — 18K Solid Gold & Certified Natural Gemstone Creations.",
+    description: "Handcrafted Luxury In Every Detail — Handcrafted 925 Sterling Silver & Certified Natural Gemstone Creations.",
     url: "https://nafiseebadijewellery.com",
     siteName: "Nafise Ebadi Jewellery",
     locale: "fa_IR",
@@ -122,7 +123,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Nafise Ebadi Jewellery | زیورآلات نفیسه عبادی",
-    description: "Handcrafted 18K Solid Gold & Certified Natural Gemstones.",
+    description: "Handcrafted 925 Sterling Silver & Certified Natural Gemstones.",
     images: ["https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=1200&auto=format&fit=crop"],
   },
   icons: {

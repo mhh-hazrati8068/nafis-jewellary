@@ -9,9 +9,9 @@ export default function NecklacesPage() {
   const necklaces = products.filter(p => p.category === 'necklaces');
 
   const getSubtitle = () => {
-    if (language === 'fa') return 'گردنبندهای عقیق سرخ، فیروزه نیشابور و طلا و نقره با تراش خاص.';
-    if (language === 'ar') return 'قلائد العقيق الأحمر والفيروز النيسابوري المؤطرة بالذهب والفضة مع تصاميم فريدة.';
-    return 'Authentic natural agate and turquoise pendant necklaces encased in handcrafted precious metals.';
+    if (language === 'fa') return 'گردنبندهای عقیق سرخ، فیروزه نیشابور و نقره ۹۲۵ با تراش دست‌ساز و اصیل.';
+    if (language === 'ar') return 'قلائد العقيق الأحمر والفيروز النيسابوري المؤطرة بالفضة الإسترلينية 925 مع تصاميم فريدة.';
+    return 'Authentic natural agate and turquoise pendant necklaces encased in handcrafted 925 sterling silver.';
   };
 
   return (
@@ -21,7 +21,7 @@ export default function NecklacesPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 border-b border-[#C4852B]/20 pb-8">
           <div>
             <span className="text-[10px] text-[#C4852B] font-mono tracking-widest uppercase mb-2 block font-bold">
-              AGATE & GOLD PENDANT NECKLACES
+              TURQUOISE, AGATE & 925 SILVER NECKLACES
             </span>
             <h1 className="text-3xl md:text-5xl font-bold uppercase">{t.header.necklaces}</h1>
           </div>

@@ -34,7 +34,7 @@ export default function CategoryGrid() {
     },
     {
       id: "collections",
-      title: language === 'fa' ? 'مجموعه طلای ۱۸ عیار' : language === 'ar' ? 'مجموعة الذهب عيار 18' : '18K Signature Sets',
+      title: language === 'fa' ? 'مجموعه نقره ۹۲۵ و فیروزه' : language === 'ar' ? 'مجموعة الفضة 925 والفيروز' : '925 Silver Signature Sets',
       subtitle: language === 'fa' ? 'طراحی‌های برتر ۲۰۲۶' : language === 'ar' ? 'تصاميم نخبة 2026' : '2026 Masterpieces',
       href: "/collections",
       image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1000&auto=format&fit=crop",

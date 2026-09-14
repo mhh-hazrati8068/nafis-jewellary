@@ -4,6 +4,7 @@ export const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://nafiseeb
 export interface BackendCategory {
   id: number;
   name: string;
+  description?: string;
 }
 
 export interface BackendProduct {
@@ -23,6 +24,7 @@ export interface BackendProduct {
   fixedPrice?: number;
   stone?: BackendProduct;
   isVisible?: boolean;
+  visible?: boolean;
 }
 
 export interface UserProfile {
@@ -33,6 +35,7 @@ export interface UserProfile {
   address?: string;
   postalCode?: string;
   role?: string;
+  createdAt?: string;
 }
 
 export interface InvoiceItem {
@@ -52,8 +55,20 @@ export interface Invoice {
   shippingAddress: string;
   postalCode: string;
   orderStatus: string;
-  isPaid: boolean;
+  isPaid?: boolean;
+  paid?: boolean;
   createdAt: string;
+}
+
+export interface Article {
+  id: number;
+  slug: string;
+  title: string;
+  summary: string;
+  content: string;
+  imageUrl?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface SilverPriceResponse {
@@ -155,21 +170,21 @@ export async function fetchCategories(token?: string | null): Promise<BackendCat
     console.warn('Categories API unreachable, using standard categories:', err);
   }
   return [
-    { id: 1, name: "دستبند" },
-    { id: 2, name: "انگشتر" },
-    { id: 3, name: "گردنبند" },
-    { id: 4, name: "گوشواره" }
+    { id: 1, name: "دستبند", description: "دستبندهای نقره دست‌ساز و فاخر" },
+    { id: 2, name: "انگشتر", description: "انگشترهای نگین‌دار و نقره اصیل" },
+    { id: 3, name: "گردنبند", description: "گردنبند و آویزهای نقره نفیس" },
+    { id: 4, name: "گوشواره", description: "گوشواره‌های دست‌ساز هنری" }
   ];
 }
 
-export async function createAdminCategory(name: string, token?: string | null): Promise<BackendCategory> {
+export async function createAdminCategory(name: string, description?: string, token?: string | null): Promise<BackendCategory> {
   const res = await fetch(`${API_BASE_URL}/api/admin/categories`, {
     method: 'POST',
     headers: {
       ...getAuthHeaders(token),
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ name }),
+    body: JSON.stringify({ name, ...(description ? { description } : {}) }),
   });
   if (!res.ok) {
     const err = await res.text();
@@ -222,7 +237,7 @@ export async function fetchLiveSilverPrice(token?: string | null): Promise<numbe
     });
     if (res.ok) {
       const text = await res.text();
-      if (!text) return 474820;
+      if (!text) return 502680;
       try {
         const data = JSON.parse(text);
         if (typeof data === 'number') return data;
@@ -237,10 +252,10 @@ export async function fetchLiveSilverPrice(token?: string | null): Promise<numbe
   } catch {
     // Graceful fallback when TGJU or server endpoint is offline
   }
-  return 474820;
+  return 502680;
 }
 
-// ---------------- CART API (Postman: 5. Cart) ----------------
+// ---------------- CART API (Postman / Swagger: Cart) ----------------
 export async function fetchBackendCart(token?: string | null): Promise<InvoiceItem[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/cart`, {
@@ -248,7 +263,10 @@ export async function fetchBackendCart(token?: string | null): Promise<InvoiceIt
       headers: getAuthHeaders(token),
     });
     if (!res.ok) return [];
-    return res.json();
+    const data = await res.json();
+    if (Array.isArray(data)) return data;
+    if (data && Array.isArray(data.items)) return data.items;
+    return [];
   } catch {
     return [];
   }
@@ -294,7 +312,7 @@ export async function clearBackendCart(token?: string | null): Promise<string> {
   return res.text();
 }
 
-// ---------------- INVOICES & CHECKOUT API (Postman: 6. Invoices) ----------------
+// ---------------- INVOICES & CHECKOUT API (Swagger: Invoices) ----------------
 export async function createCheckout(
   cartItemsMap: Record<number, number>,
   address: string,
@@ -343,7 +361,74 @@ export async function payInvoice(invoiceId: number, token?: string | null): Prom
   return res.text();
 }
 
-// ---------------- ADMIN API ----------------
+// ---------------- ARTICLES / BLOG API (Swagger: Article Controller) ----------------
+export async function fetchArticles(token?: string | null): Promise<Article[]> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/articles`, {
+      method: 'GET',
+      headers: getAuthHeaders(token),
+      cache: 'no-store',
+    });
+    if (res.ok) {
+      return res.json();
+    }
+  } catch (err) {
+    console.warn('Articles API unreachable:', err);
+  }
+  return [];
+}
+
+export async function fetchArticleBySlug(slug: string, token?: string | null): Promise<Article | null> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/articles/${encodeURIComponent(slug)}`, {
+      method: 'GET',
+      headers: getAuthHeaders(token),
+      cache: 'no-store',
+    });
+    if (res.ok) {
+      return res.json();
+    }
+  } catch (err) {
+    console.warn('Article by slug API unreachable:', err);
+  }
+  return null;
+}
+
+export async function saveAdminArticle(
+  formData: FormData,
+  isEdit = false,
+  id?: number,
+  token?: string | null
+): Promise<Article> {
+  const url = isEdit ? `${API_BASE_URL}/api/admin/articles/${id}` : `${API_BASE_URL}/api/admin/articles`;
+  const res = await fetch(url, {
+    method: isEdit ? 'PUT' : 'POST',
+    headers: {
+      'Authorization': `Bearer ${token || (typeof window !== 'undefined' ? localStorage.getItem('nafis_token') : '') || ''}`,
+    },
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(err || 'Failed to save article');
+  }
+  return res.json();
+}
+
+export async function deleteAdminArticle(id: number, token?: string | null): Promise<string> {
+  const res = await fetch(`${API_BASE_URL}/api/admin/articles/${id}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(token),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(err || 'Failed to delete article');
+  }
+  return res.text();
+}
+
+// ---------------- ADMIN API (Swagger: Admin Controller) ----------------
 export async function fetchAdminProducts(token?: string | null): Promise<BackendProduct[]> {
   const res = await fetch(`${API_BASE_URL}/api/admin/products`, {
     method: 'GET',
@@ -381,7 +466,7 @@ export async function saveAdminProduct(
   const res = await fetch(url, {
     method: isEdit ? 'PUT' : 'POST',
     headers: {
-      'Authorization': `Bearer ${token || localStorage.getItem('nafis_token') || ''}`,
+      'Authorization': `Bearer ${token || (typeof window !== 'undefined' ? localStorage.getItem('nafis_token') : '') || ''}`,
     },
     body: formData,
   });

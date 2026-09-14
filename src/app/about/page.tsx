@@ -70,17 +70,17 @@ export default function AboutPage() {
 
   const ideationElements = [
     {
-      titleFa: "سنگ عقیق طبیعی سرخ",
-      titleEn: "Natural Red Agate Gemstone",
-      descFa: "نماد اصالت، انرژی و میراث فاخر پارسی که به عنوان نگین معلق در نشان ne جای گرفته است.",
-      descEn: "Iranian gemstone heritage representing authenticity, set as the droplet gem in the 'ne' mark.",
+      titleFa: "سنگ عقیق طبیعی و فیروزه نیشابور",
+      titleEn: "Natural Agate & Neyshabur Turquoise",
+      descFa: "نماد اصالت، انرژی و میراث فاخر پارسی که به عنوان نگین در آثار نفیسه عبادی جای گرفته است.",
+      descEn: "Iranian gemstone heritage representing authenticity, set as the jewel in the 'ne' mark.",
       tag: "ELEMENT 01"
     },
     {
-      titleFa: "زنجیر و گردنبند طلای ۱۸ عیار",
-      titleEn: "18K Gold Chain & Fine Links",
-      descFa: "خطوط ظریف و هاشورهای مورب درون لوگو تداعی‌کننده بافت زنجیر و هنر دست طلاساز است.",
-      descEn: "Delicate diagonal hatching within the monogram represents fine gold link craftsmanship.",
+      titleFa: "زنجیر و نقره استرلینگ ۹۲۵ دست‌ساز",
+      titleEn: "925 Sterling Silver Chain & Links",
+      descFa: "خطوط ظریف و هاشورهای مورب درون لوگو تداعی‌کننده بافت زنجیر و هنر دست نقره‌ساز است.",
+      descEn: "Delicate diagonal hatching within the monogram represents fine sterling silver craftsmanship.",
       tag: "ELEMENT 02"
     },
     {
@@ -106,7 +106,7 @@ export default function AboutPage() {
             {language === 'fa' ? 'راهنمای هویت تصویری برند ۲۰۲۶' : '2026 CORPORATE VISUAL IDENTITY MANUAL'}
           </span>
           <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold uppercase tracking-tight mb-8 leading-tight">
-            {language === 'fa' ? 'داستان و هویت زیورآلات نفیسه عبادی' : 'The Essence of Nafise Ebadi'}
+            {language === 'fa' ? 'داستان و هویت زیورآلات نقره نفیسه عبادی' : 'The Essence of Nafise Ebadi Silver'}
           </h1>
           <div className="w-28 h-0.5 bg-gradient-to-r from-[#C4852B] to-[#660000] mx-auto mb-8"></div>
           <p className="text-sm md:text-base text-[#626667] leading-relaxed font-serif italic max-w-2xl mx-auto">
@@ -125,9 +125,9 @@ export default function AboutPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
             <div className="absolute bottom-8 left-8 right-8 text-white">
               <span className="text-[10px] text-[#C4852B] font-mono tracking-widest uppercase block mb-1">
-                MASTER ATELIER 2026
+                MASTER SILVER ATELIER 2026
               </span>
-              <h3 className="font-brand-en text-xl font-bold">دست‌ساز و متعهد به عیار خالص ۱۸</h3>
+              <h3 className="font-brand-en text-xl font-bold">دست‌ساز و متعهد به نقره اصیل ۹۲۵</h3>
             </div>
           </div>
 
@@ -136,12 +136,12 @@ export default function AboutPage() {
               01 / PHILOSOPHY & CRAFTSMANSHIP
             </span>
             <h2 className="text-2xl md:text-4xl font-bold uppercase mb-6 leading-tight">
-              {language === 'fa' ? 'پیوند هنر مدرن با طلای ناب ۱۸ عیار' : 'Where Fine Gold Meets Pure Artistry'}
+              {language === 'fa' ? 'پیوند هنر مدرن با نقره ناب ۹۲۵' : 'Where Fine Sterling Silver Meets Pure Artistry'}
             </h2>
             <p className="text-xs md:text-sm text-[#626667] leading-relaxed mb-6">
               {language === 'fa'
-                ? 'برند زیورآلات نفیسه عبادی با هدف خلق آثاری فاخر، ماندگار و فراتر از زمان در عرصه طلا و جواهرسازی معاصر بنا نهاده شده است. تمامی قطعات از طلای خالص ۱۸ عیار (۷۵۰)، سنگ‌های طبیعی عقیق سرخ و الماس‌های پاک VVS با شناسنامه اصالت ساخته می‌شوند.'
-                : 'Nafise Ebadi Jewellery was established to craft timeless wearable art pieces. Every piece is forged with certified 18K solid gold (750), natural red agate gemstones, and VVS clarity diamonds.'}
+                ? 'برند زیورآلات نفیسه عبادی با هدف خلق آثاری فاخر، ماندگار و فراتر از زمان در عرصه نقره‌سازی و گوهرشناسی معاصر بنا نهاده شده است. تمامی قطعات از نقره استرلینگ ۹۲۵ دست‌ساز، سنگ‌های طبیعی عقیق سرخ و فیروزه اصل نیشابور با شناسنامه اصالت ساخته می‌شوند.'
+                : 'Nafise Ebadi Silver Jewellery was established to craft timeless wearable art pieces. Every piece is forged with certified 925 sterling silver, natural red agate gemstones, and genuine Neyshabur turquoise.'}
             </p>
             <p className="text-xs md:text-sm text-[#626667] leading-relaxed mb-8">
               {language === 'fa'
@@ -286,8 +286,8 @@ export default function AboutPage() {
                 قلم فارسی سازمانی با خوانایی بسیار بالا، ساختار مستحکم و تناسب کلاسیک-مدرن در وزن‌های Thin، Regular، Bold و Black.
               </p>
               <div className="space-y-3 p-4 bg-white rounded-xl border border-zinc-200 text-xs">
-                <p className="font-normal">کلمه معمولی: زیورآلات دست‌ساز طلای ۱۸ عیار نفیسه عبادی</p>
-                <p className="font-bold text-sm">کلمه ضخیم: درخشش ماندگار الماس و سنگ عقیق سرخ</p>
+                <p className="font-normal">کلمه معمولی: زیورآلات دست‌ساز نقره استرلینگ ۹۲۵ نفیسه عبادی</p>
+                <p className="font-bold text-sm">کلمه ضخیم: درخشش ماندگار نقره و سنگ فیروزه اصل نیشابور</p>
               </div>
             </div>
 
@@ -301,8 +301,8 @@ export default function AboutPage() {
                 Distinct geometric high-fashion typeface engineered for timeless editorial elegance across global collections.
               </p>
               <div className="space-y-3 p-4 bg-white rounded-xl border border-zinc-200 text-xs font-clash uppercase">
-                <p className="font-normal tracking-widest">Regular: Certified 18K Solid Gold & VVS Diamond</p>
-                <p className="font-bold text-sm tracking-[0.15em]">Bold: Nafise Ebadi Jewellery Collection 2026</p>
+                <p className="font-normal tracking-widest">Regular: Certified 925 Sterling Silver & Natural Gems</p>
+                <p className="font-bold text-sm tracking-[0.15em]">Bold: Nafise Ebadi Silver Jewellery Collection 2026</p>
               </div>
             </div>
           </div>

@@ -1,0 +1,617 @@
+=== OPENAPI API SPEC OVERVIEW ===
+Title: OpenAPI definition
+Version: v0
+Servers: [
+  {
+    "url": "http://nafiseebadijewellery.com",
+    "description": "Generated server url"
+  }
+]
+
+=== ENDPOINTS ===
+[admin-controller] GET /api/admin/invoices
+  Summary: getAllInvoices
+  Responses:
+    200: OK
+      */*: {"type":"array","items":{"$ref":"#/components/schemas/Invoice"}}
+--------------------------------------------------
+[admin-controller] PUT /api/admin/invoices/{id}/status
+  Summary: updateInvoiceStatus
+  Parameters:
+    - id (in: path, required: true, type: integer)
+    - status (in: query, required: true, type: string)
+  Responses:
+    200: OK
+      */*: {"type":"string"}
+--------------------------------------------------
+[admin-controller] GET /api/admin/products
+  Summary: getAllProductsAdmin
+  Responses:
+    200: OK
+      */*: {"type":"array","items":{"$ref":"#/components/schemas/Product"}}
+--------------------------------------------------
+[admin-controller] POST /api/admin/products
+  Summary: addProduct
+  Parameters:
+    - stoneId (in: query, required: false, type: integer)
+  RequestBody:
+    Content-Type: multipart/form-data
+    Schema: {"type":"object","properties":{"product":{"$ref":"#/components/schemas/Product"},"image":{"type":"string","format":"binary"}}}
+  Responses:
+    200: OK
+      */*: {"$ref":"#/components/schemas/Product"}
+--------------------------------------------------
+[admin-controller] PUT /api/admin/products/{id}
+  Summary: updateProduct
+  Parameters:
+    - id (in: path, required: true, type: integer)
+    - stoneId (in: query, required: false, type: integer)
+  RequestBody:
+    Content-Type: multipart/form-data
+    Schema: {"type":"object","properties":{"updatedProduct":{"$ref":"#/components/schemas/Product"},"image":{"type":"string","format":"binary"}}}
+  Responses:
+    200: OK
+      */*: {"$ref":"#/components/schemas/Product"}
+--------------------------------------------------
+[admin-controller] DELETE /api/admin/products/{id}
+  Summary: deleteProduct
+  Parameters:
+    - id (in: path, required: true, type: integer)
+  Responses:
+    200: OK
+      */*: {"type":"string"}
+--------------------------------------------------
+[admin-controller] GET /api/admin/stones
+  Summary: getOnlyStones
+  Responses:
+    200: OK
+      */*: {"type":"array","items":{"$ref":"#/components/schemas/Product"}}
+--------------------------------------------------
+[admin-controller] POST /api/admin/update-silver-price
+  Summary: forceUpdateSilverPrice
+  Responses:
+    200: OK
+      */*: {"type":"string"}
+--------------------------------------------------
+[article-controller] POST /api/admin/articles
+  Summary: createArticle
+  RequestBody:
+    Content-Type: multipart/form-data
+    Schema: {"type":"object","properties":{"article":{"$ref":"#/components/schemas/Article"},"image":{"type":"string","format":"binary"}}}
+  Responses:
+    200: OK
+      */*: {"$ref":"#/components/schemas/Article"}
+--------------------------------------------------
+[article-controller] PUT /api/admin/articles/{id}
+  Summary: updateArticle
+  Parameters:
+    - id (in: path, required: true, type: integer)
+  RequestBody:
+    Content-Type: multipart/form-data
+    Schema: {"type":"object","properties":{"article":{"$ref":"#/components/schemas/Article"},"image":{"type":"string","format":"binary"}}}
+  Responses:
+    200: OK
+      */*: {"$ref":"#/components/schemas/Article"}
+--------------------------------------------------
+[article-controller] DELETE /api/admin/articles/{id}
+  Summary: deleteArticle
+  Parameters:
+    - id (in: path, required: true, type: integer)
+  Responses:
+    200: OK
+      */*: {"type":"string"}
+--------------------------------------------------
+[article-controller] GET /api/articles
+  Summary: getAllArticles
+  Responses:
+    200: OK
+      */*: {"type":"array","items":{"$ref":"#/components/schemas/Article"}}
+--------------------------------------------------
+[article-controller] GET /api/articles/{slug}
+  Summary: getArticleBySlug
+  Parameters:
+    - slug (in: path, required: true, type: string)
+  Responses:
+    200: OK
+      */*: {"$ref":"#/components/schemas/Article"}
+--------------------------------------------------
+[auth-controller] POST /api/auth/admin-login
+  Summary: adminLogin
+  RequestBody:
+    Content-Type: application/json
+    Schema: {"$ref":"#/components/schemas/AdminLoginRequest"}
+  Responses:
+    200: OK
+      */*: {"type":"string"}
+--------------------------------------------------
+[auth-controller] POST /api/auth/send-code
+  Summary: sendCode
+  RequestBody:
+    Content-Type: application/json
+    Schema: {"$ref":"#/components/schemas/PhoneRequest"}
+  Responses:
+    200: OK
+      */*: {"type":"string"}
+--------------------------------------------------
+[auth-controller] POST /api/auth/verify-code
+  Summary: verifyCode
+  RequestBody:
+    Content-Type: application/json
+    Schema: {"$ref":"#/components/schemas/VerifyRequest"}
+  Responses:
+    200: OK
+      */*: {"type":"string"}
+--------------------------------------------------
+[cart-controller] GET /api/cart
+  Summary: getCart
+  Responses:
+    200: OK
+      */*: {"$ref":"#/components/schemas/Cart"}
+--------------------------------------------------
+[cart-controller] POST /api/cart/add
+  Summary: addToCart
+  RequestBody:
+    Content-Type: application/json
+    Schema: {"$ref":"#/components/schemas/CartRequest"}
+  Responses:
+    200: OK
+      */*: {"$ref":"#/components/schemas/Cart"}
+--------------------------------------------------
+[cart-controller] DELETE /api/cart/clear
+  Summary: clearCart
+  Responses:
+    200: OK
+      */*: {"type":"string"}
+--------------------------------------------------
+[cart-controller] DELETE /api/cart/remove/{productId}
+  Summary: removeFromCart
+  Parameters:
+    - productId (in: path, required: true, type: integer)
+  Responses:
+    200: OK
+      */*: {"$ref":"#/components/schemas/Cart"}
+--------------------------------------------------
+[category-controller] POST /api/admin/categories
+  Summary: createCategory
+  RequestBody:
+    Content-Type: application/json
+    Schema: {"$ref":"#/components/schemas/Category"}
+  Responses:
+    200: OK
+      */*: {"$ref":"#/components/schemas/Category"}
+--------------------------------------------------
+[category-controller] GET /api/categories
+  Summary: getAllCategories
+  Responses:
+    200: OK
+      */*: {"type":"array","items":{"$ref":"#/components/schemas/Category"}}
+--------------------------------------------------
+[invoice-controller] POST /api/invoices/{id}/pay
+  Summary: mockPayment
+  Parameters:
+    - id (in: path, required: true, type: integer)
+  Responses:
+    200: OK
+      */*: {"type":"string"}
+--------------------------------------------------
+[invoice-controller] POST /api/invoices/checkout
+  Summary: checkout
+  RequestBody:
+    Content-Type: application/json
+    Schema: {"$ref":"#/components/schemas/CheckoutRequest"}
+  Responses:
+    200: OK
+      */*: {"type":"object"}
+--------------------------------------------------
+[invoice-controller] GET /api/invoices/my-orders
+  Summary: getMyOrders
+  Responses:
+    200: OK
+      */*: {"type":"array","items":{"$ref":"#/components/schemas/Invoice"}}
+--------------------------------------------------
+[product-controller] GET /api/products
+  Summary: getAllProducts
+  Parameters:
+    - categoryId (in: query, required: false, type: integer)
+  Responses:
+    200: OK
+      */*: {"type":"array","items":{"$ref":"#/components/schemas/ProductResponse"}}
+--------------------------------------------------
+[product-controller] GET /api/products/silver-price
+  Summary: getDailySilverPrice
+  Responses:
+    200: OK
+      */*: {"type":"number"}
+--------------------------------------------------
+[user-controller] GET /api/users/profile
+  Summary: getProfile
+  Responses:
+    200: OK
+      */*: {"$ref":"#/components/schemas/User"}
+--------------------------------------------------
+[user-controller] PUT /api/users/profile
+  Summary: updateProfile
+  RequestBody:
+    Content-Type: application/json
+    Schema: {"$ref":"#/components/schemas/ProfileRequest"}
+  Responses:
+    200: OK
+      */*: {"type":"string"}
+--------------------------------------------------
+
+=== COMPONENT SCHEMAS ===
+
+--- Schema: ProfileRequest ---
+{
+  "type": "object",
+  "properties": {
+    "firstName": {
+      "type": "string"
+    },
+    "lastName": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "postalCode": {
+      "type": "string"
+    }
+  }
+}
+
+--- Schema: Category ---
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    }
+  }
+}
+
+--- Schema: Product ---
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "name": {
+      "type": "string"
+    },
+    "pricingMethod": {
+      "type": "string",
+      "enum": [
+        "METHOD_1_SILVER_MAKING_STONE",
+        "METHOD_2_SILVER_MAKING",
+        "METHOD_3_FIXED_PRICE",
+        "METHOD_4_STONE_ONLY"
+      ]
+    },
+    "weight": {
+      "type": "number"
+    },
+    "makingChargePercentage": {
+      "type": "number"
+    },
+    "stonePrice": {
+      "type": "number"
+    },
+    "stone": {
+      "$ref": "#/components/schemas/Product"
+    },
+    "category": {
+      "$ref": "#/components/schemas/Category"
+    },
+    "fixedPrice": {
+      "type": "number"
+    },
+    "stockQuantity": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "imageUrl": {
+      "type": "string"
+    },
+    "badge": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "SPECIAL_OFFER",
+        "BEST_SELLER",
+        "NEW_ARRIVAL"
+      ]
+    },
+    "visible": {
+      "type": "boolean"
+    }
+  }
+}
+
+--- Schema: Article ---
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "slug": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "imageUrl": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
+
+--- Schema: CheckoutRequest ---
+{
+  "type": "object",
+  "properties": {
+    "cartItems": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "format": "int32"
+      }
+    },
+    "address": {
+      "type": "string"
+    },
+    "postalCode": {
+      "type": "string"
+    }
+  }
+}
+
+--- Schema: CartRequest ---
+{
+  "type": "object",
+  "properties": {
+    "productId": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "quantity": {
+      "type": "integer",
+      "format": "int32"
+    }
+  }
+}
+
+--- Schema: Cart ---
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "user": {
+      "$ref": "#/components/schemas/User"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/CartItem"
+      }
+    }
+  }
+}
+
+--- Schema: CartItem ---
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "product": {
+      "$ref": "#/components/schemas/Product"
+    },
+    "quantity": {
+      "type": "integer",
+      "format": "int32"
+    }
+  }
+}
+
+--- Schema: User ---
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "phoneNumber": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string"
+    },
+    "firstName": {
+      "type": "string"
+    },
+    "lastName": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "postalCode": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
+
+--- Schema: VerifyRequest ---
+{
+  "type": "object",
+  "properties": {
+    "phoneNumber": {
+      "type": "string"
+    },
+    "code": {
+      "type": "string"
+    }
+  }
+}
+
+--- Schema: PhoneRequest ---
+{
+  "type": "object",
+  "properties": {
+    "phoneNumber": {
+      "type": "string"
+    }
+  }
+}
+
+--- Schema: AdminLoginRequest ---
+{
+  "type": "object",
+  "properties": {
+    "username": {
+      "type": "string"
+    },
+    "password": {
+      "type": "string"
+    }
+  }
+}
+
+--- Schema: ProductResponse ---
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "name": {
+      "type": "string"
+    },
+    "livePriceToman": {
+      "type": "number"
+    },
+    "stockQuantity": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "imageUrl": {
+      "type": "string"
+    },
+    "stoneName": {
+      "type": "string"
+    },
+    "badge": {
+      "type": "string"
+    },
+    "categoryId": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "categoryName": {
+      "type": "string"
+    }
+  }
+}
+
+--- Schema: Invoice ---
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "user": {
+      "$ref": "#/components/schemas/User"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/InvoiceItem"
+      }
+    },
+    "subTotalToman": {
+      "type": "number"
+    },
+    "taxAmountToman": {
+      "type": "number"
+    },
+    "finalTotalToman": {
+      "type": "number"
+    },
+    "shippingAddress": {
+      "type": "string"
+    },
+    "postalCode": {
+      "type": "string"
+    },
+    "orderStatus": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "paid": {
+      "type": "boolean"
+    }
+  }
+}
+
+--- Schema: InvoiceItem ---
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "product": {
+      "$ref": "#/components/schemas/Product"
+    },
+    "quantity": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "calculatedPriceToman": {
+      "type": "number"
+    }
+  }
+}

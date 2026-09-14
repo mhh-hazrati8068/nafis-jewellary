@@ -9,9 +9,9 @@ export default function BraceletsPage() {
   const bracelets = products.filter(p => p.category === 'bracelets');
 
   const getSubtitle = () => {
-    if (language === 'fa') return 'دستبندهای طلا و نقره با زنجیره‌های محکم و بافت اختصاصی.';
-    if (language === 'ar') return 'أساور وسلاسل من الذهب والفضة مع صياغة متينة وأقفال آمنة.';
-    return 'Handcrafted precious metal chain link bracelets with precision clasps.';
+    if (language === 'fa') return 'دستبندهای نقره ۹۲۵ با زنجیره‌های محکم، صیقلی و بافت اختصاصی.';
+    if (language === 'ar') return 'أساور وسلاسل من الفضة الإسترلينية 925 مع صياغة متينة وأقفال آمنة.';
+    return 'Handcrafted 925 sterling silver chain link bracelets with precision clasps.';
   };
 
   return (
@@ -21,7 +21,7 @@ export default function BraceletsPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 border-b border-[#C4852B]/20 pb-8">
           <div>
             <span className="text-[10px] text-[#C4852B] font-mono tracking-widest uppercase mb-2 block font-bold">
-              SOLID GOLD & SILVER BRACELETS
+              SOLID 925 STERLING SILVER BRACELETS
             </span>
             <h1 className="text-3xl md:text-5xl font-bold uppercase">{t.header.bracelets}</h1>
           </div>

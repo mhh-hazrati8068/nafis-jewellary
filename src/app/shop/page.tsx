@@ -23,15 +23,15 @@ export default function ShopPage() {
   }, [fetchCategories]);
 
   const getPageTitle = () => {
-    if (language === 'fa') return 'تمامی زیورآلات نفیسه عبادی';
-    if (language === 'ar') return 'جميع إبداعات مجوهرات نفيسة عبادي';
-    return 'All Jewelry Creations';
+    if (language === 'fa') return 'تمامی زیورآلات نقره نفیسه عبادی';
+    if (language === 'ar') return 'جميع إبداعات الفضة الاسترليني نفيسة عبادي';
+    return 'All Silver Jewelry Creations';
   };
 
   const getPageSubtitle = () => {
-    if (language === 'fa') return 'مجموعه کامل انگشترها، گردنبندها، دستبندها و گوشواره‌های ۱۸ عیار و نقره.';
-    if (language === 'ar') return 'التشكيلة الكاملة من الخواتم والقلائد والأساور والأقراط من الذهب عيار 18 والفضة النقية والأحجار الكريمة.';
-    return 'Complete catalog of 18K solid gold, fine silver, agate gemstones, and VVS diamond jewelry.';
+    if (language === 'fa') return 'مجموعه کامل انگشترها، گردنبندها، دستبندها و گوشواره‌های نقره ۹۲۵، فیروزه نیشابور و عقیق طبیعی.';
+    if (language === 'ar') return 'التشكيلة الكاملة من الخواتم والقلائد والأساور والأقراط من الفضة الاسترليني 925 والأحجار الكريمة الطبيعية.';
+    return 'Complete catalog of handcrafted 925 sterling silver, Neyshabur turquoise, and natural agate jewelry.';
   };
 
   const allLabel = language === 'fa' ? 'همه محصولات' : language === 'ar' ? 'جميع المنتجات' : 'All Creations';
