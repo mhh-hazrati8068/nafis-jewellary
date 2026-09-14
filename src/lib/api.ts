@@ -197,6 +197,30 @@ export async function createAdminCategory(name: string, description?: string, to
   return res.json();
 }
 
+const CATEGORY_OVERRIDES_KEY = 'nafis_product_category_overrides';
+
+export function saveProductCategoryOverride(productId: number, categoryId: number) {
+  if (typeof window === 'undefined') return;
+  try {
+    const raw = localStorage.getItem(CATEGORY_OVERRIDES_KEY);
+    const map = raw ? JSON.parse(raw) : {};
+    map[productId] = categoryId;
+    localStorage.setItem(CATEGORY_OVERRIDES_KEY, JSON.stringify(map));
+  } catch {}
+}
+
+export function getProductCategoryOverride(productId: number): number | undefined {
+  if (typeof window === 'undefined') return undefined;
+  try {
+    const raw = localStorage.getItem(CATEGORY_OVERRIDES_KEY);
+    if (!raw) return undefined;
+    const map = JSON.parse(raw);
+    return map[productId];
+  } catch {
+    return undefined;
+  }
+}
+
 // ---------------- PRODUCTS & SILVER PRICE API ----------------
 export async function fetchAllProducts(categoryId?: number | null, token?: string | null): Promise<BackendProduct[]> {
   try {
@@ -211,7 +235,14 @@ export async function fetchAllProducts(categoryId?: number | null, token?: strin
     if (!res.ok) {
       throw new Error(`Products request failed: ${res.status}`);
     }
-    return res.json();
+    const data: BackendProduct[] = await res.json();
+    return data.map((p) => {
+      const override = getProductCategoryOverride(p.id);
+      if (override && !p.categoryId && !p.category) {
+        return { ...p, categoryId: override };
+      }
+      return p;
+    });
   } catch (err) {
     console.warn('Backend products offline or unreachable, using fallback catalog:', err);
     return [];
@@ -616,7 +647,14 @@ export async function fetchAdminProducts(token?: string | null): Promise<Backend
     headers: getAuthHeaders(token),
   });
   if (!res.ok) throw new Error('Failed to fetch admin products');
-  return res.json();
+  const prods: BackendProduct[] = await res.json();
+  return prods.map((p) => {
+    const override = getProductCategoryOverride(p.id);
+    if (override && !p.categoryId && !p.category) {
+      return { ...p, categoryId: override };
+    }
+    return p;
+  });
 }
 
 export async function fetchAdminStones(token?: string | null): Promise<BackendProduct[]> {
@@ -644,47 +682,14 @@ export async function saveAdminProduct(
     url += `?${queryParams.join('&')}`;
   }
 
-  // Construct structured product object matching Spring Boot entity schema
-  const name = (formData.get('name') as string) || '';
-  const pricingMethod = (formData.get('pricingMethod') as string) || 'METHOD_1_SILVER_MAKING_STONE';
-  const weight = parseFloat((formData.get('weight') as string) || '0');
-  const makingChargePercentage = parseFloat((formData.get('makingChargePercentage') as string) || '0');
-  const fixedPrice = parseFloat((formData.get('fixedPrice') as string) || '0');
-  const stonePrice = parseFloat((formData.get('stonePrice') as string) || '0');
-  const stockQuantity = parseInt((formData.get('stockQuantity') as string) || '0', 10);
-  const badge = (formData.get('badge') as string) || 'NONE';
-  const visible = formData.get('visible') === 'true' || formData.get('isVisible') === 'true';
-
-  const productObject: Record<string, unknown> = {
-    name,
-    pricingMethod,
-    weight,
-    makingChargePercentage,
-    fixedPrice,
-    stonePrice,
-    stockQuantity,
-    badge,
-    visible,
-  };
-  if (id) productObject.id = id;
+  // Set form fields for ModelAttribute binding (avoiding binary JSON Blob which triggers 403)
   if (categoryId) {
-    productObject.category = { id: categoryId };
     formData.set('category.id', String(categoryId));
-    formData.set('category[id]', String(categoryId));
-    formData.set('category', JSON.stringify({ id: categoryId }));
     formData.set('categoryId', String(categoryId));
   }
   if (stoneId) {
-    productObject.stone = { id: stoneId };
     formData.set('stone.id', String(stoneId));
     formData.set('stoneId', String(stoneId));
-  }
-
-  const productBlob = new Blob([JSON.stringify(productObject)], { type: 'application/json' });
-  const partName = isEdit ? 'updatedProduct' : 'product';
-  formData.set(partName, productBlob);
-  if (isEdit) {
-    formData.set('product', productBlob);
   }
 
   const res = await fetch(url, {
@@ -699,7 +704,15 @@ export async function saveAdminProduct(
     const err = await res.text();
     throw new Error(err || 'Failed to save product');
   }
-  return res.json();
+
+  const saved: BackendProduct = await res.json();
+  if (categoryId && (saved.id || id)) {
+    saveProductCategoryOverride(saved.id || id || 0, categoryId);
+    if (!saved.categoryId && !saved.category) {
+      saved.categoryId = categoryId;
+    }
+  }
+  return saved;
 }
 
 export async function deleteAdminProduct(id: number, token?: string | null): Promise<string> {
