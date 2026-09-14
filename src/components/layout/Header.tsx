@@ -41,14 +41,14 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-[#C4852B]/20 bg-[#FFFFFF]/95 dark:bg-[#FAF9F5]/95 backdrop-blur-sm transition-colors duration-300">
-        <div className="container mx-auto px-4 md:px-8 h-16 flex items-center justify-between gap-2 overflow-hidden">
+      <header className="sticky top-0 z-50 w-full border-b border-[#C4852B]/20 bg-[#FFFFFF]/95 dark:bg-[#FAF9F5]/95 backdrop-blur-md shadow-[0_2px_15px_rgba(0,0,0,0.03)] transition-all duration-300">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 h-20 flex items-center justify-between gap-4">
           
           {/* Mobile Navigation Toggle Only */}
           <div className="flex items-center md:hidden">
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-1.5 text-zinc-900 hover:text-[#C4852B] transition-colors"
+              className="p-2 text-zinc-900 hover:text-[#C4852B] transition-colors rounded-lg hover:bg-zinc-100"
               aria-label="Toggle Navigation Menu"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
@@ -58,7 +58,7 @@ export default function Header() {
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex flex-1 items-center gap-7 text-[11px] uppercase tracking-[0.15em] font-medium text-zinc-800">
+          <nav className="hidden md:flex flex-1 items-center gap-6 lg:gap-8 text-xs uppercase tracking-[0.15em] font-semibold text-zinc-800">
             <Link href="/shop" className="hover:text-[#C4852B] transition-colors relative py-1 group">
               <span className="font-bold text-[#C4852B]">{t.header.shop}</span>
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#C4852B] group-hover:w-full transition-all duration-300"></span>
@@ -84,37 +84,59 @@ export default function Header() {
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#C4852B] group-hover:w-full transition-all duration-300"></span>
             </Link>
             {mounted && isAdmin && (
-              <Link href="/admin" className="px-2 py-0.5 rounded bg-[#660000] text-white text-[10px] font-bold tracking-wider hover:bg-[#800000] transition-colors shadow-sm">
+              <Link href="/admin" className="px-2.5 py-1 rounded-full bg-[#660000] text-white text-[10px] font-bold tracking-wider hover:bg-[#800000] transition-colors shadow-xs">
                 ⚙️ {t.header.admin}
               </Link>
             )}
           </nav>
 
-          {/* Brand Logo */}
+          {/* Brand Logo & Prominent Title Section */}
           <div className="flex-1 flex justify-center text-center">
-            <Link href="/" className="flex items-center gap-2.5 group py-1">
-              <BrandLogo size="sm" showSubline={false} />
+            <Link href="/" className="flex items-center gap-3 group py-1">
+              <BrandLogo size="md" showSubline={false} />
               <div className="flex flex-col items-start text-left rtl:text-right rtl:items-end">
-                <span className="text-base sm:text-lg md:text-xl tracking-[0.2em] font-brand-en uppercase font-bold text-zinc-950 group-hover:text-[#C4852B] transition-colors whitespace-nowrap">
-                  Nafise Ebadi
-                </span>
-                <span className="text-[9px] sm:text-[10px] text-[#660000] whitespace-nowrap font-bold ltr:tracking-[0.2em]">
-                  {t.brandName}
-                </span>
+                {language === 'fa' ? (
+                  <>
+                    <span className="text-base sm:text-lg md:text-xl font-extrabold font-sans text-zinc-950 group-hover:text-[#C4852B] transition-colors whitespace-nowrap leading-tight">
+                      زیورآلات نفیسه عبادی
+                    </span>
+                    <span className="text-[9px] sm:text-[10px] font-brand-en tracking-[0.22em] uppercase text-[#660000] font-bold whitespace-nowrap pt-0.5">
+                      NAFISE EBADI JEWELLERY
+                    </span>
+                  </>
+                ) : language === 'ar' ? (
+                  <>
+                    <span className="text-base sm:text-lg md:text-xl font-extrabold font-sans text-zinc-950 group-hover:text-[#C4852B] transition-colors whitespace-nowrap leading-tight">
+                      مجوهرات نفيسة عبادي
+                    </span>
+                    <span className="text-[9px] sm:text-[10px] font-brand-en tracking-[0.22em] uppercase text-[#660000] font-bold whitespace-nowrap pt-0.5">
+                      NAFISE EBADI JEWELLERY
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-base sm:text-lg md:text-xl font-extrabold font-brand-en tracking-[0.18em] uppercase text-zinc-950 group-hover:text-[#C4852B] transition-colors whitespace-nowrap leading-tight">
+                      NAFISE EBADI
+                    </span>
+                    <span className="text-[9px] sm:text-[10px] font-mono tracking-[0.22em] uppercase text-[#660000] font-bold whitespace-nowrap pt-0.5">
+                      FINE SILVER ATELIER
+                    </span>
+                  </>
+                )}
               </div>
             </Link>
           </div>
 
           {/* Header Actions */}
-          <div className="flex items-center justify-end gap-1.5 sm:gap-3">
+          <div className="flex items-center justify-end gap-2 sm:gap-3">
             
             {/* Search Trigger */}
             <button 
               onClick={() => toggleSearch(true)}
               aria-label="Search" 
-              className="p-1.5 text-zinc-800 hover:text-[#C4852B] transition-colors"
+              className="p-2 text-zinc-800 hover:text-[#C4852B] hover:bg-zinc-100 dark:hover:bg-[#F4F1EA] rounded-full transition-colors cursor-pointer"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.2} stroke="currentColor" className="w-5 h-5">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.4} stroke="currentColor" className="w-5 h-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
               </svg>
             </button>
@@ -123,37 +145,37 @@ export default function Header() {
             {mounted && token ? (
               <button
                 onClick={() => setProfileModalOpen(true)}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[#C4852B]/40 bg-[#C4852B]/10 hover:bg-[#C4852B]/20 text-zinc-900 text-xs font-medium transition-all"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C4852B]/40 bg-[#C4852B]/10 hover:bg-[#C4852B]/20 text-zinc-900 text-xs font-semibold transition-all cursor-pointer shadow-2xs"
                 title={t.header.profile}
               >
                 <span className="w-5 h-5 rounded-full bg-[#C4852B] text-white flex items-center justify-center text-[10px] font-bold">
                   {user?.firstName ? user.firstName[0] : (isAdmin ? '👑' : '👤')}
                 </span>
-                <span className="hidden lg:inline text-[11px] font-mono font-semibold">
+                <span className="hidden lg:inline text-[11px] font-mono font-bold">
                   {user?.firstName || user?.phoneNumber || (isAdmin ? 'Admin' : 'User')}
                 </span>
               </button>
             ) : (
               <button
                 onClick={() => setAuthModalOpen(true)}
-                className="p-1.5 text-zinc-800 hover:text-[#C4852B] transition-colors flex items-center gap-1"
+                className="p-2 text-zinc-800 hover:text-[#C4852B] hover:bg-zinc-100 dark:hover:bg-[#F4F1EA] rounded-full transition-colors flex items-center gap-1 cursor-pointer"
                 aria-label="Login"
                 title={t.header.login}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.2} stroke="currentColor" className="w-5 h-5">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.4} stroke="currentColor" className="w-5 h-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                 </svg>
-                <span className="hidden xl:inline text-[11px] font-medium tracking-wider uppercase">
+                <span className="hidden xl:inline text-xs font-semibold tracking-wider uppercase">
                   {t.header.login}
                 </span>
               </button>
             )}
 
             {/* Desktop 3-Language Selector Pill */}
-            <div className="hidden md:flex items-center p-0.5 rounded-full border border-[#C4852B]/40 bg-[#C4852B]/10 text-[11px] font-semibold tracking-wider">
+            <div className="hidden md:flex items-center p-0.5 rounded-full border border-[#C4852B]/35 bg-[#C4852B]/10 text-xs font-semibold tracking-wider">
               <button
                 onClick={() => setLanguage('fa')}
-                className={`px-2 py-0.5 rounded-full transition-all duration-200 cursor-pointer ${
+                className={`px-2.5 py-1 rounded-full transition-all duration-200 cursor-pointer ${
                   language === 'fa'
                     ? 'bg-[#C4852B] text-white shadow-xs font-bold'
                     : 'text-zinc-700 hover:text-[#C4852B]'
@@ -164,7 +186,7 @@ export default function Header() {
               </button>
               <button
                 onClick={() => setLanguage('en')}
-                className={`px-2 py-0.5 rounded-full transition-all duration-200 cursor-pointer ${
+                className={`px-2.5 py-1 rounded-full transition-all duration-200 cursor-pointer ${
                   language === 'en'
                     ? 'bg-[#C4852B] text-white shadow-xs font-bold'
                     : 'text-zinc-700 hover:text-[#C4852B]'
@@ -175,7 +197,7 @@ export default function Header() {
               </button>
               <button
                 onClick={() => setLanguage('ar')}
-                className={`px-2 py-0.5 rounded-full transition-all duration-200 cursor-pointer ${
+                className={`px-2.5 py-1 rounded-full transition-all duration-200 cursor-pointer ${
                   language === 'ar'
                     ? 'bg-[#C4852B] text-white shadow-xs font-bold'
                     : 'text-zinc-700 hover:text-[#C4852B]'
@@ -189,9 +211,9 @@ export default function Header() {
             {/* Wishlist */}
             <button 
               aria-label="Wishlist" 
-              className="hidden sm:block p-1.5 text-zinc-800 hover:text-[#660000] transition-colors relative"
+              className="hidden sm:block p-2 text-zinc-800 hover:text-[#660000] hover:bg-zinc-100 dark:hover:bg-[#F4F1EA] rounded-full transition-colors relative cursor-pointer"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill={wishlist.length > 0 ? "currentColor" : "none"} viewBox="0 0 24 24" strokeWidth={1.2} stroke="currentColor" className={`w-5 h-5 ${wishlist.length > 0 ? "text-[#660000]" : ""}`}>
+              <svg xmlns="http://www.w3.org/2000/svg" fill={wishlist.length > 0 ? "currentColor" : "none"} viewBox="0 0 24 24" strokeWidth={1.4} stroke="currentColor" className={`w-5 h-5 ${wishlist.length > 0 ? "text-[#660000]" : ""}`}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
               </svg>
               {wishlist.length > 0 && (
@@ -199,17 +221,17 @@ export default function Header() {
               )}
             </button>
 
-            {/* Cart Trigger */}
+            {/* Cart Trigger Button */}
             <button 
               onClick={() => toggleCart(true)}
               aria-label="Shopping Cart" 
-              className="p-1.5 text-zinc-800 hover:text-[#C4852B] transition-colors relative flex items-center cursor-pointer"
+              className="p-2 text-zinc-800 hover:text-[#C4852B] hover:bg-zinc-100 dark:hover:bg-[#F4F1EA] rounded-full transition-colors relative flex items-center cursor-pointer"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.2} stroke="currentColor" className="w-5 h-5">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.4} stroke="currentColor" className="w-5 h-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
               </svg>
               {cartCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 flex items-center justify-center rounded-full bg-[#C4852B] text-[10px] font-bold text-white font-mono shadow-sm">
+                <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 flex items-center justify-center rounded-full bg-[#660000] text-[10px] font-bold text-white font-mono shadow-sm">
                   {cartCount}
                 </span>
               )}
