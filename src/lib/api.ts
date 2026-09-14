@@ -32,6 +32,9 @@ export interface UserProfile {
   phoneNumber: string;
   firstName?: string;
   lastName?: string;
+  birthDate?: string;
+  province?: string;
+  city?: string;
   address?: string;
   postalCode?: string;
   role?: string;

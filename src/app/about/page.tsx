@@ -2,309 +2,275 @@
 
 import { useAppStore } from "@/store/useAppStore";
 import Link from "next/link";
+import Image from "next/image";
 import BrandLogo from "@/components/layout/BrandLogo";
-import LogoGridInspector from "@/components/brand/LogoGridInspector";
 import { MotionFadeIn, MotionStaggerContainer, MotionStaggerItem, TiltCard } from "@/components/ui/MotionWrappers";
 
 export default function AboutPage() {
   const { language, t } = useAppStore();
 
-  const colorPalette = [
+  const values = [
     {
-      nameFa: "اکر طلایی (رنگ اصلی)",
-      nameEn: "Ochre Gold (Primary)",
-      percent: "50%",
-      hex: "#C4852B",
-      rgb: "RGB(196, 133, 43)",
-      bg: "bg-[#C4852B]",
-      textColor: "text-white",
-      descFa: "رنگ اصلی سازمانی با ۵۰٪ کاربرد در نشان، دکمه‌ها و پترن‌های طلایی.",
-      descEn: "Primary brand accent (50% occurrence) used in logos, accents, and gold patterns."
+      icon: "✨",
+      titleFa: "نقره ۹۲۵ استرلینگ عیار خالص",
+      titleEn: "Certified 925 Sterling Silver",
+      titleAr: "فضة استرليني 925 نقية معتمدة",
+      descFa: "تمام آثار گالری با بالاترین استاندارد خلوص نقره ۹۲۵ و آبکاری محافظ رودیوم برای درخشش مادام‌العمر و عدم کدر شدن تولید می‌شوند.",
+      descEn: "Every creation is forged from premium 925 sterling silver with protective rhodium finish for enduring brilliance.",
+      descAr: "تُصاغ جميع قطعنا من الفضة الاسترليني 925 النقية مع طبقة حماية متطورة للمحافظة على البريق الخالد.",
     },
     {
-      nameFa: "زرشکی سلطنتی",
-      nameEn: "Deep Burgundy",
-      percent: "20%",
-      hex: "#660000",
-      rgb: "RGB(102, 0, 0)",
-      bg: "bg-[#660000]",
-      textColor: "text-white",
-      descFa: "رنگ لوکس ادیتوریال و نماد سنگ عقیق با ۲۰٪ کاربرد در CTAها و بسته‌بندی.",
-      descEn: "Luxury editorial accent (20% occurrence) inspired by natural red agate gemstones."
+      icon: "💠",
+      titleFa: "سنگ‌های اصیل فیروزه نیشابور و عقیق",
+      titleEn: "Authentic Neyshabur Turquoise & Agate",
+      titleAr: "أحجار الفيروز النيسابوري والعقيق الطبيعي",
+      descFa: "استفاده انحصاری از سنگ‌های معدنی ۱۰۰٪ طبیعی، شناسنامه‌دار و بدون بهسازی شیمیایی از کهن‌ترین معادن نیشابور و یمن.",
+      descEn: "100% natural, certified, untreated gemstones sourced directly from heritage mines of Neyshabur and Yemen.",
+      descAr: "أحجار كريمة طبيعية 100% مستخرجة من أقدم المناجم ومرفقة بشهادات فحص گوهرشناسی معتمدة.",
     },
     {
-      nameFa: "سفید خالص",
-      nameEn: "Pure White Canvas",
-      percent: "20%",
-      hex: "#FFFFFF",
-      rgb: "RGB(255, 255, 255)",
-      bg: "bg-white",
-      textColor: "text-zinc-950",
-      border: "border border-zinc-300",
-      descFa: "بوم پس‌زمینه و فضای منفی تنفسی با ۲۰٪ سهم در کاتالوگ و اوراق اداری.",
-      descEn: "Base canvas & negative space (20% occurrence) for catalog and stationery."
+      icon: "🔨",
+      titleFa: "هنر دست استادکاران نقره‌ساز",
+      titleEn: "Master Silversmith Craftsmanship",
+      titleAr: "صياغة يدوية بأيدي أمهر الحرفيين",
+      descFa: "ترکیب تکنیک‌های سنتی قلم‌زنی و مخراج‌کاری دقیق دستی با ظرافت‌های طراحی مدرن و مینیمال معاصر.",
+      descEn: "Fusing traditional Persian hand-engraving and stone setting with contemporary architectural minimalism.",
+      descAr: "دمج فنون النقش اليدوي والترصيع الدقيق مع الخطوط الهندسية العصرية الراقية.",
     },
     {
-      nameFa: "خاکستری سنگی",
-      nameEn: "Slate Gray",
-      percent: "5%",
-      hex: "#626667",
-      rgb: "RGB(98, 102, 103)",
-      bg: "bg-[#626667]",
-      textColor: "text-white",
-      descFa: "رنگ فرعی برای متون توضیحات، خطوط جداکننده و جزئیات متریال.",
-      descEn: "Secondary slate (5% occurrence) for material specs and technical details."
+      icon: "🛡️",
+      titleFa: "گارانتی اصالت و خدمات پس از فروش",
+      titleEn: "Lifetime Warranty & Polishing Care",
+      titleAr: "ضمان أصالة دائم وخدمات العناية",
+      descFa: "ارائه فاکتور رسمی معتبر سازمانی، شناسنامه گوهرشناسی اختصاصی و خدمات تمیزکاری و پولیش دوره‌ای رایگان برای همراهان.",
+      descEn: "Official corporate invoice, gemological authenticity certificate, and complimentary lifetime cleaning care.",
+      descAr: "فاتورة رسمية معتمدة، شهادة أصالة للأحجار الكريمة، وخدمات تلميع وتنظيف دورية لزبائننا الكرام.",
     },
-    {
-      nameFa: "سیاه عمیق",
-      nameEn: "Deep Black",
-      percent: "5%",
-      hex: "#000000",
-      rgb: "RGB(0, 0, 0)",
-      bg: "bg-black",
-      textColor: "text-white",
-      descFa: "کنتراست متون عناوین و نسخه تک‌رنگ مونوکروم نشان.",
-      descEn: "High-contrast typography (5% occurrence) and monochrome mark variants."
-    }
   ];
 
-  const ideationElements = [
+  const milestones = [
     {
-      titleFa: "سنگ عقیق طبیعی و فیروزه نیشابور",
-      titleEn: "Natural Agate & Neyshabur Turquoise",
-      descFa: "نماد اصالت، انرژی و میراث فاخر پارسی که به عنوان نگین در آثار نفیسه عبادی جای گرفته است.",
-      descEn: "Iranian gemstone heritage representing authenticity, set as the jewel in the 'ne' mark.",
-      tag: "ELEMENT 01"
+      year: "۱۴۰۰",
+      yearEn: "2021",
+      titleFa: "تأسیس کارگاه تخصصی نفیسه عبادی",
+      titleEn: "Founding the Master Silver Atelier",
+      titleAr: "تأسيس ورشة صياغة الفضة",
+      descFa: "آغاز فعالیت با تمرکز بر طراحی مینیمال زیورآلات نقره و احیای هنر فیروزه‌نشانی اصیل نیشابور.",
+      descEn: "Inception with a focus on handcrafted minimalist silver jewelry and Neyshabur turquoise.",
+      descAr: "الانطلاق بالتركيز على صياغة الفضة اليدوية وترصيع الفيروز النيسابوري.",
     },
     {
-      titleFa: "زنجیر و نقره استرلینگ ۹۲۵ دست‌ساز",
-      titleEn: "925 Sterling Silver Chain & Links",
-      descFa: "خطوط ظریف و هاشورهای مورب درون لوگو تداعی‌کننده بافت زنجیر و هنر دست نقره‌ساز است.",
-      descEn: "Delicate diagonal hatching within the monogram represents fine sterling silver craftsmanship.",
-      tag: "ELEMENT 02"
+      year: "۱۴۰۲",
+      yearEn: "2023",
+      titleFa: "توسعه کالکشن‌های اختصاصی عقیق و نقره",
+      titleEn: "Curating Natural Agate Collections",
+      titleAr: "توسيع مجموعات العقيق الطبيعي",
+      descFa: "طراحی نیم‌ست‌ها و انگشترهای مرصع به عقیق‌های سرخ یمنی و سلیمانی با قاب‌های دست‌ساز قلم‌زنی‌شده.",
+      descEn: "Designing bespoke pendants and rings featuring rare natural Yemeni and banded agates.",
+      descAr: "تصميم مجموعات مميزة من العقيق اليماني والسليماني الطبيعي المصاغ يدوياً.",
     },
     {
-      titleFa: "مونوگرام بین‌المللی ne",
-      titleEn: "International 'ne' Monogram",
-      descFa: "طراحی حروف آغازین نام نفیسه عبادی (Nafise Ebadi) با رویکرد بین‌المللی و معماری مدرن.",
-      descEn: "Initials of brand founder Nafise Ebadi, crafted with contemporary architectural elegance.",
-      tag: "ELEMENT 03"
-    }
+      year: "۱۴۰۴ - ۱۴۰۵",
+      yearEn: "2025 - 2026",
+      titleFa: "راه‌اندازی فروشگاه آنلاین و ارسال سراسری",
+      titleEn: "E-Commerce Launch & Nationwide Delivery",
+      titleAr: "إطلاق المتجر الإلكتروني والشحن المباشر",
+      descFa: "فراهم‌سازی بستر خرید آنلاین امن با محاسبه‌گر لحظه‌ای نقره، صدور فاکتور رسمی و ارسال بیمه‌شده به تمام نقاط.",
+      descEn: "State-of-the-art online boutique with live silver rate integration and fully insured express delivery.",
+      descAr: "تقديم تجربة تسوق إلكترونية راقية مع تسعير مباشر للفضة وفواتير رسمية وشحن مؤمن بالكامل.",
+    },
   ];
 
   return (
-    <div className="py-20 md:py-32 bg-[#FFFFFF] dark:bg-[#FAF9F5] text-zinc-950 min-h-screen transition-colors duration-500">
-      <div className="container mx-auto px-4 md:px-12">
+    <div className="py-16 md:py-28 bg-[#FFFFFF] dark:bg-[#FAF9F5] text-zinc-950 min-h-screen transition-colors duration-500">
+      <div className="container mx-auto px-4 sm:px-6 md:px-12">
         
-        {/* Hero Header */}
-        <div className="max-w-4xl mx-auto text-center mb-24">
+        {/* Header Hero Section */}
+        <div className="max-w-4xl mx-auto text-center mb-20 md:mb-28">
           <div className="flex justify-center mb-6">
             <BrandLogo size="lg" showSubline={false} />
           </div>
           
-          <span className="text-[10px] text-[#C4852B] uppercase tracking-[0.35em] font-semibold mb-3 block font-mono">
-            {language === 'fa' ? 'راهنمای هویت تصویری برند ۲۰۲۶' : '2026 CORPORATE VISUAL IDENTITY MANUAL'}
+          <span className="text-[11px] text-[#A06314] uppercase tracking-[0.3em] font-bold mb-3 block font-mono">
+            {language === 'fa' 
+              ? 'کارگاه تخصصی نقره و گوهرشناسی نفیسه عبادی' 
+              : language === 'ar' 
+              ? 'ورشة صياغة الفضة والأحجار الكريمة' 
+              : 'NAFISE EBADI MASTER SILVER ATELIER'}
           </span>
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold uppercase tracking-tight mb-8 leading-tight">
-            {language === 'fa' ? 'داستان و هویت زیورآلات نقره نفیسه عبادی' : 'The Essence of Nafise Ebadi Silver'}
+
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold uppercase tracking-tight mb-6 leading-tight">
+            {language === 'fa' 
+              ? 'اصالت نقره ۹۲۵ دست‌ساز و شکوه سنگ‌های طبیعی' 
+              : language === 'ar' 
+              ? 'أصالة الفضة 925 المصوغة يدوياً وفخامة الأحجار الطبيعية' 
+              : 'Where Pure Silver Artistry Meets Natural Gems'}
           </h1>
-          <div className="w-28 h-0.5 bg-gradient-to-r from-[#C4852B] to-[#660000] mx-auto mb-8"></div>
-          <p className="text-sm md:text-base text-[#626667] leading-relaxed font-serif italic max-w-2xl mx-auto">
-            &ldquo;{t.story.quote}&rdquo;
+
+          <div className="w-24 h-1 bg-gradient-to-r from-[#C4852B] to-[#660000] mx-auto mb-6 rounded-full"></div>
+
+          <p className="text-sm md:text-base text-zinc-600 leading-relaxed max-w-2xl mx-auto font-sans">
+            {language === 'fa'
+              ? 'روایتی از تلفیق هنر دست استادکاران نقره‌ساز ایرانی با مرغوب‌ترین نقره استرلینگ ۹۲۵، فیروزه اصل نیشابور و عقیق‌های اصیل معدنی؛ آثاری ماندگار برای کسانی که به اصالت و ظرافت وفادارند.'
+              : language === 'ar'
+              ? 'قصة تدمج إبداع صائغي الفضة الإيرانية مع أجود أنواع الفضة الاسترليني 925، الفيروز النيسابوري الأصيل، والعقيق الطبيعي لتبقى قطعاً خالدة تتوارثها الأجيال.'
+              : 'A dedicated silver jewelry house committed to handcrafted 925 sterling silver, authentic Neyshabur turquoise, and certified natural agate gemstones.'}
           </p>
         </div>
 
-        {/* Brand Heritage Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center mb-32">
-          <div className="relative aspect-[4/5] rounded-3xl overflow-hidden border border-[#C4852B]/30 shadow-2xl luxury-card-hover">
-            <img 
-              src="https://images.unsplash.com/photo-1573408301145-b98c46544405?q=80&w=1000&auto=format&fit=crop" 
-              alt="Artisan Workshop" 
-              className="w-full h-full object-cover"
+        {/* Studio Showcase Banner */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-28">
+          <div className="relative aspect-[4/3] sm:aspect-[16/10] rounded-3xl overflow-hidden border border-[#C4852B]/30 shadow-2xl">
+            <Image
+              src="/images/hero-silver-bg.jpg"
+              alt="Nafise Ebadi Silver Atelier"
+              fill
+              className="object-cover object-center transition-transform duration-700 hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
-            <div className="absolute bottom-8 left-8 right-8 text-white">
-              <span className="text-[10px] text-[#C4852B] font-mono tracking-widest uppercase block mb-1">
-                MASTER SILVER ATELIER 2026
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            <div className="absolute bottom-6 start-6 end-6 text-white">
+              <span className="text-[10px] text-[#C4852B] font-mono tracking-widest uppercase block mb-1 font-bold">
+                FINE SILVER ATELIER
               </span>
-              <h3 className="font-brand-en text-xl font-bold">دست‌ساز و متعهد به نقره اصیل ۹۲۵</h3>
+              <h3 className="font-bold text-lg sm:text-xl">
+                {language === 'fa' ? 'میز کار نقره‌سازی و ابزارهای سنتی ساخت' : 'Artisan Workbench & Silversmith Craft'}
+              </h3>
             </div>
           </div>
 
           <div className="flex flex-col justify-center">
-            <span className="text-[10px] text-[#C4852B] uppercase tracking-[0.3em] font-semibold mb-3 font-mono">
-              01 / PHILOSOPHY & CRAFTSMANSHIP
+            <span className="text-[11px] text-[#C4852B] uppercase tracking-[0.25em] font-bold mb-3 font-mono">
+              01 / OUR CRAFT & PHILOSOPHY
             </span>
-            <h2 className="text-2xl md:text-4xl font-bold uppercase mb-6 leading-tight">
-              {language === 'fa' ? 'پیوند هنر مدرن با نقره ناب ۹۲۵' : 'Where Fine Sterling Silver Meets Pure Artistry'}
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-5 leading-tight">
+              {language === 'fa'
+                ? 'تعهد به نقره خالص و هنر دست‌ساز'
+                : language === 'ar'
+                ? 'الالتزام بأعلى معايير الفضة النقية'
+                : 'Dedicated to Sterling Silver & Hand Craftsmanship'}
             </h2>
-            <p className="text-xs md:text-sm text-[#626667] leading-relaxed mb-6">
+            <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-4">
               {language === 'fa'
-                ? 'برند زیورآلات نفیسه عبادی با هدف خلق آثاری فاخر، ماندگار و فراتر از زمان در عرصه نقره‌سازی و گوهرشناسی معاصر بنا نهاده شده است. تمامی قطعات از نقره استرلینگ ۹۲۵ دست‌ساز، سنگ‌های طبیعی عقیق سرخ و فیروزه اصل نیشابور با شناسنامه اصالت ساخته می‌شوند.'
-                : 'Nafise Ebadi Silver Jewellery was established to craft timeless wearable art pieces. Every piece is forged with certified 925 sterling silver, natural red agate gemstones, and genuine Neyshabur turquoise.'}
+                ? 'در کارگاه زیورآلات نقره نفیسه عبادی، هر قطعه اثر یک سفر هنری و دست‌ساز است. از ذوب شمش‌های خالص نقره و آلیاژسازی دقیق به عیار ۹۲۵ گرفته تا سوهان‌کاری، قلم‌زنی ظریف، مرصع‌کاری نگین‌های فیروزه و عقیق و پرداخت نهایی آینه‌ای.'
+                : language === 'ar'
+                ? 'في ورشة مجوهرات نفيسة عبادي، تمر كل قطعة برحلة حرفية دقيقة تبدأ من صهر سبائك الفضة النقية ودمجها بعيار 925 المعتمد، مروراً بالنقش والترصيع الدقيق، وحتى التلميع النهائي.'
+                : 'At the Nafise Ebadi studio, each creation begins with the finest silver bullion alloyed to 925 sterling purity, meticulously shaped, engraved, and hand-set with natural untreated gemstones.'}
             </p>
-            <p className="text-xs md:text-sm text-[#626667] leading-relaxed mb-8">
+            <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-6">
               {language === 'fa'
-                ? 'طراحی‌های نفیسه عبادی بر سادگی فرم، خطوط معمارانه و احترام به هویت دست‌ساز استوار است؛ به گونه‌ای که هر قطعه تجلی‌بخش درخشش و اصالت همراهان گرامی ما باشد.'
-                : 'Guided by clean architectural lines and minimalist perfection, each piece reflects timeless luxury and modern sophistication.'}
+                ? 'ما باور داریم زیبایی واقعی در سادگی فرم، تناسبات هارمونیک و پیوند با سنگ‌های معدنی بااصالت نهفته است. زیورآلات ما برای استفاده روزمره و مناسبت‌های خاص با بالاترین دوام طراحی می‌شوند.'
+                : language === 'ar'
+                ? 'نؤمن بأن الفخامة الحقيقية تكمن في نقاء التصميم والأصالة التامة للأحجار الطبيعية التي تضفي هيبة وطاقة فريدة.'
+                : 'We believe genuine luxury resides in harmonious proportions and ethical gemstones designed for a lifetime of beauty.'}
             </p>
-            <div>
+
+            <div className="flex flex-wrap gap-4 pt-2">
               <Link 
-                href="/collections" 
-                className="inline-block px-8 py-3.5 bg-[#660000] text-white text-xs font-bold uppercase tracking-[0.2em] rounded-full hover:bg-[#7D0000] transition-all shadow-md hover:scale-105 cursor-pointer"
+                href="/shop" 
+                className="px-6 py-3 bg-[#660000] text-white text-xs font-bold uppercase tracking-wider rounded-full hover:bg-[#7D0000] transition-all shadow-md cursor-pointer"
               >
                 {t.hero.explore}
+              </Link>
+              <Link 
+                href="/collections" 
+                className="px-6 py-3 border border-[#C4852B] text-zinc-900 text-xs font-bold uppercase tracking-wider rounded-full hover:bg-[#C4852B]/10 transition-all cursor-pointer"
+              >
+                {t.header.collections}
               </Link>
             </div>
           </div>
         </div>
 
-        {/* 02 / Color Palette & Occurrence Hierarchy (Pages 12-13 of Brand PDF) */}
-        <div className="mb-32 p-8 sm:p-12 rounded-3xl bg-[#F4F1EA] border border-[#C4852B]/30 shadow-sm">
-          <div className="max-w-3xl mb-12">
-            <span className="text-[10px] text-[#C4852B] uppercase tracking-[0.3em] font-semibold mb-2 block font-mono">
-              02 / COLOR SPECTRUM & USAGE (PAGES 12-13)
+        {/* Atelier Core Pillars Grid */}
+        <div className="mb-28">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <span className="text-[11px] text-[#C4852B] uppercase tracking-[0.3em] font-bold mb-2 block font-mono">
+              02 / OUR PILLARS
             </span>
-            <h2 className="text-2xl sm:text-4xl font-bold uppercase tracking-tight mb-4">
-              {language === 'fa' ? 'پالت رنگی و درصد استفاده در هویت برند' : 'Color System & Percentage Hierarchy'}
+            <h2 className="text-2xl sm:text-4xl font-bold uppercase tracking-tight">
+              {language === 'fa' ? 'ارزش‌ها و استانداردهای زیورآلات نفیسه عبادی' : 'Our Quality Standards & Guarantees'}
             </h2>
-            <p className="text-xs md:text-sm text-[#626667] leading-relaxed">
-              {language === 'fa'
-                ? 'رنگ‌های سازمانی برند به ۵ رنگ اصلی با درصد وقوع مشخص تقسیم می‌شوند تا انسجام بصری کامل در بسته‌بندی، وبسایت و کمپین‌های دیجیتال برقرار گردد.'
-                : 'The official visual identity mandates strict usage distribution across 5 core colors.'}
-            </p>
           </div>
 
-          {/* Visual Percentage Progress Strip */}
-          <div className="w-full h-8 rounded-xl overflow-hidden flex shadow-inner mb-10 border border-zinc-300">
-            <div style={{ width: "50%" }} className="bg-[#C4852B] flex items-center justify-center text-white text-[10px] font-mono font-bold" title="Ochre Gold 50%">
-              50%
-            </div>
-            <div style={{ width: "20%" }} className="bg-[#660000] flex items-center justify-center text-white text-[10px] font-mono font-bold" title="Deep Burgundy 20%">
-              20%
-            </div>
-            <div style={{ width: "20%" }} className="bg-white flex items-center justify-center text-zinc-900 text-[10px] font-mono font-bold border-x border-zinc-200" title="Pure White 20%">
-              20%
-            </div>
-            <div style={{ width: "5%" }} className="bg-[#626667] flex items-center justify-center text-white text-[8px] font-mono font-bold" title="Slate Gray 5%">
-              5%
-            </div>
-            <div style={{ width: "5%" }} className="bg-black flex items-center justify-center text-white text-[8px] font-mono font-bold" title="Deep Black 5%">
-              5%
-            </div>
-          </div>
-
-          {/* Color Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {colorPalette.map((col, idx) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {values.map((v, idx) => (
               <div 
                 key={idx}
-                className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-sm flex flex-col justify-between"
+                className="p-6 sm:p-7 rounded-3xl bg-white dark:bg-[#FAF9F5] border border-[#C4852B]/30 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
               >
                 <div>
-                  <div className={`w-full h-20 rounded-xl ${col.bg} ${col.border || ''} mb-4 shadow-sm flex items-end p-2.5`}>
-                    <span className={`font-mono text-xs font-bold ${col.textColor} bg-black/30 px-2 py-0.5 rounded backdrop-blur-xs`}>
-                      {col.percent}
-                    </span>
-                  </div>
-                  <h4 className="font-bold text-sm text-zinc-950 mb-1">
-                    {language === 'fa' ? col.nameFa : col.nameEn}
-                  </h4>
-                  <div className="font-mono text-[11px] text-[#C4852B] font-semibold mb-2">
-                    {col.hex} • {col.rgb}
-                  </div>
+                  <span className="text-3xl mb-4 block p-3 w-fit rounded-2xl bg-[#C4852B]/10">
+                    {v.icon}
+                  </span>
+                  <h3 className="font-bold text-base text-zinc-950 mb-2 leading-snug">
+                    {language === 'fa' ? v.titleFa : language === 'ar' ? v.titleAr : v.titleEn}
+                  </h3>
+                  <p className="text-xs text-zinc-600 leading-relaxed">
+                    {language === 'fa' ? v.descFa : language === 'ar' ? v.descAr : v.descEn}
+                  </p>
                 </div>
-                <p className="text-[10px] text-[#626667] leading-relaxed border-t border-zinc-200 pt-3 mt-3">
-                  {language === 'fa' ? col.descFa : col.descEn}
+                <div className="pt-4 mt-6 border-t border-zinc-100 flex items-center justify-between text-[10px] text-[#A06314] font-bold">
+                  <span>✓ گارانتی کیفیت</span>
+                  <span>نقره ۹۲۵</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Milestone Timeline */}
+        <div className="mb-24 p-8 sm:p-12 rounded-3xl bg-[#F4F1EA] border border-[#C4852B]/25">
+          <div className="max-w-2xl mb-10">
+            <span className="text-[11px] text-[#C4852B] uppercase tracking-[0.3em] font-bold mb-2 block font-mono">
+              03 / JOURNEY
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold uppercase">
+              {language === 'fa' ? 'مسیر پیشرفت و توسعه برند' : 'Our Atelier Journey'}
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {milestones.map((m, idx) => (
+              <div key={idx} className="relative p-6 bg-white rounded-2xl border border-zinc-200 shadow-2xs">
+                <span className="text-xs font-mono font-bold text-[#660000] bg-[#660000]/10 px-3 py-1 rounded-full inline-block mb-3">
+                  {language === 'en' ? m.yearEn : m.year}
+                </span>
+                <h4 className="font-bold text-sm sm:text-base text-zinc-950 mb-2">
+                  {language === 'fa' ? m.titleFa : language === 'ar' ? m.titleAr : m.titleEn}
+                </h4>
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  {language === 'fa' ? m.descFa : language === 'ar' ? m.descAr : m.descEn}
                 </p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* 03 / Ideation & Core Elements (Page 3 of Brand PDF) */}
-        <div className="mb-32">
-          <div className="max-w-3xl mb-12">
-            <span className="text-[10px] text-[#C4852B] uppercase tracking-[0.3em] font-semibold mb-2 block font-mono">
-              03 / LOGO IDEATION & ELEMENTS (PAGE 3)
+        {/* Contact & Custom Order Banner */}
+        <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-[#1A1816] to-[#2B2621] text-white flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl">
+          <div className="max-w-xl">
+            <span className="text-[10px] text-[#C4852B] uppercase tracking-widest font-mono font-bold block mb-2">
+              CUSTOM BESPOKE COMMISSIONS
             </span>
-            <h2 className="text-2xl sm:text-4xl font-bold uppercase tracking-tight">
-              {language === 'fa' ? 'عناصر و المان‌های اصلی در ایده‌پردازی نشان' : 'Core Design Ideation Elements'}
-            </h2>
+            <h3 className="text-2xl sm:text-3xl font-bold mb-3 text-white">
+              {language === 'fa' 
+                ? 'سفارش ساخت اختصاصی زیورآلات نقره و نگین‌های خاص' 
+                : 'Custom Silversmithing & Gemstone Commissions'}
+            </h3>
+            <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
+              {language === 'fa'
+                ? 'آیا طرح خاصی در نظر دارید یا مایل به سفارش نقره ۹۲۵ با سنگ فیروزه نیشابور یا عقیق با تراش دلخواه هستید؟ کارشناسان ما آماده مشاوره به شما هستند.'
+                : 'Have a custom design or gemstone in mind? Our master craftsmen are available for personalized silver creations.'}
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {ideationElements.map((elem, idx) => (
-              <div
-                key={idx}
-                className="p-8 rounded-3xl bg-[#FAF9F5] border border-[#C4852B]/30 shadow-md luxury-card-hover flex flex-col justify-between"
-              >
-                <div>
-                  <span className="text-[9px] font-mono tracking-widest text-[#660000] bg-[#660000]/10 px-3 py-1 rounded-full uppercase mb-6 inline-block font-bold">
-                    {elem.tag}
-                  </span>
-                  <h3 className="text-xl font-bold text-zinc-950 mb-3">
-                    {language === 'fa' ? elem.titleFa : elem.titleEn}
-                  </h3>
-                  <p className="text-xs text-[#626667] leading-relaxed">
-                    {language === 'fa' ? elem.descFa : elem.descEn}
-                  </p>
-                </div>
-                <div className="mt-8 pt-4 border-t border-zinc-200 flex justify-between items-center text-[10px] text-[#C4852B] font-mono">
-                  <span>Nafise Ebadi Visual System</span>
-                  <span>✓ Certified</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* 03.5 / Logo Anatomy & Clear Space Grid (Pages 10-13) */}
-        <div className="mb-32">
-          <LogoGridInspector />
-        </div>
-
-        {/* 04 / Typography Guideline (Pages 14-18) */}
-        <div className="p-8 sm:p-12 rounded-3xl bg-[#FAF9F5] border border-zinc-200 shadow-xl mb-16">
-          <div className="max-w-3xl mb-12">
-            <span className="text-[10px] text-[#C4852B] uppercase tracking-[0.3em] font-semibold mb-2 block font-mono">
-              04 / OFFICIAL TYPOGRAPHY (PAGES 14-18)
-            </span>
-            <h2 className="text-2xl sm:text-4xl font-bold uppercase tracking-tight mb-4">
-              {language === 'fa' ? 'تایپوگرافی سازمانی: فونت کلمه و Clash Display' : 'Official Typefaces: Kalameh & Clash Display'}
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            {/* Persian Typeface */}
-            <div className="p-6 rounded-2xl bg-[#F4F1EA] border border-zinc-200">
-              <span className="text-[9px] font-mono text-[#660000] uppercase tracking-widest block mb-2 font-bold">
-                PERSIAN TYPEFACE (قلم فارسی)
-              </span>
-              <h3 className="text-2xl font-bold mb-4 font-kalameh">فونت اختصاصی کلمه (Kalameh)</h3>
-              <p className="text-xs text-[#626667] leading-relaxed mb-6">
-                قلم فارسی سازمانی با خوانایی بسیار بالا، ساختار مستحکم و تناسب کلاسیک-مدرن در وزن‌های Thin، Regular، Bold و Black.
-              </p>
-              <div className="space-y-3 p-4 bg-white rounded-xl border border-zinc-200 text-xs">
-                <p className="font-normal">کلمه معمولی: زیورآلات دست‌ساز نقره استرلینگ ۹۲۵ نفیسه عبادی</p>
-                <p className="font-bold text-sm">کلمه ضخیم: درخشش ماندگار نقره و سنگ فیروزه اصل نیشابور</p>
-              </div>
-            </div>
-
-            {/* English Typeface */}
-            <div className="p-6 rounded-2xl bg-[#F4F1EA] border border-zinc-200">
-              <span className="text-[9px] font-mono text-[#C4852B] uppercase tracking-widest block mb-2 font-bold">
-                ENGLISH TYPEFACE (قلم انگلیسی)
-              </span>
-              <h3 className="text-2xl font-bold mb-4 font-clash uppercase">Clash Display</h3>
-              <p className="text-xs text-[#626667] leading-relaxed mb-6">
-                Distinct geometric high-fashion typeface engineered for timeless editorial elegance across global collections.
-              </p>
-              <div className="space-y-3 p-4 bg-white rounded-xl border border-zinc-200 text-xs font-clash uppercase">
-                <p className="font-normal tracking-widest">Regular: Certified 925 Sterling Silver & Natural Gems</p>
-                <p className="font-bold text-sm tracking-[0.15em]">Bold: Nafise Ebadi Silver Jewellery Collection 2026</p>
-              </div>
-            </div>
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <Link
+              href="/shop"
+              className="px-8 py-3.5 bg-[#C4852B] hover:bg-[#A76E1F] text-white text-xs font-bold uppercase tracking-wider rounded-full text-center transition-all shadow-md cursor-pointer"
+            >
+              {language === 'fa' ? 'مشاهده فروشگاه' : 'Shop Silver Catalog'}
+            </Link>
           </div>
         </div>
 
@@ -312,4 +278,3 @@ export default function AboutPage() {
     </div>
   );
 }
-

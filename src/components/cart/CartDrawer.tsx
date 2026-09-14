@@ -3,6 +3,7 @@
 import { useAppStore } from "@/store/useAppStore";
 import { useState } from "react";
 import { createCheckout, payInvoice, Invoice } from "@/lib/api";
+import IranLocationSelector from "@/components/ui/IranLocationSelector";
 
 export default function CartDrawer() {
   const { 
@@ -22,6 +23,8 @@ export default function CartDrawer() {
   } = useAppStore();
 
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [province, setProvince] = useState(user?.province || "");
+  const [city, setCity] = useState(user?.city || "");
   const [address, setAddress] = useState(user?.address || "");
   const [postalCode, setPostalCode] = useState(user?.postalCode || "");
   const [isLoading, setIsLoading] = useState(false);
@@ -37,6 +40,8 @@ export default function CartDrawer() {
       setAuthModalOpen(true);
       return;
     }
+    if (user?.province) setProvince(user.province);
+    if (user?.city) setCity(user.city);
     if (user?.address) setAddress(user.address);
     if (user?.postalCode) setPostalCode(user.postalCode);
     setIsCheckingOut(true);
@@ -45,13 +50,13 @@ export default function CartDrawer() {
 
   const handleConfirmOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!address.trim() || !postalCode.trim()) {
+    if (!province.trim() || !city.trim() || !address.trim() || !postalCode.trim()) {
       setErrorMsg(
         language === "fa" 
-          ? "لطفاً آدرس و کدپستی را وارد کنید" 
+          ? "لطفاً استان، شهر، نشانی و کدپستی را وارد کنید" 
           : language === "ar"
-          ? "يرجى إدخال العنوان والرمز البريدي"
-          : "Please enter address and postal code"
+          ? "يرجى اختيار المحافظة والمدينة وإدخال العنوان والرمز البريدي"
+          : "Please select province, city, and enter address and postal code"
       );
       return;
     }
@@ -65,7 +70,8 @@ export default function CartDrawer() {
         itemsMap[item.id] = item.quantity;
       });
 
-      const invoice = await createCheckout(itemsMap, address, postalCode, token, cart);
+      const fullShippingAddress = `استان ${province}، شهر ${city}، ${address.trim()}`;
+      const invoice = await createCheckout(itemsMap, fullShippingAddress, postalCode, token, cart);
       setCreatedInvoice(invoice);
       clearCart();
       setIsCheckingOut(false);
@@ -245,16 +251,28 @@ export default function CartDrawer() {
                 </div>
               )}
 
+              {/* Static Province & City Selector (Client-Side Filtered) */}
+              <div className="p-3 bg-zinc-50 border border-zinc-200 rounded-xl">
+                <IranLocationSelector
+                  selectedProvince={province}
+                  selectedCity={city}
+                  onChange={({ province: p, city: c }) => {
+                    setProvince(p);
+                    setCity(c);
+                  }}
+                />
+              </div>
+
               <div>
                 <label className="block text-xs font-medium text-zinc-700 mb-1">
-                  {language === "fa" ? "نشانی دقیق پستی" : language === "ar" ? "عنوان التوصيل الدقيق" : "Shipping Address"}
+                  {language === "fa" ? "نشانی پستی (خیابان، کوچه، پلاک، واحد)" : language === "ar" ? "عنوان التوصيل (الشارع، المبنى، الشقة)" : "Street Address (Street, Building, Unit)"}
                 </label>
                 <textarea
-                  rows={3}
+                  rows={2}
                   required
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder={language === "fa" ? "استان، شهر، خیابان، پلاک، واحد..." : language === "ar" ? "المدينة، الشارع، المبنى، الشقة..." : "City, Street, Building..."}
+                  placeholder={language === "fa" ? "خیابان، کوچه، پلاک، واحد..." : language === "ar" ? "الشارع، المبنى، الشقة..." : "Street, Building, Unit..."}
                   className="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-xs focus:outline-none focus:border-[#C4852B] text-zinc-900"
                 />
               </div>

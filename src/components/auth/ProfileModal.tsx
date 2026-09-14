@@ -3,6 +3,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { Invoice, fetchMyOrders, payInvoice, updateUserProfile } from "@/lib/api";
+import IranLocationSelector from "@/components/ui/IranLocationSelector";
+import JalaliDatePicker from "@/components/ui/JalaliDatePicker";
 
 function ProfileModalContent() {
   const { setProfileModalOpen, user, token, logout, language, refreshProfile, setActiveReceiptInvoice } = useAppStore();
@@ -10,12 +12,27 @@ function ProfileModalContent() {
   const [activeTab, setActiveTab] = useState<"profile" | "orders">("profile");
   const [firstName, setFirstName] = useState(user?.firstName || "");
   const [lastName, setLastName] = useState(user?.lastName || "");
+  const [province, setProvince] = useState(user?.province || "");
+  const [city, setCity] = useState(user?.city || "");
+  const [birthDate, setBirthDate] = useState(user?.birthDate || "");
   const [address, setAddress] = useState(user?.address || "");
   const [postalCode, setPostalCode] = useState(user?.postalCode || "");
   const [orders, setOrders] = useState<Invoice[]>([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      if (user.firstName) setFirstName(user.firstName);
+      if (user.lastName) setLastName(user.lastName);
+      if (user.province) setProvince(user.province);
+      if (user.city) setCity(user.city);
+      if (user.birthDate) setBirthDate(user.birthDate);
+      if (user.address) setAddress(user.address);
+      if (user.postalCode) setPostalCode(user.postalCode);
+    }
+  }, [user]);
 
   const loadOrders = useCallback(async () => {
     if (!token) return;
@@ -54,7 +71,15 @@ function ProfileModalContent() {
     setIsSaving(true);
     setMsg(null);
     try {
-      await updateUserProfile({ firstName, lastName, address, postalCode }, token);
+      await updateUserProfile({ 
+        firstName, 
+        lastName, 
+        province, 
+        city, 
+        birthDate, 
+        address, 
+        postalCode 
+      }, token);
       await refreshProfile();
       setMsg(language === "fa" ? "پروفایل با موفقیت بروزرسانی شد" : language === "ar" ? "تم تحديث الملف الشخصي بنجاح" : "Profile updated successfully");
     } catch (err: unknown) {
@@ -162,15 +187,36 @@ function ProfileModalContent() {
                 </div>
               </div>
 
+              {/* Jalali Date of Birth */}
+              <div className="p-3.5 bg-zinc-50 border border-zinc-200/80 rounded-xl">
+                <JalaliDatePicker
+                  value={birthDate}
+                  onChange={(isoDate) => setBirthDate(isoDate)}
+                  label={language === "fa" ? "تاریخ تولد (تقویم خورشیدی)" : language === "ar" ? "تاريخ الميلاد (التقويم الشمسي)" : "Date of Birth (Solar Hijri)"}
+                />
+              </div>
+
+              {/* Client-Side Static Province & City Selector */}
+              <div className="p-3.5 bg-zinc-50 border border-zinc-200/80 rounded-xl">
+                <IranLocationSelector
+                  selectedProvince={province}
+                  selectedCity={city}
+                  onChange={({ province: p, city: c }) => {
+                    setProvince(p);
+                    setCity(c);
+                  }}
+                />
+              </div>
+
               <div>
                 <label className="block text-xs font-medium text-zinc-700 mb-1">
-                  {language === "fa" ? "نشانی دقیق جهت ارسال مرسولات" : language === "ar" ? "عنوان التوصيل الدقيق" : "Shipping Address"}
+                  {language === "fa" ? "نشانی دقیق پستی (خیابان، کوچه، پلاک، واحد)" : language === "ar" ? "عنوان التوصيل التفصيلي" : "Street Address & Details"}
                 </label>
                 <textarea
-                  rows={3}
+                  rows={2}
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder={language === "fa" ? "استان، شهر، خیابان، پلاک..." : language === "ar" ? "المدينة، الشارع، المبنى..." : "City, Street, Building..."}
+                  placeholder={language === "fa" ? "خیابان، کوچه، پلاک، طبقه، واحد..." : language === "ar" ? "الشارع، المبنى، الشقة..." : "Street, Building, Unit..."}
                   className="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-xs focus:outline-none focus:border-[#C4852B] text-zinc-900"
                 />
               </div>

@@ -161,10 +161,12 @@ export default function Header() {
               <LanguageDropdown />
             </div>
 
-            {/* Wishlist */}
-            <button 
+            {/* Wishlist Link */}
+            <Link 
+              href="/wishlist"
               aria-label="Wishlist" 
               className="hidden sm:block p-2 text-zinc-800 hover:text-[#660000] hover:bg-zinc-100 dark:hover:bg-[#F4F1EA] rounded-full transition-colors relative cursor-pointer"
+              title={t.header.wishlist}
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill={wishlist.length > 0 ? "currentColor" : "none"} viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`w-5 h-5 ${wishlist.length > 0 ? "text-[#660000]" : ""}`}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
@@ -172,7 +174,7 @@ export default function Header() {
               {wishlist.length > 0 && (
                 <span className="absolute top-1.5 right-1.5 flex h-2 w-2 rounded-full bg-[#660000]"></span>
               )}
-            </button>
+            </Link>
 
             {/* Cart Trigger Button */}
             <button 
@@ -225,6 +227,10 @@ export default function Header() {
             </div>
           </div>
 
+          <Link href="/wishlist" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1.5 flex items-center justify-between">
+            <span>{t.header.wishlist}</span>
+            <span>❤️</span>
+          </Link>
           <Link href="/articles" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1.5 flex items-center justify-between">
             <span>{t.header.journal}</span>
             <span>📖</span>

@@ -4,198 +4,18 @@ import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAppStore } from "@/store/useAppStore";
-
-interface CollectionItem {
-  id: string;
-  href: string;
-  nameFa: string;
-  nameEn: string;
-  nameAr: string;
-  descFa: string;
-  descEn: string;
-  descAr: string;
-  icon: string;
-  sampleProduct: {
-    nameFa: string;
-    nameEn: string;
-    nameAr: string;
-    image: string;
-    priceFa: string;
-    priceEn: string;
-    priceAr: string;
-    tagFa: string;
-    tagEn: string;
-    tagAr: string;
-    stoneFa: string;
-    stoneEn: string;
-    stoneAr: string;
-  };
-}
-
-const COLLECTIONS: CollectionItem[] = [
-  {
-    id: "rings",
-    href: "/rings",
-    nameFa: "انگشترهای نقره ۹۲۵",
-    nameEn: "925 Silver Rings",
-    nameAr: "خواتم فضة 925",
-    descFa: "حلقه‌ها و انگشترهای دست‌ساز با فیروزه و عقیق",
-    descEn: "Handcrafted bands & rings with turquoise and agate",
-    descAr: "خواتم ودبلات صياغة يدوية مع الفيروز والعقيق",
-    icon: "💍",
-    sampleProduct: {
-      nameFa: "انگشتر نقره ۹۲۵ دست‌ساز با نگین فیروزه نیشابور اصل",
-      nameEn: "Handcrafted 925 Silver Ring with Neyshabur Turquoise",
-      nameAr: "خاتم فضة 925 مع حجر الفيروز النيسابوري الأصلي",
-      image: "https://images.unsplash.com/photo-1599643478524-fb66f70a9578?q=80&w=800&auto=format&fit=crop",
-      priceFa: "۶,۳۷۴,۰۰۰ تومان",
-      priceEn: "6,374,000 Toman",
-      priceAr: "6,374,000 تومان",
-      tagFa: "کالکشن دست‌ساز",
-      tagEn: "Handcrafted Collection",
-      tagAr: "مجموعة يدوية",
-      stoneFa: "فیروزه اصل نیشابور",
-      stoneEn: "Neyshabur Turquoise",
-      stoneAr: "فيروز نيسابوري طبيعي",
-    },
-  },
-  {
-    id: "necklaces",
-    href: "/necklaces",
-    nameFa: "گردنبندهای نقره",
-    nameEn: "Silver Necklaces",
-    nameAr: "قلائد وسلاسل فضة",
-    descFa: "آویزها و سینه‌ریزهای نقره استرلینگ با عقیق یمنی",
-    descEn: "Sterling silver pendants and natural Yemeni agate",
-    descAr: "قلائد بحجر العقيق اليماني والفضة الاسترليني",
-    icon: "📿",
-    sampleProduct: {
-      nameFa: "گردنبند مدال عقیق یمنی و نقره ۹۲۵ دست‌ساز",
-      nameEn: "Authentic Yemeni Agate 925 Silver Pendant",
-      nameAr: "قلادة فضة 925 مع مدالية عقيق يماني طبيعي",
-      image: "https://images.unsplash.com/photo-1599643477877-530eb83abc8e?q=80&w=800&auto=format&fit=crop",
-      priceFa: "۴,۹۵۰,۰۰۰ تومان",
-      priceEn: "4,950,000 Toman",
-      priceAr: "4,950,000 تومان",
-      tagFa: "نقره و سنگ معدنی",
-      tagEn: "Silver & Gemstones",
-      tagAr: "فضة وأحجار طبيعية",
-      stoneFa: "عقیق سرخ یمنی",
-      stoneEn: "Red Yemeni Agate",
-      stoneAr: "عقيق يماني أحمر",
-    },
-  },
-  {
-    id: "bracelets",
-    href: "/bracelets",
-    nameFa: "دستبندهای نقره",
-    nameEn: "Silver Bracelets",
-    nameAr: "أساور فضة صياغة يدوية",
-    descFa: "دستبندهای زنجیری، کارتیه و بافت دست‌ساز نقره",
-    descEn: "Hand-braided, link and chain silver bracelets",
-    descAr: "أساور جنزير وتصاميم حديثة من الفضة 925",
-    icon: "✨",
-    sampleProduct: {
-      nameFa: "دستبند زنجیری نقره ۹۲۵ دست‌ساز با بافت اختصاصی",
-      nameEn: "925 Sterling Silver Handcrafted Link Bracelet",
-      nameAr: "سوار جنزير فضة إسترليني 925 متقن الصنع",
-      image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=800&auto=format&fit=crop",
-      priceFa: "۳,۸۹۰,۰۰۰ تومان",
-      priceEn: "3,890,000 Toman",
-      priceAr: "3,890,000 تومان",
-      tagFa: "بافت اختصاصی نقره",
-      tagEn: "Custom Silver Weave",
-      tagAr: "صياغة حصرية",
-      stoneFa: "نقره ۹۲۵ خالص",
-      stoneEn: "Solid 925 Silver",
-      stoneAr: "فضة خالصة 925",
-    },
-  },
-  {
-    id: "earrings",
-    href: "/earrings",
-    nameFa: "گوشواره‌های نقره",
-    nameEn: "Silver Earrings",
-    nameAr: "أقراط فضة ولؤلؤ",
-    descFa: "گوشواره‌های آویز و میخی با مروارید طبیعی و نگین",
-    descEn: "Drop & stud earrings with natural pearls and gems",
-    descAr: "أقراط متدلية مع لؤلؤ طبيعي وأحجار كريمة",
-    icon: "💎",
-    sampleProduct: {
-      nameFa: "گوشواره آویز نقره ۹۲۵ و مروارید طبیعی پرورشی",
-      nameEn: "Freshwater Pearl & 925 Silver Drop Earrings",
-      nameAr: "أقراط متدلية لؤلؤ طبيعي وفضة 925",
-      image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=800&auto=format&fit=crop",
-      priceFa: "۲,۴۵۰,۰۰۰ تومان",
-      priceEn: "2,450,000 Toman",
-      priceAr: "2,450,000 تومان",
-      tagFa: "مروارید اصل",
-      tagEn: "Natural Pearl",
-      tagAr: "لؤلؤ طبيعي",
-      stoneFa: "مروارید پرورشی آب شیرین",
-      stoneEn: "Freshwater Cultured Pearl",
-      stoneAr: "لؤلؤ مستزرع طبيعي",
-    },
-  },
-  {
-    id: "turquoise-atelier",
-    href: "/collections",
-    nameFa: "کالکشن فیروزه نیشابور",
-    nameEn: "Neyshabur Turquoise Atelier",
-    nameAr: "مجموعة الفيروز النيسابوري",
-    descFa: "شاهکار نقره با فیروزه شجری و عجمی اصل نیشابور",
-    descEn: "Master silver pieces with certified Neyshabur turquoise",
-    descAr: "قطع حصرية مرصعة بأجود أنواع الفيروز الأصيل",
-    icon: "💠",
-    sampleProduct: {
-      nameFa: "ست سلطنتی نقره ۹۲۵ و فیروزه اصیل شجری نیشابور",
-      nameEn: "Royal 925 Silver & Neyshabur Turquoise Set",
-      nameAr: "طقم ملكي فضة 925 مع فيروز نيسابوري أصيل",
-      image: "/images/hero-silver-bg.jpg",
-      priceFa: "۸,۵۰۰,۰۰۰ تومان",
-      priceEn: "8,500,000 Toman",
-      priceAr: "8,500,000 تومان",
-      tagFa: "شناسنامه اصالت رسمی",
-      tagEn: "Certified Gemstone",
-      tagAr: "شهادة أصالة معتمدة",
-      stoneFa: "فیروزه شجری نیشابور",
-      stoneEn: "Genuine Neyshabur Gem",
-      stoneAr: "فيروز شجري نيسابوري",
-    },
-  },
-  {
-    id: "agate-heritage",
-    href: "/collections",
-    nameFa: "کالکشن عقیق یمنی",
-    nameEn: "Yemeni Agate Heritage",
-    nameAr: "مجموعة العقيق اليماني",
-    descFa: "زیورآلات نقره مرصع به عقیق سرخ و سلیمانی طبیعی",
-    descEn: "Fine silver creations set with natural red agate",
-    descAr: "مجوهرات فضة مرصعة بالعقيق اليماني والسليماني",
-    icon: "🪨",
-    sampleProduct: {
-      nameFa: "انگشتر نقره ۹۲۵ مینیمال دست‌ساز",
-      nameEn: "Handcrafted Minimalist 925 Silver Band",
-      nameAr: "خاتم فضة إسترليني 925 مينيمال عصري",
-      image: "https://images.unsplash.com/photo-1605100804763-247f66126e28?q=80&w=800&auto=format&fit=crop",
-      priceFa: "۱,۸۵۰,۰۰۰ تومان",
-      priceEn: "1,850,000 Toman",
-      priceAr: "1,850,000 تومان",
-      tagFa: "عقیق طبیعی معدنی",
-      tagEn: "Natural Agate",
-      tagAr: "عقيق طبيعي",
-      stoneFa: "عقیق معدنی اصل",
-      stoneEn: "Natural Mineral Agate",
-      stoneAr: "عقيق معدني أصيل",
-    },
-  },
-];
+import { getProductName, getProductMaterial, translateDynamicText } from "@/lib/dynamicTranslator";
 
 export default function CollectionsMegaMenu() {
-  const { language, t } = useAppStore();
+  const { categories, products, fetchCategories, fetchProducts, language, t } = useAppStore();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    fetchCategories();
+    fetchProducts();
+  }, [fetchCategories, fetchProducts]);
 
   const handleMouseEnter = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -208,43 +28,65 @@ export default function CollectionsMegaMenu() {
     }, 180);
   };
 
-  const activeCollection = COLLECTIONS[selectedIndex] || COLLECTIONS[0];
-  const sample = activeCollection.sampleProduct;
-
-  const getCollectionName = (item: CollectionItem) => {
-    if (language === "ar") return item.nameAr;
-    if (language === "en") return item.nameEn;
-    return item.nameFa;
+  // Helper to map category name to icon
+  const getCategoryIcon = (name: string, id: number) => {
+    const lower = (name || "").toLowerCase();
+    if (lower.includes("انگشتر") || lower.includes("حلقه") || lower.includes("ring") || id === 2) return "💍";
+    if (lower.includes("گردنبند") || lower.includes("آویز") || lower.includes("necklace") || id === 3) return "📿";
+    if (lower.includes("دستبند") || lower.includes("bracelet") || id === 1) return "✨";
+    if (lower.includes("گوشواره") || lower.includes("earring") || id === 4) return "💎";
+    return "💠";
   };
 
-  const getCollectionDesc = (item: CollectionItem) => {
-    if (language === "ar") return item.descAr;
-    if (language === "en") return item.descEn;
-    return item.descFa;
+  // Helper to get category link
+  const getCategoryHref = (name: string, id: number) => {
+    const lower = (name || "").toLowerCase();
+    if (lower.includes("انگشتر") || id === 2) return "/rings";
+    if (lower.includes("گردنبند") || id === 3) return "/necklaces";
+    if (lower.includes("دستبند") || id === 1) return "/bracelets";
+    if (lower.includes("گوشواره") || id === 4) return "/earrings";
+    return `/shop?category=${id}`;
   };
 
-  const getSampleName = () => {
-    if (language === "ar") return sample.nameAr;
-    if (language === "en") return sample.nameEn;
-    return sample.nameFa;
+  // Dynamic Categories from Backend API
+  const apiCategories = categories && categories.length > 0
+    ? categories
+    : [
+        { id: 1, name: "دستبند", description: "دستبندهای نقره دست‌ساز و فاخر" },
+        { id: 2, name: "انگشتر", description: "انگشترهای نگین‌دار و نقره اصیل" },
+        { id: 3, name: "گردنبند", description: "گردنبند و آویزهای نقره نفیس" },
+        { id: 4, name: "گوشواره", description: "گوشواره‌های دست‌ساز هنری" }
+      ];
+
+  const safeIndex = Math.min(selectedIndex, apiCategories.length - 1);
+  const activeCategory = apiCategories[safeIndex] || apiCategories[0];
+
+  // Dynamically find a real product from the active API category
+  const sampleProduct = products.find((p) => {
+    const catName = (activeCategory.name || "").toLowerCase();
+    return (
+      (p.categoryFa && p.categoryFa.toLowerCase().includes(catName)) ||
+      (p.nameFa && p.nameFa.toLowerCase().includes(catName)) ||
+      (catName.includes("انگشتر") && p.category === "rings") ||
+      (catName.includes("گردنبند") && p.category === "necklaces") ||
+      (catName.includes("دستبند") && p.category === "bracelets") ||
+      (catName.includes("گوشواره") && p.category === "earrings")
+    );
+  }) || products[0];
+
+  const getLocalizedCategoryName = (name: string) => {
+    if (language === "fa") return name;
+    return translateDynamicText(name, language);
   };
 
-  const getSamplePrice = () => {
-    if (language === "ar") return sample.priceAr;
-    if (language === "en") return sample.priceEn;
-    return sample.priceFa;
-  };
-
-  const getSampleTag = () => {
-    if (language === "ar") return sample.tagAr;
-    if (language === "en") return sample.tagEn;
-    return sample.tagFa;
-  };
-
-  const getSampleStone = () => {
-    if (language === "ar") return sample.stoneAr;
-    if (language === "en") return sample.stoneEn;
-    return sample.stoneFa;
+  const getLocalizedCategoryDesc = (desc?: string, name?: string) => {
+    if (language === "fa") {
+      return desc || `مجموعه زیورآلات نقره ۹۲۵ دست‌ساز در دسته‌بندی ${name || ""}`;
+    }
+    if (language === "ar") {
+      return `مجموعة حصرية من الفضة الاسترليني 925 المصوغة يدوياً`;
+    }
+    return `Exclusive handcrafted 925 sterling silver ${name || "creations"}`;
   };
 
   return (
@@ -294,7 +136,7 @@ export default function CollectionsMegaMenu() {
       >
         <div className="w-[740px] lg:w-[820px] max-w-[94vw] bg-white/98 dark:bg-[#FAF9F5]/98 backdrop-blur-xl rounded-3xl p-6 border border-[#C4852B]/35 shadow-[0_20px_60px_rgba(0,0,0,0.14)] grid grid-cols-12 gap-6 overflow-hidden">
           
-          {/* Column 1: Collections Navigation List (7 of 12 cols) */}
+          {/* Column 1: Dynamic Categories List from Backend API (7 of 12 cols) */}
           <div className="col-span-7 flex flex-col justify-between border-e border-[#C4852B]/20 pe-6">
             <div>
               <div className="flex items-center justify-between pb-3 mb-2 border-b border-zinc-100">
@@ -302,29 +144,34 @@ export default function CollectionsMegaMenu() {
                   <span>✨</span>
                   <span>
                     {language === "fa"
-                      ? "کالکشن‌های اختصاصی نقره ۹۲۵"
+                      ? "دسته‌بندی‌های رسمی فروشگاه"
                       : language === "ar"
-                      ? "المجموعات الحصرية للفضة 925"
-                      : "Exclusive 925 Silver Collections"}
+                      ? "تصنيفات المتجر الرسمية"
+                      : "Official API Categories"}
                   </span>
                 </span>
                 <Link
-                  href="/collections"
+                  href="/shop"
                   onClick={() => setIsOpen(false)}
                   className="text-[11px] font-bold text-[#660000] hover:text-[#C4852B] transition-colors"
                 >
-                  {language === "fa" ? "همه کالکشن‌ها ←" : language === "ar" ? "جميع المجموعات ←" : "All Collections →"}
+                  {language === "fa" ? "مشاهده همه ←" : language === "ar" ? "عرض الكل ←" : "All Products →"}
                 </Link>
               </div>
 
-              {/* Collections Interactive List */}
-              <div className="space-y-1">
-                {COLLECTIONS.map((col, idx) => {
+              {/* Dynamic Categories Interactive List */}
+              <div className="space-y-1.5">
+                {apiCategories.map((cat, idx) => {
                   const isHovered = selectedIndex === idx;
+                  const catName = getLocalizedCategoryName(cat.name);
+                  const catDesc = getLocalizedCategoryDesc(cat.description, cat.name);
+                  const catHref = getCategoryHref(cat.name, cat.id);
+                  const icon = getCategoryIcon(cat.name, cat.id);
+
                   return (
                     <Link
-                      key={col.id}
-                      href={col.href}
+                      key={cat.id}
+                      href={catHref}
                       onMouseEnter={() => setSelectedIndex(idx)}
                       onClick={() => setIsOpen(false)}
                       className={`w-full flex items-center justify-between p-2.5 rounded-2xl transition-all duration-200 text-start group cursor-pointer ${
@@ -334,8 +181,8 @@ export default function CollectionsMegaMenu() {
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <span className="text-xl shrink-0 p-1 rounded-xl bg-white/80 shadow-2xs">
-                          {col.icon}
+                        <span className="text-xl shrink-0 p-1.5 rounded-xl bg-white/80 shadow-2xs">
+                          {icon}
                         </span>
                         <div className="flex flex-col">
                           <span
@@ -343,10 +190,10 @@ export default function CollectionsMegaMenu() {
                               isHovered ? "text-[#660000] dark:text-[#A06314]" : "text-zinc-900 group-hover:text-[#C4852B]"
                             }`}
                           >
-                            {getCollectionName(col)}
+                            {catName}
                           </span>
                           <span className="text-[11px] text-zinc-500 font-medium leading-normal line-clamp-1">
-                            {getCollectionDesc(col)}
+                            {catDesc}
                           </span>
                         </div>
                       </div>
@@ -379,62 +226,68 @@ export default function CollectionsMegaMenu() {
             </div>
           </div>
 
-          {/* Column 2: Interactive Sample Product Preview Card (5 of 12 cols) */}
+          {/* Column 2: Dynamic Sample Product from Active API Category (5 of 12 cols) */}
           <div className="col-span-5 flex flex-col justify-between bg-white dark:bg-[#FAF9F5] p-4 rounded-2xl border border-[#C4852B]/25 shadow-sm">
-            <div>
-              {/* Product Badge / Category Tag */}
-              <div className="flex items-center justify-between gap-2 mb-2.5">
-                <span className="px-2.5 py-0.5 rounded-full bg-[#660000]/10 text-[#660000] text-[10px] font-bold tracking-wider">
-                  {getSampleTag()}
-                </span>
-                <span className="px-2 py-0.5 rounded-full bg-[#C4852B]/15 text-[#A06314] text-[10px] font-bold">
-                  {getSampleStone()}
-                </span>
-              </div>
-
-              {/* Sample Product Image */}
-              <div className="relative w-full h-44 rounded-xl overflow-hidden bg-zinc-100 border border-zinc-200/80 mb-3 group">
-                <Image
-                  src={sample.image}
-                  alt={getSampleName()}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 300px"
-                  className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 pointer-events-none" />
-                <div className="absolute bottom-2 start-2 end-2 flex justify-between items-end text-white">
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-black/50 backdrop-blur-xs font-mono">
-                    SILVER 925
+            {sampleProduct ? (
+              <div>
+                {/* Product Badge / Category Tag */}
+                <div className="flex items-center justify-between gap-2 mb-2.5">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#660000]/10 text-[#660000] text-[10px] font-bold tracking-wider">
+                    {getLocalizedCategoryName(activeCategory.name)}
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full bg-[#C4852B]/15 text-[#A06314] text-[10px] font-bold">
+                    {getProductMaterial(sampleProduct, language)}
                   </span>
                 </div>
+
+                {/* Sample Product Image */}
+                <div className="relative w-full h-44 rounded-xl overflow-hidden bg-zinc-100 border border-zinc-200/80 mb-3 group">
+                  <Image
+                    src={sampleProduct.image}
+                    alt={getProductName(sampleProduct, language)}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 300px"
+                    className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 pointer-events-none" />
+                  <div className="absolute bottom-2 start-2 end-2 flex justify-between items-end text-white">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-black/50 backdrop-blur-xs font-mono">
+                      SILVER 925
+                    </span>
+                  </div>
+                </div>
+
+                {/* Sample Product Title */}
+                <h4 className="font-bold text-xs sm:text-sm text-zinc-950 line-clamp-2 leading-snug mb-2">
+                  {getProductName(sampleProduct, language)}
+                </h4>
+
+                {/* Live Price */}
+                <div className="flex items-baseline gap-1.5 text-[#660000] font-bold font-mono text-sm">
+                  <span className="text-zinc-500 font-sans text-[11px] font-medium">
+                    {language === "fa" ? "قیمت:" : language === "ar" ? "السعر:" : "Price:"}
+                  </span>
+                  <span>{sampleProduct.price.toLocaleString()} تومان</span>
+                </div>
               </div>
-
-              {/* Sample Product Title */}
-              <h4 className="font-bold text-xs sm:text-sm text-zinc-950 line-clamp-2 leading-snug mb-2">
-                {getSampleName()}
-              </h4>
-
-              {/* Live Price */}
-              <div className="flex items-baseline gap-1.5 text-[#660000] font-bold font-mono text-sm">
-                <span className="text-zinc-500 font-sans text-[11px] font-medium">
-                  {language === "fa" ? "قیمت:" : language === "ar" ? "السعر:" : "Price:"}
-                </span>
-                <span>{getSamplePrice()}</span>
+            ) : (
+              <div className="flex-1 flex items-center justify-center text-xs text-zinc-400">
+                در حال دریافت نمونه محصول...
               </div>
-            </div>
+            )}
 
-            {/* Direct CTA Link to the Collection */}
+            {/* Direct CTA Link to the Selected Category */}
             <Link
-              href={activeCollection.href}
+              href={getCategoryHref(activeCategory.name, activeCategory.id)}
               onClick={() => setIsOpen(false)}
               className="mt-3 w-full py-2.5 px-4 rounded-xl bg-[#660000] hover:bg-[#7D0000] text-white font-bold text-xs text-center transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <span>
                 {language === "fa"
-                  ? `مشاهده ${getCollectionName(activeCollection)}`
+                  ? `مشاهده زیورآلات ${getLocalizedCategoryName(activeCategory.name)}`
                   : language === "ar"
-                  ? `استعراض ${getCollectionName(activeCollection)}`
-                  : `Explore ${getCollectionName(activeCollection)}`}
+                  ? `استعراض ${getLocalizedCategoryName(activeCategory.name)}`
+                  : `Explore ${getLocalizedCategoryName(activeCategory.name)}`}
               </span>
               <span>{language === "en" ? "→" : "←"}</span>
             </Link>

@@ -89,6 +89,18 @@ export const translations = {
       taxNotice: "Taxes and shipping calculated at checkout.",
       checkout: "Checkout Now"
     },
+    wishlistPage: {
+      title: "Your Saved Wishlist",
+      subtitle: "Handcrafted 925 sterling silver & natural gemstone pieces you have favorited.",
+      emptyTitle: "Your Wishlist is Empty",
+      emptyDesc: "You haven't added any silver jewelry pieces to your wishlist yet. Explore our handcrafted collection to favorite items.",
+      explore: "Explore Silver Jewelry",
+      savedItems: "saved pieces",
+      addAllToCart: "Add All to Cart",
+      remove: "Remove",
+      addedToCart: "Added to Cart!",
+      clearAll: "Clear Wishlist"
+    },
     story: {
       tag: "The Nafise Ebadi Story",
       title: "Where Pure Art Meets Fine Sterling Silver",
@@ -209,6 +221,18 @@ export const translations = {
       taxNotice: "مالیات و هزینه ارسال در مرحله نهایی محاسبه می‌شود.",
       checkout: "نهایی کردن و پرداخت"
     },
+    wishlistPage: {
+      title: "لیست علاقه‌مندی‌های شما",
+      subtitle: "مجموعه زیورآلات نقره ۹۲۵ و سنگ‌های اصیلی که برای خرید بعدی نشان کرده‌اید.",
+      emptyTitle: "لیست علاقه‌مندی‌های شما خالی است",
+      emptyDesc: "هنوز محصولی را به علاقه‌مندی‌های خود اضافه نکرده‌اید. با کلیک بر روی آیکون قلب در محصولات، آثار مورد علاقه خود را ذخیره نمایید.",
+      explore: "مشاهده زیورآلات نقره",
+      savedItems: "محصول نشان‌شده",
+      addAllToCart: "افزودن همه به سبد خرید",
+      remove: "حذف از لیست",
+      addedToCart: "به سبد خرید اضافه شد!",
+      clearAll: "پاک کردن همه"
+    },
     story: {
       tag: "فلسفه برند زیورآلات نفیسه عبادی",
       title: "پیوند هنر تمام‌عیار با نقره ناب ۹۲۵",
@@ -328,6 +352,18 @@ export const translations = {
       subtotal: "المجموع الفرعي",
       taxNotice: "يتم احتساب الضرائب ورسوم الشحن عند إتمام الطلب.",
       checkout: "إتمام الطلب والدفع"
+    },
+    wishlistPage: {
+      title: "قائمة رغباتك المحفوظة",
+      subtitle: "قطع الفضة الاسترليني 925 والأحجار الطبيعية التي اخترت حفظها.",
+      emptyTitle: "قائمة رغباتك فارغة حالياً",
+      emptyDesc: "لم تقم بإضافة أي مجوهرات إلى قائمتك بعد. استكشف مجموعاتنا الحصرية واحفظ ما يعجبك.",
+      explore: "تصفح مجوهرات الفضة",
+      savedItems: "قطع محفوظة",
+      addAllToCart: "إضافة الكل إلى السلة",
+      remove: "إزالة",
+      addedToCart: "تمت الإضافة إلى السلة!",
+      clearAll: "إفراغ القائمة"
     },
     story: {
       tag: "قصة نفيسة عبادي",
