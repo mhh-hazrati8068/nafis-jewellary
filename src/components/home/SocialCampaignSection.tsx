@@ -11,14 +11,14 @@ export default function SocialCampaignSection() {
   const campaignCards = [
     {
       id: "hands-rings",
-      titleFa: "تصویرسازی اختصاصی دست و انگشتر",
-      titleEn: "Minimalist Hand & Ring Staging",
+      titleFa: "انگشترهای فاخر نقره با گوهرنشانی اصیل",
+      titleEn: "Artisanal Handcrafted Silver Rings",
       categoryFa: "انگشتر نقره ۹۲۵ و سنگ عقیق",
-      categoryEn: "925 Silver & Agate Ring",
+      categoryEn: "925 Silver & Natural Agate Ring",
       bgClass: "bg-white text-zinc-950",
       borderClass: "border-[#C4852B]/30",
       logoVariant: "gold" as const,
-      badgeText: "CAMPAIGN 01",
+      badgeText: "SIGNATURE 01",
       svgContent: (
         <svg viewBox="0 0 300 320" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
           {/* Minimalist vector hand */}
@@ -40,14 +40,14 @@ export default function SocialCampaignSection() {
     },
     {
       id: "hands-pendant",
-      titleFa: "آویز مدال عقیق و نقره دست‌ساز",
-      titleEn: "Agate Gemstone & Silver Pendant",
-      categoryFa: "گردنبند عقیق طبیعی سرخ و نقره",
+      titleFa: "آویز و مدال‌های قلم‌زنی نقره دست‌ساز",
+      titleEn: "Hand-Engraved Silver Pendants & Medallions",
+      categoryFa: "گردنبند و مدال عقیق طبیعی سرخ",
       categoryEn: "Natural Red Agate Silver Pendant",
       bgClass: "bg-[#660000] text-white",
       borderClass: "border-[#C4852B]/50",
       logoVariant: "white" as const,
-      badgeText: "CAMPAIGN 02",
+      badgeText: "SIGNATURE 02",
       svgContent: (
         <svg viewBox="0 0 300 320" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
           {/* Hands holding the pendant */}
@@ -85,14 +85,14 @@ export default function SocialCampaignSection() {
     },
     {
       id: "hands-clasp",
-      titleFa: "پیوند دست‌ها و دستبند نقره",
-      titleEn: "Unity & 925 Silver Link Bracelet",
+      titleFa: "دستبندها و النگوهای نقره با صیقل آینه‌ای",
+      titleEn: "Mirror-Finish Silver Bracelets & Bangles",
       categoryFa: "دستبند زنجیری نقره استرلینگ ۹۲۵",
       categoryEn: "925 Sterling Silver Link Bracelet",
       bgClass: "bg-[#C4852B] text-white",
       borderClass: "border-white/40",
       logoVariant: "white" as const,
-      badgeText: "CAMPAIGN 03",
+      badgeText: "SIGNATURE 03",
       svgContent: (
         <svg viewBox="0 0 300 320" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
           {/* Clasping hands vector */}
@@ -129,19 +129,19 @@ export default function SocialCampaignSection() {
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-16 md:mb-20">
           <span className="text-[10px] text-[#C4852B] uppercase tracking-[0.35em] font-semibold mb-3 block font-mono">
-            {language === 'fa' ? 'راهنمای هویت بصری ۲۰۲۶ — صفحات ۲۶ الی ۲۹' : '2026 VISUAL IDENTITY — PAGES 26-29'}
+            {language === 'fa' ? 'هنر زرگری و ساخت اختصاصی زیورآلات' : 'HANDCRAFTED 925 SILVER ATELIER'}
           </span>
           
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold uppercase tracking-tight mb-6">
-            {language === 'fa' ? 'کمپین تصویرسازی و محتوای دیجیتال' : 'Artistic Digital Campaign'}
+            {language === 'fa' ? 'ظرافت هنر دست‌ساز و اصالت نقره ۹۲۵' : 'Mastercrafted Silver & Natural Gemstones'}
           </h2>
 
           <div className="w-24 h-0.5 bg-gradient-to-r from-[#C4852B] to-[#660000] mx-auto mb-6"></div>
 
           <p className="text-xs sm:text-sm text-[#626667] leading-relaxed max-w-2xl mx-auto">
             {language === 'fa'
-              ? 'بر اساس راهنمای رسمی برند، محصولات نفیسه عبادی روی تصویرسازی‌های اختصاصی دست با ترکیب رنگی اکر طلایی (۵۰٪) و سرخ زرشکی (۲۰٪) به نمایش گذاشته می‌شوند تا هویتی هنری، مدرن و متمایز بیافرینند.'
-              : 'As defined in the official identity manual, fine jewelry pieces are staged on custom vector hand illustrations to create a bespoke, timeless, and high-fashion editorial presence.'}
+              ? 'هر اثر از زیورآلات نقره نفیسه عبادی با تلفیق هنر قلم‌زنی استادکاران، گوهرنشانی فیروزه نیشابور و عقیق طبیعی و صیقل بی‌نقص زرگری آفریده شده است تا شکوهی جاودان به استایل شما ببخشد.'
+              : 'Every piece from Nafise Ebadi Jewellery combines traditional master silversmithing, authentic Neyshabur turquoise and Yemeni agate setting, creating timeless elegance and refined personal style.'}
           </p>
         </div>
 
@@ -193,7 +193,7 @@ export default function SocialCampaignSection() {
             href="/collections"
             className="inline-flex items-center gap-3 px-8 py-3.5 bg-[#660000] text-white font-bold text-xs uppercase tracking-[0.2em] rounded-full shadow-[0_8px_25px_rgba(102,0,0,0.35)] hover:bg-[#7D0000] hover:scale-105 transition-all duration-300"
           >
-            <span>{language === 'fa' ? 'مشاهده کالکشن‌های دست‌ساز ۲۰۲۶' : 'Explore 2026 Handcrafted Sets'}</span>
+            <span>{language === 'fa' ? 'مشاهده همه کالکشن‌های دست‌ساز نقره' : 'Explore Handcrafted Collections'}</span>
             <span>→</span>
           </Link>
         </div>

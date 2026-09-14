@@ -34,16 +34,16 @@ export default function PackagingShowcase() {
       id: "box",
       tagFa: "بسته‌بندی رسمی هدایا",
       tagEn: "OFFICIAL GIFT PACKAGING",
-      tagAr: "علب الهدايا الرسمية",
-      titleFa: "جعبه چرمی فاخر با نشان نقره‌کوب",
-      titleEn: "Luxury Leatherette Box with Silver Accent",
-      titleAr: "صندوق جلدي فاخر بختم الفضة البارز",
-      descFa: "طراحی شده بر اساس صفحه ۲۱ راهنمای هویت سازمانی؛ دارای روکش زرشکی مات (#660000)، پوشش مخمل مشکی ضدخش، و مونوگرام زرین ne نقره‌کوب برجسته.",
-      descEn: "Engineered according to page 21 of the corporate guidelines; featuring a matte burgundy finish (#660000), anti-tarnish black velvet interior, and embossed ne monogram.",
-      descAr: "مصمم وفقاً لمعايير الهوية المؤسسية؛ بلمسة مخملية بورغندي (#660000) ومونوغرام بارز لشعار ne.",
-      specsFa: ["پوشش مخمل لطیف مشکی", "نشان کوب حرارتی ne", "قفل مغناطیسی نرم و ابریشمی", "گارانتی نقره ۹۲۵ دست‌ساز"],
-      specsEn: ["Anti-tarnish interior velvet", "Thermal-embossed ne crest", "Soft magnetic enclosure", "925 Silver Purity guarantee insert"],
-      specsAr: ["مخمل داخلي أسود فاخر", "ختم حراري لشعار ne", "إغلاق مغناطيسي ناعم", "شهادة ضمان الفضة 925"],
+      tagAr: "علب الهدايا الفاخرة",
+      titleFa: "جعبه چرمی و مخمل فاخر با نشان نقره‌کوب",
+      titleEn: "Luxury Leatherette & Velvet Presentation Box",
+      titleAr: "صندوق جلدي ومخملي فاخر بختم الفضة",
+      descFa: "پوشش مخمل مشکی ضدکدرشدگی برای حفظ درخشش نقره ۹۲۵، بدنه چرمی مات زرشکی با قفل مغناطیسی نرم و محافظ، طراحی شده برای مراقبت از سنگ‌های قیمتی و ماندگاری هدیه.",
+      descEn: "Engineered with anti-tarnish black velvet interior to preserve the mirror luster of 925 sterling silver, featuring a matte burgundy exterior and protective magnetic enclosure.",
+      descAr: "مبطن بمخمل أسود خاص لحماية لمعان الفضة الإسترلينية 925 مع هيكل بورغندي فاخر وإغلاق مغناطيسي آمن.",
+      specsFa: ["پوشش مخمل لطیف ضدکدرشدگی نقره", "نشان نقره‌کوب برجسته نفیس", "قفل مغناطیسی نرم و ابریشمی", "مناسب هدیه و یادبود ماندگار"],
+      specsEn: ["Anti-tarnish interior velvet", "Embossed luxury silver crest", "Soft magnetic safety enclosure", "Signature gift keepsake box"],
+      specsAr: ["مخمل داخلي مضاد للأكسدة", "ختم فضي بارز وفاخر", "إغلاق مغناطيسي ناعم", "علبة هدايا تذكارية أنيقة"],
       image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=1000&auto=format&fit=crop"
     },
     {
@@ -54,12 +54,12 @@ export default function PackagingShowcase() {
       titleFa: "ساک خرید لوکس با بند ابریشم بافته",
       titleEn: "Boutique Shopping Bag with Braided Silk Rope",
       titleAr: "حقيبة بوتيك راقية بحبال حريرية منسوجة",
-      descFa: "ساخته شده از مقوای کتان ۳۰۰ گرمی به رنگ زغالی تیره و زرشکی، کناره‌های تزئین‌شده با هاشور ۴۵ درجه و بندهای ابریشمی دست‌بافت.",
-      descEn: "Crafted from 300gsm textured linen cardstock in deep charcoal and burgundy, flanked by 45° diagonal crosshatch sides and hand-braided silk handles.",
-      descAr: "مصنوعة من كرتون كتان 300 غرام بلون الفحم والبورغندي مع حبال حريرية منسوجة يدوياً.",
-      specsFa: ["مقوای کتان ۳۰۰ گرم فابریانو", "بندهای ابریشم دست‌بافته", "هاشور اختصاصی ۴۵ درجه در عطف", "کف تقویت‌شده ضد ضربه"],
-      specsEn: ["300gsm Fabriano linen board", "Braided silk rope handles", "Signature 45° crosshatch side gussets", "Reinforced protective base"],
-      specsAr: ["ورق فابريانو كتاني 300 غرام", "حبال حريرية منسوجة", "نقوش هندسية بزاوية 45°", "قاعدة مقواة لحماية القطع"],
+      descFa: "ساخته شده از مقوای کتان ضخیم ۳۰۰ گرمی با بندهای ابریشمی دست‌بافته و کف تقویت‌شده ضدضربه، تضمین‌کننده حمل امن و ارائه‌ای باشکوه برای زیورآلات فاخر.",
+      descEn: "Crafted from heavy 300gsm textured linen cardstock with hand-braided silk handles and reinforced shock-resistant base for secure delivery.",
+      descAr: "مصنوعة من كرتون كتان 300 غرام متين مع حبال حريرية منسوجة يدوياً وقاعدة مقواة لحماية القطع.",
+      specsFa: ["مقوای کتان ۳۰۰ گرم فابریانو", "بندهای ابریشم دست‌بافته مقاوم", "کف تقویت‌شده ضد ضربه", "طراحی ارگونومیک و چشم‌نواز"],
+      specsEn: ["300gsm Fabriano linen board", "Braided silk rope handles", "Reinforced protective base", "Ergonomic luxury presentation"],
+      specsAr: ["ورق فابريانو كتاني 300 غرام", "حبال حريرية منسوجة متينة", "قاعدة مقواة ضد الصدمات", "تصميم فخم ومريح للحمل"],
       image: "https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=1000&auto=format&fit=crop"
     },
     {
@@ -70,28 +70,28 @@ export default function PackagingShowcase() {
       titleFa: "شناسنامه عیار نقره ۹۲۵ و گوهرشناسی",
       titleEn: "925 Sterling Silver & Gemstone Registry Certificate",
       titleAr: "شهادة نقاوة الفضة 925 وتوثيق الأحجار",
-      descFa: "سند رسمی ضمانت عیار نقره ۹۲۵، شماره سریال حکاکی شده، مهر هولوگرام و مشخصات گوهرشناسی سنگ فیروزه نیشابور و عقیق طبیعی.",
-      descEn: "Official 925 sterling silver purity certificate, serialized validation, hologram seal, and natural gemstone origin registry.",
-      descAr: "وثيقة رسمية لضمان عيار الفضة 925 ورقم تسلسلي محفور مع ختم التوثيق لحجر الفيروز والعقيق الطبيعي.",
-      specsFa: ["مهر برجسته هولوگرام اصالت", "ثبت آنلاین شماره سریال محصول", "تاییدیه خلوص نقره استرلینگ ۹۲۵", "شناسنامه فیروزه و عقیق طبیعی"],
-      specsEn: ["Embossed hologram seal", "Online serial code lookup", "925 Sterling silver verification", "Natural gemstone grading report"],
-      specsAr: ["ختم هولوغرام بارز", "التحقق من الرقم التسلسلي أونلاين", "تأكيد نقاوة الفضة 925", "شهادة الأحجار الطبيعية"],
+      descFa: "سند رسمی ضمانت خلوص نقره ۹۲۵، ثبت شماره سریال اختصاصی محصول، هولوگرام زرین و تاییدیه اصالت سنگ فیروزه اصیل نیشابور و عقیق طبیعی.",
+      descEn: "Official certificate verifying 925 sterling silver purity, serialized product code, golden hologram seal, and natural Neyshabur turquoise / agate origin report.",
+      descAr: "وثيقة رسمية لضمان عيار الفضة 925 ورقم تسلسلي محفور مع ختم التوثيق لحجر الفيروز النيشابوري والعقيق الطبيعي.",
+      specsFa: ["تاییدیه رسمی خلوص نقره استرلینگ ۹۲۵", "شناسنامه فیروزه نیشابور و عقیق معدنی", "ثبت آنلاین شماره سریال محصول", "مهر و هولوگرام زرین اصالت"],
+      specsEn: ["925 Sterling silver purity verification", "Natural turquoise & agate grading report", "Online serial code registry", "Gold hologram security seal"],
+      specsAr: ["تأكيد نقاوة الفضة 925", "شهادة فحص الفيروز والعقيق الطبيعي", "تسجيل الرقم التسلسلي أونلاين", "ختم أمان هولوغرام ذهبي"],
       image: "https://images.unsplash.com/photo-1607344645866-009c320c5ab8?q=80&w=1000&auto=format&fit=crop"
     },
     {
       id: "card",
-      tagFa: "ست اداری و کارت ویزیت",
-      tagEn: "CORPORATE STATIONERY",
-      tagAr: "البطاقات والمطبوعات الرسمية",
-      titleFa: "کارت ویزیت کتان با لبه‌های متالیک",
-      titleEn: "Cotton Business Card with Metallic Edges",
-      titleAr: "بطاقة عمل قطنية بحواف فاخرة",
-      descFa: "کارت ویزیت ۳۵۰ گرمی دورو زرشکی و شیری با لبه‌های متالیک صیقلی، تایپوگرافی هماهنگ فارسی کلمه و انگلیسی کلش دیسپلی.",
-      descEn: "350gsm duplex cotton board in burgundy and ivory featuring precision metallic foil edges and dual Kalameh / Clash Display typography.",
-      descAr: "بطاقة قطنية فاخرة 350 غرام بحواف معدنية صقيلة مع خط كَلَمه العربي وخط Clash Display الإنجليزي.",
-      specsFa: ["مقوای کتان ۳۵۰ گرمی دو لایه", "لبه‌های متالیک براق", "تایپوگرافی رسمی Kalameh", "هاشور ظریف سازمانی"],
-      specsEn: ["350gsm duplex cotton stock", "Polished metallic edges", "Official Clash Display font", "Subtle corporate hatch"],
-      specsAr: ["ورق قطني 350 غرام طبقتين", "حواف معدنية مصقولة", "تنسيق خط كَلَمه الرسمي", "هاشور هندسي راقٍ"],
+      tagFa: "کیت جلا و نگهداری نقره",
+      tagEn: "SILVER CARE & POLISHING KIT",
+      tagAr: "مجموعة العناية والتلميع",
+      titleFa: "دستمال نانو جلا و دفترچه نگهداری نقره",
+      titleEn: "Silver Polishing Cloth & Lifetime Care Guide",
+      titleAr: "منديل نانو لتلميع الفضة ودليل العناية",
+      descFa: "همراه با دستمال میکروفیبر مخصوص جلادهی نقره بدون ایجاد خط و خش و بروشور راهنمای نگهداری زیورآلات نقره و نگین‌های طبیعی جهت حفظ درخشش همیشگی.",
+      descEn: "Includes a gentle microfiber silver polishing cloth and comprehensive care guide for preserving the brilliant shine of silver and precious gemstones.",
+      descAr: "يتضمن منديلاً ناعماً خاصاً بتلميع الفضة دون خدوش ودليلاً شاملاً للعناية ببريق الفضة والأحجار الكريمة.",
+      specsFa: ["دستمال نانو مخصوص جلای نقره", "راهنمای تخصصی مراقبت از سنگ‌ها", "حفظ درخشش بدون ایجاد خط و خش", "پشتیبانی و مشاوره گالری"],
+      specsEn: ["Ultra-soft silver polishing cloth", "Gemstone care instructions", "Non-abrasive luster restoration", "Dedicated boutique support"],
+      specsAr: ["منديل نانو فائق النعومة لتلميع الفضة", "تعليمات خاصة للعناية بالأحجار", "إعادة اللمعان دون خدوش", "استشارات ودعم البوتيك الدائم"],
       image: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=1000&auto=format&fit=crop"
     }
   ];
@@ -110,10 +110,10 @@ export default function PackagingShowcase() {
         <div className="text-center max-w-3xl mx-auto mb-16">
           <MotionFadeIn direction="up">
             <span className="text-[10px] text-[#C4852B] uppercase tracking-[0.3em] font-semibold mb-3 block font-mono">
-              {language === 'fa' ? 'استاندارد بسته‌بندی و هویت ملموس (صفحات ۲۰ تا ۲۵ دفترچه راهنما)' : language === 'ar' ? 'معايير التغليف والهوية الملموسة' : 'CORPORATE PACKAGING & STATIONERY GUIDELINES (PAGES 20-25)'}
+              {language === 'fa' ? 'بسته‌بندی تشریفاتی و تجربه جعبه‌گشایی' : language === 'ar' ? 'فخامة التغليف ومراسم الاستلام' : 'LUXURY UNBOXING & PRESENTATION EXPERIENCE'}
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold uppercase tracking-tight mb-6">
-              {language === 'fa' ? 'بسته‌بندی و تشریفات برند نفیسه عبادی' : language === 'ar' ? 'فخامة التغليف ومراسم الاستلام' : 'Signature Packaging & Unboxing Ceremony'}
+              {language === 'fa' ? 'بسته‌بندی و تشریفات برند نفیسه عبادی' : language === 'ar' ? 'فخامة التغليف والتقديم الرسمي' : 'Signature Packaging & Presentation Ceremony'}
             </h2>
             <div className="w-24 h-0.5 bg-gradient-to-r from-[#C4852B] to-[#660000] mx-auto mb-6"></div>
             <p className="text-xs sm:text-sm text-[#626667] leading-relaxed">
@@ -164,10 +164,10 @@ export default function PackagingShowcase() {
               {/* Floating Badge */}
               <div className="absolute bottom-6 right-6 px-4 py-2 bg-[#660000] text-white rounded-xl shadow-xl border border-[#C4852B]/50">
                 <span className="text-[10px] font-mono uppercase tracking-widest block font-bold text-[#C4852B]">
-                  100% BRAND ACCREDITED
+                  100% SILVER 925
                 </span>
                 <span className="text-[9px] text-zinc-200">
-                  {language === 'fa' ? 'مطابق کتابچه استانداردهای سازمانی' : language === 'ar' ? 'معتمد وفق دليل الهوية المؤسسية' : 'Verified Brand Manual 2026'}
+                  {language === 'fa' ? 'بسته‌بندی رسمی و شناسنامه اصالت' : language === 'ar' ? 'تغليف رسمي وشهادة الأصالة' : 'Certified Luxury Presentation'}
                 </span>
               </div>
             </div>

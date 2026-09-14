@@ -35,9 +35,9 @@ export const initialProducts: Product[] = [
     materialFa: "نقره استرلینگ ۹۲۵ دست‌ساز",
     materialEn: "Handcrafted 925 Sterling Silver",
     materialAr: "فضة إسترليني 925 صياغة يدوية",
-    descriptionFa: "طراحی دست‌ساز با الهام از هویت بصری زیورآلات نفیسه عبادی. ساخته شده از نقره استرلینگ ۹۲۵ با پرداخت نهایی صیقلی و مقاوم.",
-    descriptionEn: "Handcrafted minimalist design inspired by the official Nafise Ebadi corporate visual identity. Made from certified 925 sterling silver.",
-    descriptionAr: "تصميم يدوي مستوحى من الهوية البصرية لمجوهرات نفيسة عبادی، مصاغ من الفضة عيار 925 بلمعان مصقول فائق الدقة.",
+    descriptionFa: "طراحی مینیمال و دست‌ساز نقره‌سازان نفیسه عبادی. ساخته شده از نقره استرلینگ ۹۲۵ با پرداخت نهایی صیقلی، براق و ضدحساسیت.",
+    descriptionEn: "Handcrafted minimalist design by Nafise Ebadi master silversmiths. Made from certified 925 sterling silver with mirror finish.",
+    descriptionAr: "تصميم يدوي مينيمال راقٍ من الفضة عيار 925 بصياغة يدوية ولمعان مصقول فائق الدقة.",
     image: "https://images.unsplash.com/photo-1605100804763-247f66126e28?q=80&w=800&auto=format&fit=crop",
     images: [
       "https://images.unsplash.com/photo-1605100804763-247f66126e28?q=80&w=800&auto=format&fit=crop",

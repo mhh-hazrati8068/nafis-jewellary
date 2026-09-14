@@ -102,13 +102,13 @@ export const translations = {
       clearAll: "Clear Wishlist"
     },
     story: {
-      tag: "The Nafise Ebadi Story",
-      title: "Where Pure Art Meets Fine Sterling Silver",
-      p1: "From the beginning of our artisan journey, we sought to combine pure artistry with fine 925 sterling silver and authentic natural stones like Neyshabur turquoise and Yemeni agate, creating jewelry that pins genuine luxury to every moment of your life.",
-      p2: "Innovation, bold design, and minimalist perfection guide our master silversmiths. Every silver ring, necklace, and bracelet is crafted to remain worthy of the inspiring hands and hearts of those who wear them.",
-      button: "Discover Our Heritage",
-      quote: "Artistry in every silver curve, elegance in every gemstone facet.",
-      quoteAuthor: "Nafise Ebadi Silversmith Atelier"
+      tag: "Heritage & Silversmith Atelier",
+      title: "The Fusion of Master Artistry & Pure 925 Sterling Silver",
+      p1: "At Nafise Ebadi Jewellery, each handcrafted piece embodies the harmonious union of 925 sterling silver and certified natural gemstones, including authentic Neyshabur turquoise and Yemeni agate.",
+      p2: "Combining time-honored Iranian silversmithing techniques with modern minimalist aesthetics, our master artisans craft enduring jewelry pieces designed to celebrate personal elegance and genuine luxury.",
+      button: "Discover Our Story & Craft",
+      quote: "Handcrafted brilliance in every silver curve, pure authenticity in every gemstone.",
+      quoteAuthor: "Nafise Ebadi Fine Jewellery Atelier"
     },
     footer: {
       brandDesc: "Online luxury boutique for handcrafted 925 sterling silver and natural certified gemstone jewelry. Experience elegance, quality, and authenticity in every piece.",
@@ -234,13 +234,13 @@ export const translations = {
       clearAll: "پاک کردن همه"
     },
     story: {
-      tag: "فلسفه برند زیورآلات نفیسه عبادی",
-      title: "پیوند هنر تمام‌عیار با نقره ناب ۹۲۵",
-      p1: "از روزی که این سفر هنری را آغاز کردیم به دنبال آن بودیم تا از پیوند هنر تمام‌عیار با نقره استرلینگ ۹۲۵ و سنگ‌های اصیل فیروزه نیشابور و عقیق طبیعی، تجربه‌ای بسازیم که معنای واقعی زیبایی و اصالت را به زندگی شما سنجاق کند.",
-      p2: "نوآوری، خلاقیت و جسارت را به کارمان افزودیم تا با افتخار، شایسته دست‌های الهام‌بخش و قلب‌های مهربان همراهانمان باشیم.",
-      button: "داستان برند ما",
+      tag: "اصالت و میراث زرگری نفیسه عبادی",
+      title: "پیوند هنر اصیل دست‌ساز با نقره ناب ۹۲۵",
+      p1: "در گالری زیورآلات نفیسه عبادی، هر قطعه تجسمی از تلفیق نقره استرلینگ ۹۲۵ با سنگ‌های اصیل معدنی نظیر فیروزه فاخر نیشابور و عقیق طبیعی است. ما بر آنیم تا با تکیه بر ذوق استادکاران و استانداردهای کهن زرگری، آثاری ماندگار و پرمعنا بیافرینیم.",
+      p2: "طراحی‌های منحصربه‌فرد، پولیش آینه‌ای با آبکاری رادیوم ضدحساسیت و توجه وسواس‌گونه به جزئیات، زیورآلاتی را پدید می‌آورد که برازنده زیبایی، وقار و اصالت همراهان گرامی ما باشد.",
+      button: "درباره گالری و داستان برند",
       quote: "درخشش هنر دست در هر منحنی نقره و هر تراش سنگ اصیل.",
-      quoteAuthor: "کارگاه تخصصی نقره‌سازی نفیسه عبادی"
+      quoteAuthor: "گالری تخصصی نقره و جواهر نفیسه عبادی"
     },
     footer: {
       brandDesc: "طراحی و ساخت آنلاین زیورآلات دست‌ساز نقره استرلینگ ۹۲۵ و سنگ‌های اصیل طبیعی. تجربه ظرافت، کیفیت و اصالت در هر قطعه.",
@@ -366,13 +366,13 @@ export const translations = {
       clearAll: "إفراغ القائمة"
     },
     story: {
-      tag: "قصة نفيسة عبادي",
-      title: "حيث يمتزج الفن الخالص بالفضة الاسترليني 925",
-      p1: "منذ انطلاق رحلتنا، سعينا لدمج الإبداع الفني مع الفضة الاسترليني 925 وأحجار الفيروز النيسابوري والعقيق الطبيعي لصناعة تجربة تمنح الفخامة والجمال معنى حقيقياً في كل لحظة من حياتك.",
-      p2: "الابتكار والجرأة والكمال في التصميم هي ركائز ورشتنا لنبقى دوماً عند حسن ظن أصحاب الذوق الرفيع.",
-      button: "اكتشف تراثنا",
+      tag: "أصالة وتراث صياغة الفضة",
+      title: "امتزاج الإبداع الحرفي الأصيل بالفضة الاسترليني 925",
+      p1: "في بوتيك مجوهرات نفيسة عبادي، تجسد كل قطعة حكاية فنية تلتقي فيها الفضة عيار 925 مع أرقى الأحجار الكريمة الطبيعية كالفيروز النيسابوري الأصيل والعقيق اليمني الفاخر.",
+      p2: "نجمع بين عراقة الفنون اليدوية التراثية وأحدث معايير الصياغة الحديثة لنقدم مجوهرات فريدة تليق بذوقكم الرفيع وتعكس فخامة متجددة.",
+      button: "اكتشف قصة البوتيك وتراثنا",
       quote: "إبداع متقن في كل انحناءة فضة، وبريق خالد في كل حجر كريم طبيعي.",
-      quoteAuthor: "ورشة صياغة الفضة نفيسة عبادي"
+      quoteAuthor: "بوتيك مجوهرات نفيسة عبادي للفضة الفاخرة"
     },
     footer: {
       brandDesc: "بوتيك راقٍ لتصميم وصياغة الفضة عيار 925 والمجوهرات المرصعة بالفيروز والعقيق الطبيعي المعتمد. فخامة وأصالة تدوم.",
