@@ -24,7 +24,7 @@ import {
 } from "@/lib/api";
 
 export default function AdminDashboardPage() {
-  const { token, isAdmin, loginAsAdmin, silverPricePerGramToman, fetchSilverPrice, fetchProducts, logout } = useAppStore();
+  const { token, isAdmin, loginAsAdmin, silverPricePerGramToman, fetchSilverPrice, fetchProducts, logout, setActiveReceiptInvoice } = useAppStore();
 
   const [activeTab, setActiveTab] = useState<"products" | "categories" | "invoices" | "articles">("products");
   const [products, setProducts] = useState<BackendProduct[]>([]);
@@ -741,6 +741,14 @@ export default function AdminDashboardPage() {
                         </div>
                         
                         <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => setActiveReceiptInvoice(inv)}
+                            className="px-3 py-1.5 bg-[#C4852B] hover:bg-[#A76E1F] text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                          >
+                            <span>🧾</span>
+                            <span>رسید رسمی</span>
+                          </button>
+
                           <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                             isPaid ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-800"
                           }`}>

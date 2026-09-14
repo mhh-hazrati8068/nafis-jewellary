@@ -7,6 +7,7 @@ import TopBar from "@/components/layout/TopBar";
 import CartDrawer from "@/components/cart/CartDrawer";
 import SearchModal from "@/components/search/SearchModal";
 import LanguageWrapper from "@/components/layout/LanguageWrapper";
+import OfficialReceiptModal from "@/components/receipt/OfficialReceiptModal";
 
 const kalameh = localFont({
   src: [
@@ -160,6 +161,7 @@ export default function RootLayout({
           </main>
           <CartDrawer />
           <SearchModal />
+          <OfficialReceiptModal />
           <Footer />
         </LanguageWrapper>
       </body>

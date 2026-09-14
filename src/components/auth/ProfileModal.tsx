@@ -5,7 +5,7 @@ import { useAppStore } from "@/store/useAppStore";
 import { Invoice, fetchMyOrders, payInvoice, updateUserProfile } from "@/lib/api";
 
 function ProfileModalContent() {
-  const { setProfileModalOpen, user, token, logout, language, refreshProfile } = useAppStore();
+  const { setProfileModalOpen, user, token, logout, language, refreshProfile, setActiveReceiptInvoice } = useAppStore();
 
   const [activeTab, setActiveTab] = useState<"profile" | "orders">("profile");
   const [firstName, setFirstName] = useState(user?.firstName || "");
@@ -264,14 +264,24 @@ function ProfileModalContent() {
                       </span>
                     </div>
 
-                    {!invoice.isPaid && (
+                    <div className="pt-2 flex items-center gap-2">
                       <button
-                        onClick={() => handlePay(invoice.id)}
-                        className="w-full mt-2 py-2 bg-green-600 hover:bg-green-700 text-white font-bold text-xs rounded-lg transition-colors cursor-pointer"
+                        onClick={() => setActiveReceiptInvoice(invoice)}
+                        className="flex-1 py-2 bg-[#C4852B] hover:bg-[#A76E1F] text-white font-bold text-xs rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs"
                       >
-                        {language === "fa" ? "💳 پرداخت آنلاین فاکتور" : language === "ar" ? "💳 الدفع الإلكتروني للفاتورة" : "💳 Pay Online Now"}
+                        <span>🧾</span>
+                        <span>{language === "fa" ? "مشاهده رسید رسمی سازمان" : language === "ar" ? "عرض الإيصال الرسمي" : "Official Receipt"}</span>
                       </button>
-                    )}
+
+                      {!invoice.isPaid && (
+                        <button
+                          onClick={() => handlePay(invoice.id)}
+                          className="flex-1 py-2 bg-green-600 hover:bg-green-700 text-white font-bold text-xs rounded-lg transition-colors cursor-pointer shadow-2xs"
+                        >
+                          {language === "fa" ? "💳 پرداخت" : language === "ar" ? "💳 دفع" : "💳 Pay"}
+                        </button>
+                      )}
+                    </div>
                   </div>
                 ))
               )}

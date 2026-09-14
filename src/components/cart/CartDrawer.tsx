@@ -17,7 +17,8 @@ export default function CartDrawer() {
     token, 
     user, 
     setAuthModalOpen,
-    setProfileModalOpen 
+    setProfileModalOpen,
+    setActiveReceiptInvoice
   } = useAppStore();
 
   const [isCheckingOut, setIsCheckingOut] = useState(false);
@@ -195,9 +196,19 @@ export default function CartDrawer() {
 
             <div className="space-y-2 pt-4">
               <button
+                onClick={() => {
+                  setActiveReceiptInvoice(createdInvoice);
+                }}
+                className="w-full py-3.5 bg-[#C4852B] hover:bg-[#A76E1F] text-white font-bold text-xs uppercase tracking-wider rounded-xl text-center shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
+              >
+                <span>🧾</span>
+                <span>{language === "fa" ? "مشاهده و چاپ رسید رسمی سازمان" : language === "ar" ? "عرض وطباعة الإيصال الرسمي" : "View & Print Official Organization Receipt"}</span>
+              </button>
+
+              <button
                 onClick={handlePayment}
                 disabled={isLoading}
-                className="w-full py-3.5 bg-green-600 hover:bg-green-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl text-center shadow-lg transition-all cursor-pointer"
+                className="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl text-center shadow-md transition-all cursor-pointer"
               >
                 {isLoading 
                   ? (language === "fa" ? "در حال اتصال به درگاه..." : language === "ar" ? "جاري الاتصال ببوابة الدفع..." : "Connecting to Gateway...") 
@@ -205,7 +216,7 @@ export default function CartDrawer() {
               </button>
               <button
                 onClick={() => { toggleCart(false); setCreatedInvoice(null); setProfileModalOpen(true); }}
-                className="w-full py-2.5 bg-zinc-200 hover:bg-zinc-300 text-zinc-800 font-bold text-xs rounded-xl transition-all cursor-pointer"
+                className="w-full py-2 bg-zinc-200 hover:bg-zinc-300 text-zinc-800 font-bold text-xs rounded-xl transition-all cursor-pointer"
               >
                 {language === "fa" ? "مشاهده در سوابق سفارشات" : language === "ar" ? "عرض سجل الطلبات" : "View in Order History"}
               </button>

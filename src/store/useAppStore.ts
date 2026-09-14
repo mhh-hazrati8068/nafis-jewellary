@@ -76,8 +76,10 @@ interface AppState {
   isAdmin: boolean
   isAuthModalOpen: boolean
   isProfileModalOpen: boolean
+  activeReceiptInvoice: import('@/lib/api').Invoice | null
   setAuthModalOpen: (open: boolean) => void
   setProfileModalOpen: (open: boolean) => void
+  setActiveReceiptInvoice: (invoice: import('@/lib/api').Invoice | null) => void
   loginWithOtp: (phoneNumber: string, code: string) => Promise<void>
   loginAsAdmin: (username: string, pass: string) => Promise<void>
   logout: () => void
@@ -290,9 +292,11 @@ export const useAppStore = create<AppState>()((set, get) => ({
   isAdmin: false,
   isAuthModalOpen: false,
   isProfileModalOpen: false,
+  activeReceiptInvoice: null,
 
   setAuthModalOpen: (open) => set({ isAuthModalOpen: open }),
   setProfileModalOpen: (open) => set({ isProfileModalOpen: open }),
+  setActiveReceiptInvoice: (invoice) => set({ activeReceiptInvoice: invoice }),
 
   loginWithOtp: async (phoneNumber: string, code: string) => {
     const token = await verifyOtp(phoneNumber, code);
