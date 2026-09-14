@@ -17,6 +17,7 @@ export interface BackendProduct {
   badge?: 'NONE' | 'SPECIAL_OFFER' | 'BEST_SELLER' | 'NEW_ARRIVAL' | string;
   categoryId?: number;
   categoryName?: string;
+  category?: BackendCategory;
   weight?: number;
   pricingMethod?: 'METHOD_1_SILVER_MAKING_STONE' | 'METHOD_2_SILVER_MAKING' | 'METHOD_3_FIXED_PRICE' | 'METHOD_4_STONE_ONLY' | string;
   makingChargePercentage?: number;
@@ -641,6 +642,49 @@ export async function saveAdminProduct(
   if (categoryId) queryParams.push(`categoryId=${categoryId}`);
   if (queryParams.length > 0) {
     url += `?${queryParams.join('&')}`;
+  }
+
+  // Construct structured product object matching Spring Boot entity schema
+  const name = (formData.get('name') as string) || '';
+  const pricingMethod = (formData.get('pricingMethod') as string) || 'METHOD_1_SILVER_MAKING_STONE';
+  const weight = parseFloat((formData.get('weight') as string) || '0');
+  const makingChargePercentage = parseFloat((formData.get('makingChargePercentage') as string) || '0');
+  const fixedPrice = parseFloat((formData.get('fixedPrice') as string) || '0');
+  const stonePrice = parseFloat((formData.get('stonePrice') as string) || '0');
+  const stockQuantity = parseInt((formData.get('stockQuantity') as string) || '0', 10);
+  const badge = (formData.get('badge') as string) || 'NONE';
+  const visible = formData.get('visible') === 'true' || formData.get('isVisible') === 'true';
+
+  const productObject: Record<string, unknown> = {
+    name,
+    pricingMethod,
+    weight,
+    makingChargePercentage,
+    fixedPrice,
+    stonePrice,
+    stockQuantity,
+    badge,
+    visible,
+  };
+  if (id) productObject.id = id;
+  if (categoryId) {
+    productObject.category = { id: categoryId };
+    formData.set('category.id', String(categoryId));
+    formData.set('category[id]', String(categoryId));
+    formData.set('category', JSON.stringify({ id: categoryId }));
+    formData.set('categoryId', String(categoryId));
+  }
+  if (stoneId) {
+    productObject.stone = { id: stoneId };
+    formData.set('stone.id', String(stoneId));
+    formData.set('stoneId', String(stoneId));
+  }
+
+  const productBlob = new Blob([JSON.stringify(productObject)], { type: 'application/json' });
+  const partName = isEdit ? 'updatedProduct' : 'product';
+  formData.set(partName, productBlob);
+  if (isEdit) {
+    formData.set('product', productBlob);
   }
 
   const res = await fetch(url, {

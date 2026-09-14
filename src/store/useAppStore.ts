@@ -104,7 +104,9 @@ function mapBackendToFrontend(bp: BackendProduct): Product {
 
   const stoneEn = bp.stoneName ? translateDynamicText(bp.stoneName, 'en') : '';
   const stoneAr = bp.stoneName ? translateDynamicText(bp.stoneName, 'ar') : '';
-  const catSlug = inferCategorySlug(bp.name, bp.categoryName, bp.categoryId);
+  const effectiveCatId = bp.categoryId ?? bp.category?.id;
+  const effectiveCatName = bp.categoryName || bp.category?.name;
+  const catSlug = inferCategorySlug(bp.name, effectiveCatName, effectiveCatId);
 
   return {
     id: bp.id,
@@ -113,9 +115,9 @@ function mapBackendToFrontend(bp: BackendProduct): Product {
     nameAr: translateDynamicText(bp.name, 'ar'),
     price: bp.livePriceToman || 0,
     category: catSlug,
-    categoryFa: bp.categoryName || (catSlug === 'rings' ? 'انگشتر' : catSlug === 'necklaces' ? 'گردنبند' : catSlug === 'bracelets' ? 'دستبند' : 'گوشواره'),
-    categoryEn: translateDynamicText(bp.categoryName || catSlug, 'en'),
-    categoryAr: translateDynamicText(bp.categoryName || catSlug, 'ar'),
+    categoryFa: effectiveCatName || (catSlug === 'rings' ? 'انگشتر' : catSlug === 'necklaces' ? 'گردنبند' : catSlug === 'bracelets' ? 'دستبند' : 'گوشواره'),
+    categoryEn: translateDynamicText(effectiveCatName || catSlug, 'en'),
+    categoryAr: translateDynamicText(effectiveCatName || catSlug, 'ar'),
     materialFa: `نقره ۹۹۹ عیار خالص ${bp.weight ? `(${bp.weight} گرم)` : ''}`,
     materialEn: `999 Fine Pure Silver ${bp.weight ? `(${bp.weight}g)` : ''}`,
     materialAr: `فضة نقية عيار 999 ${bp.weight ? `(${bp.weight} جرام)` : ''}`,

@@ -68,8 +68,32 @@ export default function Header() {
             </button>
           </div>
 
+          {/* Brand Logo & Brand Name:
+              - Desktop: Start (Right in FA/AR, Left in EN)
+              - Mobile: Centered in viewport */}
+          <div className="flex-1 md:flex-initial flex justify-center md:justify-start">
+            <Link href="/" className="flex items-center gap-3 group py-1">
+              <BrandLogo size="md" showSubline={false} />
+              <div className="hidden sm:flex flex-col items-start text-start justify-center">
+                {/* English Brand Name on TOP */}
+                <span className="font-brand-en font-black uppercase text-base sm:text-lg md:text-xl text-zinc-950 group-hover:text-[#C4852B] transition-colors whitespace-nowrap leading-tight tracking-[0.14em]">
+                  NAFISE EBADI
+                </span>
+
+                {/* Persian/Subtitle on BOTTOM */}
+                <span className="font-kalameh font-bold text-xs sm:text-sm text-[#660000] whitespace-nowrap leading-tight pt-0.5">
+                  {language === 'ar' 
+                    ? 'مجوهرات نفيسة عبادي للفضة' 
+                    : language === 'en' 
+                    ? 'HANDCRAFTED 925 SILVER' 
+                    : 'زیورآلات نقره نفیسه عبادی'}
+                </span>
+              </div>
+            </Link>
+          </div>
+
           {/* Desktop Navigation Links: Online Shop | Collections (Mega Menu) | Journal | About Us */}
-          <nav className="hidden md:flex flex-1 items-center gap-6 lg:gap-8 text-[13px] font-semibold text-zinc-800 font-sans">
+          <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-[13px] font-semibold text-zinc-800 font-sans ms-4 lg:ms-8">
             {/* 1. Online Shop */}
             <Link href="/shop" className="hover:text-[#C4852B] transition-colors relative py-1 group">
               <span className="font-bold text-[#C4852B]">{t.header.shop}</span>
@@ -99,27 +123,8 @@ export default function Header() {
             )}
           </nav>
 
-          {/* Brand Logo & Brand Name (English on Top, Persian/Native on Bottom - Image only on Mobile) */}
-          <div className="flex-1 flex justify-center text-center">
-            <Link href="/" className="flex items-center gap-3 group py-1">
-              <BrandLogo size="md" showSubline={false} />
-              <div className="hidden sm:flex flex-col items-start text-left rtl:text-right rtl:items-end justify-center">
-                {/* English Brand Name on TOP */}
-                <span className="font-brand-en font-black uppercase text-base sm:text-lg md:text-xl text-zinc-950 group-hover:text-[#C4852B] transition-colors whitespace-nowrap leading-tight tracking-[0.14em]">
-                  NAFISE EBADI
-                </span>
-
-                {/* Persian/Subtitle on BOTTOM */}
-                <span className="font-kalameh font-bold text-xs sm:text-sm text-[#660000] whitespace-nowrap leading-tight pt-0.5">
-                  {language === 'ar' 
-                    ? 'مجوهرات نفيسة عبادي للفضة' 
-                    : language === 'en' 
-                    ? 'HANDCRAFTED 925 SILVER' 
-                    : 'زیورآلات نقره نفیسه عبادی'}
-                </span>
-              </div>
-            </Link>
-          </div>
+          {/* Desktop Spacer */}
+          <div className="hidden md:flex flex-1" />
 
           {/* Header Actions */}
           <div className="flex items-center justify-end gap-2 sm:gap-3">

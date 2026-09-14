@@ -190,7 +190,12 @@ export default function AdminDashboardPage() {
   const handleOpenEditModal = (prod: BackendProduct) => {
     setEditingProduct(prod);
     setName(prod.name || "");
-    setSelectedCategoryId(prod.categoryId ? String(prod.categoryId) : "");
+    const catId = prod.categoryId 
+      ? String(prod.categoryId) 
+      : prod.category?.id 
+      ? String(prod.category.id) 
+      : "";
+    setSelectedCategoryId(catId);
     setPricingMethod(prod.pricingMethod || "METHOD_1_SILVER_MAKING_STONE");
     setWeight(String(prod.weight ?? "4.5"));
     setMakingChargePercentage(String(prod.makingChargePercentage ?? "15"));
