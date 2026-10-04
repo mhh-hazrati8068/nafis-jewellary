@@ -158,27 +158,158 @@ export async function updateUserProfile(profile: Partial<UserProfile>, token?: s
   return res.text();
 }
 
+// ---------------- ULTRA-FAST MEMORY & STORAGE CACHE & DEDUPLICATION ----------------
+interface CacheRecord<T> {
+  data: T;
+  timestamp: number;
+}
+
+const memoryCache = new Map<string, CacheRecord<any>>();
+const inFlightRequests = new Map<string, Promise<any>>();
+
+export function invalidateApiCache(prefix?: string) {
+  if (!prefix) {
+    memoryCache.clear();
+    if (typeof window !== 'undefined') {
+      try {
+        const keys = Object.keys(localStorage);
+        for (const k of keys) {
+          if (k.startsWith('nafis_cache_')) localStorage.removeItem(k);
+        }
+      } catch {}
+    }
+    return;
+  }
+  for (const key of memoryCache.keys()) {
+    if (key.startsWith(prefix)) memoryCache.delete(key);
+  }
+  if (typeof window !== 'undefined') {
+    try {
+      const keys = Object.keys(localStorage);
+      for (const k of keys) {
+        if (k.startsWith(`nafis_cache_${prefix}`)) localStorage.removeItem(k);
+      }
+    } catch {}
+  }
+}
+
+export function getCachedApiData<T>(key: string, ttlMs = 120000): T | null {
+  const now = Date.now();
+  const cached = memoryCache.get(key);
+  if (cached && now - cached.timestamp < ttlMs) {
+    return cached.data;
+  }
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem(`nafis_cache_${key}`);
+      if (stored) {
+        const parsed: CacheRecord<T> = JSON.parse(stored);
+        if (now - parsed.timestamp < ttlMs) {
+          memoryCache.set(key, parsed);
+          return parsed.data;
+        }
+      }
+    } catch {}
+  }
+  return null;
+}
+
+export async function fastFetch<T>(
+  key: string,
+  fetcher: (signal: AbortSignal) => Promise<T>,
+  ttlMs = 60000,
+  timeoutMs = 5000
+): Promise<T> {
+  const now = Date.now();
+
+  // 1. In-memory cache hit (0ms)
+  const cached = memoryCache.get(key);
+  if (cached && now - cached.timestamp < ttlMs) {
+    return cached.data;
+  }
+
+  // 2. LocalStorage cache hit (near 0ms)
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem(`nafis_cache_${key}`);
+      if (stored) {
+        const parsed: CacheRecord<T> = JSON.parse(stored);
+        if (now - parsed.timestamp < ttlMs) {
+          memoryCache.set(key, parsed);
+          return parsed.data;
+        }
+      }
+    } catch {}
+  }
+
+  // 3. In-flight promise deduplication (shares ongoing network call across all components)
+  const inFlight = inFlightRequests.get(key);
+  if (inFlight) {
+    return inFlight;
+  }
+
+  // 4. Dispatch network request with abort timeout
+  const promise = (async () => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const result = await fetcher(controller.signal);
+      clearTimeout(timer);
+      if (result !== undefined && result !== null) {
+        const record = { data: result, timestamp: Date.now() };
+        memoryCache.set(key, record);
+        if (typeof window !== 'undefined') {
+          try {
+            localStorage.setItem(`nafis_cache_${key}`, JSON.stringify(record));
+          } catch {}
+        }
+      }
+      return result;
+    } catch (err) {
+      clearTimeout(timer);
+      // Return stale cache if available when network errors or times out
+      const stale = memoryCache.get(key);
+      if (stale) return stale.data;
+      if (typeof window !== 'undefined') {
+        try {
+          const stored = localStorage.getItem(`nafis_cache_${key}`);
+          if (stored) return JSON.parse(stored).data;
+        } catch {}
+      }
+      throw err;
+    } finally {
+      inFlightRequests.delete(key);
+    }
+  })();
+
+  inFlightRequests.set(key, promise);
+  return promise;
+}
+
 // ---------------- CATEGORIES API ----------------
 export async function fetchCategories(token?: string | null): Promise<BackendCategory[]> {
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/categories`, {
-      method: 'GET',
-      headers: getAuthHeaders(token),
-      cache: 'no-store',
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) return data;
+  return fastFetch('categories', async (signal) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/categories`, {
+        method: 'GET',
+        headers: getAuthHeaders(token),
+        signal,
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) return data;
+      }
+    } catch (err) {
+      console.warn('Categories API unreachable, using standard categories:', err);
     }
-  } catch (err) {
-    console.warn('Categories API unreachable, using standard categories:', err);
-  }
-  return [
-    { id: 1, name: "دستبند", description: "دستبندهای نقره دست‌ساز و فاخر" },
-    { id: 2, name: "انگشتر", description: "انگشترهای نگین‌دار و نقره اصیل" },
-    { id: 3, name: "گردنبند", description: "گردنبند و آویزهای نقره نفیس" },
-    { id: 4, name: "گوشواره", description: "گوشواره‌های دست‌ساز هنری" }
-  ];
+    return [
+      { id: 1, name: "دستبند", description: "دستبندهای نقره دست‌ساز و فاخر" },
+      { id: 2, name: "انگشتر", description: "انگشترهای نگین‌دار و نقره اصیل" },
+      { id: 3, name: "گردنبند", description: "گردنبند و آویزهای نقره نفیس" },
+      { id: 4, name: "گوشواره", description: "گوشواره‌های دست‌ساز هنری" }
+    ];
+  }, 300000, 4000); // 5 min TTL, 4s timeout
 }
 
 export async function createAdminCategory(name: string, description?: string, token?: string | null): Promise<BackendCategory> {
@@ -194,6 +325,7 @@ export async function createAdminCategory(name: string, description?: string, to
     const err = await res.text();
     throw new Error(err || 'Failed to create category');
   }
+  invalidateApiCache('categories');
   return res.json();
 }
 
@@ -223,71 +355,78 @@ export function getProductCategoryOverride(productId: number): number | undefine
 
 // ---------------- PRODUCTS & SILVER PRICE API ----------------
 export async function fetchAllProducts(categoryId?: number | null, token?: string | null): Promise<BackendProduct[]> {
-  try {
-    const url = categoryId 
-      ? `${API_BASE_URL}/api/products?categoryId=${categoryId}` 
-      : `${API_BASE_URL}/api/products`;
-    const res = await fetch(url, {
-      method: 'GET',
-      headers: getAuthHeaders(token),
-      cache: 'no-store',
-    });
-    if (!res.ok) {
-      throw new Error(`Products request failed: ${res.status}`);
-    }
-    const data: BackendProduct[] = await res.json();
-    return data.map((p) => {
-      const override = getProductCategoryOverride(p.id);
-      if (override && !p.categoryId && !p.category) {
-        return { ...p, categoryId: override };
+  const cacheKey = `products_${categoryId ?? 'all'}`;
+  return fastFetch(cacheKey, async (signal) => {
+    try {
+      const url = categoryId 
+        ? `${API_BASE_URL}/api/products?categoryId=${categoryId}` 
+        : `${API_BASE_URL}/api/products`;
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: getAuthHeaders(token),
+        signal,
+      });
+      if (!res.ok) {
+        throw new Error(`Products request failed: ${res.status}`);
       }
-      return p;
-    });
-  } catch (err) {
-    console.warn('Backend products offline or unreachable, using fallback catalog:', err);
-    return [];
-  }
+      const data: BackendProduct[] = await res.json();
+      return data.map((p) => {
+        const override = getProductCategoryOverride(p.id);
+        if (override && !p.categoryId && !p.category) {
+          return { ...p, categoryId: override };
+        }
+        return p;
+      });
+    } catch (err) {
+      console.warn('Backend products offline or unreachable, using fallback catalog:', err);
+      return [];
+    }
+  }, 60000, 5000); // 60s TTL, 5s timeout
 }
 
 export async function fetchProductById(id: number | string, token?: string | null): Promise<BackendProduct | null> {
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/products/${id}`, {
-      method: 'GET',
-      headers: getAuthHeaders(token),
-      cache: 'no-store',
-    });
-    if (!res.ok) return null;
-    return res.json();
-  } catch {
-    return null;
-  }
+  return fastFetch(`product_${id}`, async (signal) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/products/${id}`, {
+        method: 'GET',
+        headers: getAuthHeaders(token),
+        signal,
+      });
+      if (!res.ok) return null;
+      return res.json();
+    } catch {
+      return null;
+    }
+  }, 60000, 4000);
 }
 
 export async function fetchLiveSilverPrice(token?: string | null): Promise<number> {
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/products/silver-price`, {
-      method: 'GET',
-      headers: getAuthHeaders(token),
-      cache: 'no-store',
-    });
-    if (res.ok) {
-      const text = await res.text();
-      if (!text) return 502680;
-      try {
-        const data = JSON.parse(text);
-        if (typeof data === 'number') return data;
-        if (data && typeof data.pricePerGramToman === 'number') return data.pricePerGramToman;
-        if (data && typeof data.price === 'number') return data.price;
-        if (data && typeof data.silverPrice === 'number') return data.silverPrice;
-      } catch {
-        const num = parseFloat(text);
-        if (!isNaN(num) && num > 0) return num;
+  return fastFetch('silver_price', async (signal) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/products/silver-price`, {
+        method: 'GET',
+        headers: getAuthHeaders(token),
+        signal,
+      });
+      if (res.ok) {
+        const text = await res.text();
+        if (!text) return 502680;
+        try {
+          const data = JSON.parse(text);
+          if (typeof data === 'number') return data;
+          if (data && typeof data.pricePerGramToman === 'number') return data.pricePerGramToman;
+          if (data && typeof data.price === 'number') return data.price;
+          if (data && typeof data.silverPrice === 'number') return data.silverPrice;
+        } catch {
+          const num = parseFloat(text);
+          if (!isNaN(num) && num > 0) return num;
+        }
       }
+    } catch {
+      // Graceful fallback when TGJU or server endpoint is offline
     }
-  } catch {
-    // Graceful fallback when TGJU or server endpoint is offline
-  }
-  return 502680;
+    return 502680;
+  }, 30000, 4000); // 30s TTL, 4s timeout
 }
 
 // ---------------- CART API (Postman / Swagger: Cart) ----------------
@@ -575,35 +714,39 @@ export async function payInvoice(invoiceId: number, token?: string | null): Prom
 
 // ---------------- ARTICLES / BLOG API (Swagger: Article Controller) ----------------
 export async function fetchArticles(token?: string | null): Promise<Article[]> {
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/articles`, {
-      method: 'GET',
-      headers: getAuthHeaders(token),
-      cache: 'no-store',
-    });
-    if (res.ok) {
-      return res.json();
+  return fastFetch('articles', async (signal) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/articles`, {
+        method: 'GET',
+        headers: getAuthHeaders(token),
+        signal,
+      });
+      if (res.ok) {
+        return res.json();
+      }
+    } catch (err) {
+      console.warn('Articles API unreachable:', err);
     }
-  } catch (err) {
-    console.warn('Articles API unreachable:', err);
-  }
-  return [];
+    return [];
+  }, 180000, 4000); // 3 min TTL, 4s timeout
 }
 
 export async function fetchArticleBySlug(slug: string, token?: string | null): Promise<Article | null> {
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/articles/${encodeURIComponent(slug)}`, {
-      method: 'GET',
-      headers: getAuthHeaders(token),
-      cache: 'no-store',
-    });
-    if (res.ok) {
-      return res.json();
+  return fastFetch(`article_${slug}`, async (signal) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/articles/${encodeURIComponent(slug)}`, {
+        method: 'GET',
+        headers: getAuthHeaders(token),
+        signal,
+      });
+      if (res.ok) {
+        return res.json();
+      }
+    } catch (err) {
+      console.warn('Article by slug API unreachable:', err);
     }
-  } catch (err) {
-    console.warn('Article by slug API unreachable:', err);
-  }
-  return null;
+    return null;
+  }, 180000, 4000);
 }
 
 export async function saveAdminArticle(
@@ -625,6 +768,8 @@ export async function saveAdminArticle(
     const err = await res.text();
     throw new Error(err || 'Failed to save article');
   }
+  invalidateApiCache('articles');
+  invalidateApiCache('article_');
   return res.json();
 }
 
@@ -637,33 +782,41 @@ export async function deleteAdminArticle(id: number, token?: string | null): Pro
     const err = await res.text();
     throw new Error(err || 'Failed to delete article');
   }
+  invalidateApiCache('articles');
+  invalidateApiCache('article_');
   return res.text();
 }
 
 // ---------------- ADMIN API (Swagger: Admin Controller) ----------------
 export async function fetchAdminProducts(token?: string | null): Promise<BackendProduct[]> {
-  const res = await fetch(`${API_BASE_URL}/api/admin/products`, {
-    method: 'GET',
-    headers: getAuthHeaders(token),
-  });
-  if (!res.ok) throw new Error('Failed to fetch admin products');
-  const prods: BackendProduct[] = await res.json();
-  return prods.map((p) => {
-    const override = getProductCategoryOverride(p.id);
-    if (override && !p.categoryId && !p.category) {
-      return { ...p, categoryId: override };
-    }
-    return p;
-  });
+  return fastFetch('admin_products', async (signal) => {
+    const res = await fetch(`${API_BASE_URL}/api/admin/products`, {
+      method: 'GET',
+      headers: getAuthHeaders(token),
+      signal,
+    });
+    if (!res.ok) throw new Error('Failed to fetch admin products');
+    const prods: BackendProduct[] = await res.json();
+    return prods.map((p) => {
+      const override = getProductCategoryOverride(p.id);
+      if (override && !p.categoryId && !p.category) {
+        return { ...p, categoryId: override };
+      }
+      return p;
+    });
+  }, 20000, 5000); // 20s TTL for admin listing
 }
 
 export async function fetchAdminStones(token?: string | null): Promise<BackendProduct[]> {
-  const res = await fetch(`${API_BASE_URL}/api/admin/stones`, {
-    method: 'GET',
-    headers: getAuthHeaders(token),
-  });
-  if (!res.ok) throw new Error('Failed to fetch gemstones');
-  return res.json();
+  return fastFetch('admin_stones', async (signal) => {
+    const res = await fetch(`${API_BASE_URL}/api/admin/stones`, {
+      method: 'GET',
+      headers: getAuthHeaders(token),
+      signal,
+    });
+    if (!res.ok) throw new Error('Failed to fetch gemstones');
+    return res.json();
+  }, 300000, 4000); // 5 min TTL
 }
 
 export async function saveAdminProduct(
@@ -712,6 +865,10 @@ export async function saveAdminProduct(
       saved.categoryId = categoryId;
     }
   }
+
+  // Invalidate cached products immediately
+  invalidateApiCache('products_');
+  invalidateApiCache('admin_products');
   return saved;
 }
 
@@ -724,6 +881,8 @@ export async function deleteAdminProduct(id: number, token?: string | null): Pro
     const err = await res.text();
     throw new Error(err || 'Failed to delete product');
   }
+  invalidateApiCache('products_');
+  invalidateApiCache('admin_products');
   return res.text();
 }
 
@@ -733,16 +892,21 @@ export async function forceUpdateSilverPrice(token?: string | null): Promise<str
     headers: getAuthHeaders(token),
   });
   if (!res.ok) throw new Error('Failed to update silver price');
+  invalidateApiCache('silver_price');
+  invalidateApiCache('products_');
   return res.text();
 }
 
 export async function fetchAdminInvoices(token?: string | null): Promise<Invoice[]> {
-  const res = await fetch(`${API_BASE_URL}/api/admin/invoices`, {
-    method: 'GET',
-    headers: getAuthHeaders(token),
-  });
-  if (!res.ok) throw new Error('Failed to fetch admin invoices');
-  return res.json();
+  return fastFetch('admin_invoices', async (signal) => {
+    const res = await fetch(`${API_BASE_URL}/api/admin/invoices`, {
+      method: 'GET',
+      headers: getAuthHeaders(token),
+      signal,
+    });
+    if (!res.ok) throw new Error('Failed to fetch admin invoices');
+    return res.json();
+  }, 15000, 5000); // 15s cache, 5s timeout
 }
 
 export async function updateInvoiceStatus(id: number, status: string, token?: string | null): Promise<string> {
@@ -751,5 +915,6 @@ export async function updateInvoiceStatus(id: number, status: string, token?: st
     headers: getAuthHeaders(token),
   });
   if (!res.ok) throw new Error('Failed to update invoice status');
+  invalidateApiCache('admin_invoices');
   return res.text();
 }

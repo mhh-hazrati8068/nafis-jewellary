@@ -5,6 +5,7 @@ export interface Product {
   nameAr?: string
   price: number
   category: 'rings' | 'necklaces' | 'bracelets' | 'earrings'
+  categoryId?: number
   categoryFa: string
   categoryEn: string
   categoryAr?: string
@@ -29,6 +30,7 @@ export const initialProducts: Product[] = [
     nameAr: "خاتم فضة إسترليني 925 مينيمال عصري",
     price: 1850000,
     category: "rings",
+    categoryId: 2,
     categoryFa: "انگشتر",
     categoryEn: "Rings",
     categoryAr: "خواتم",
@@ -55,6 +57,7 @@ export const initialProducts: Product[] = [
     nameAr: "خاتم فضة 925 مع حجر الفيروز النيسابوري الأصلي",
     price: 6374453,
     category: "rings",
+    categoryId: 2,
     categoryFa: "انگشتر",
     categoryEn: "Rings",
     categoryAr: "خواتم",
@@ -80,6 +83,7 @@ export const initialProducts: Product[] = [
     nameAr: "أقراط متدلية لؤلؤ طبيعي وفضة 925",
     price: 2450000,
     category: "earrings",
+    categoryId: 4,
     categoryFa: "گوشواره",
     categoryEn: "Earrings",
     categoryAr: "أقراط",
@@ -105,6 +109,7 @@ export const initialProducts: Product[] = [
     nameAr: "سوار جنزير فضة إسترليني 925",
     price: 3890000,
     category: "bracelets",
+    categoryId: 1,
     categoryFa: "دستبند",
     categoryEn: "Bracelets",
     categoryAr: "أساور",
@@ -130,6 +135,7 @@ export const initialProducts: Product[] = [
     nameAr: "قلادة فضة 925 مع مدالية عقيق يماني طبيعي",
     price: 4950000,
     category: "necklaces",
+    categoryId: 3,
     categoryFa: "گردنبند",
     categoryEn: "Necklaces",
     categoryAr: "قلائد",
@@ -154,6 +160,7 @@ export const initialProducts: Product[] = [
     nameAr: "دبلة فضة 925 مصقولة بخطوط متوازية",
     price: 2750000,
     category: "rings",
+    categoryId: 2,
     categoryFa: "انگشتر",
     categoryEn: "Rings",
     categoryAr: "خواتم",

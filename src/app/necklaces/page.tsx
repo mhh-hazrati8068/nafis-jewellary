@@ -2,11 +2,17 @@
 
 import { useAppStore } from "@/store/useAppStore";
 import Link from "next/link";
+import { useEffect } from "react";
 import { getProductName, getProductMaterial } from "@/lib/dynamicTranslator";
 
 export default function NecklacesPage() {
-  const { products, language, addToCart, t } = useAppStore();
-  const necklaces = products.filter(p => p.category === 'necklaces');
+  const { products, language, addToCart, t, fetchProducts, isLoadingProducts } = useAppStore();
+
+  useEffect(() => {
+    fetchProducts(3);
+  }, [fetchProducts]);
+
+  const necklaces = products.filter(p => p.categoryId === 3 || p.category === 'necklaces');
 
   const getSubtitle = () => {
     if (language === 'fa') return 'گردنبندهای عقیق سرخ، فیروزه نیشابور و نقره ۹۲۵ با تراش دست‌ساز و اصیل.';

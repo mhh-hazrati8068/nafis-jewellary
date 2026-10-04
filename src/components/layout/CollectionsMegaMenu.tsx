@@ -14,9 +14,9 @@ export default function CollectionsMegaMenu() {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    fetchCategories();
-    fetchProducts();
-  }, [fetchCategories, fetchProducts]);
+    if (!categories || categories.length === 0) fetchCategories();
+    if (!products || products.length === 0) fetchProducts();
+  }, [categories, products, fetchCategories, fetchProducts]);
 
   const handleMouseEnter = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -30,13 +30,8 @@ export default function CollectionsMegaMenu() {
   };
 
   // Helper to get category link
-  const getCategoryHref = (name: string, id: number) => {
-    const lower = (name || "").toLowerCase();
-    if (lower.includes("انگشتر") || id === 2) return "/rings";
-    if (lower.includes("گردنبند") || id === 3) return "/necklaces";
-    if (lower.includes("دستبند") || id === 1) return "/bracelets";
-    if (lower.includes("گوشواره") || id === 4) return "/earrings";
-    return `/shop?category=${id}`;
+  const getCategoryHref = (_name: string, id: number) => {
+    return `/shop?categoryId=${id}`;
   };
 
   // Dynamic Categories from Backend API

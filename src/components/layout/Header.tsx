@@ -38,6 +38,7 @@ export default function Header() {
     setAuthModalOpen,
     setProfileModalOpen,
     loadUserFromStorage,
+    fetchCategories,
     fetchProducts,
     fetchSilverPrice
   } = useAppStore();
@@ -48,6 +49,7 @@ export default function Header() {
 
   useEffect(() => {
     loadUserFromStorage();
+    fetchCategories();
     fetchProducts();
     fetchSilverPrice();
 
@@ -263,19 +265,19 @@ export default function Header() {
               <span className="text-[11px] text-zinc-400 font-mono">۴ دسته‌بندی</span>
             </Link>
             <div className="ps-4 flex flex-col gap-1.5 text-xs text-zinc-700 border-s-2 border-[#C4852B]/30 ms-2">
-              <Link href="/rings" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1.5 flex items-center gap-2.5">
+              <Link href="/shop?categoryId=2" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1.5 flex items-center gap-2.5">
                 <RingIcon className="w-4 h-4 text-[#A06314]" />
                 <span>{t.header.rings}</span>
               </Link>
-              <Link href="/necklaces" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1.5 flex items-center gap-2.5">
+              <Link href="/shop?categoryId=3" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1.5 flex items-center gap-2.5">
                 <NecklaceIcon className="w-4 h-4 text-[#A06314]" />
                 <span>{t.header.necklaces}</span>
               </Link>
-              <Link href="/bracelets" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1.5 flex items-center gap-2.5">
+              <Link href="/shop?categoryId=1" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1.5 flex items-center gap-2.5">
                 <BraceletIcon className="w-4 h-4 text-[#A06314]" />
                 <span>{t.header.bracelets}</span>
               </Link>
-              <Link href="/earrings" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1.5 flex items-center gap-2.5">
+              <Link href="/shop?categoryId=4" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#C4852B] py-1.5 flex items-center gap-2.5">
                 <EarringsIcon className="w-4 h-4 text-[#A06314]" />
                 <span>{t.header.earrings}</span>
               </Link>

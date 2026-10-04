@@ -1,0 +1,34 @@
+.adminShell {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f6f8;
+  font-family: var(--font-kalameh), 'Kalameh', system-ui, sans-serif;
+  color: #1a1816;
+}
+
+.mainContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin-right: 260px;
+  transition: margin-right 0.3s ease;
+}
+
+.pageContent {
+  flex: 1;
+  padding: 26px 28px;
+  overflow-x: hidden;
+}
+
+@media (max-width: 1024px) {
+  .mainContent {
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .pageContent {
+    padding: 16px;
+  }
+}

@@ -2,16 +2,43 @@ import type { Metadata } from "next";
 import { initialProducts } from "@/data/products";
 import ProductDetailView from "@/components/product/ProductDetailView";
 
+import { API_BASE_URL } from "@/lib/api";
+
 // Explicitly tell Next.js not to try server-rendering unknown IDs
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  if (!initialProducts || initialProducts.length === 0) {
-    return []; 
+  const ids = new Set<string>();
+
+  // 1. Static initial products
+  if (initialProducts && initialProducts.length > 0) {
+    initialProducts.forEach((product) => {
+      ids.add(product.id.toString());
+    });
   }
 
-  return initialProducts.map((product) => ({
-    id: product.id.toString(),
+  // 2. Pre-generate range 1..100 so all current and upcoming product IDs are exported
+  for (let i = 1; i <= 100; i++) {
+    ids.add(i.toString());
+  }
+
+  // 3. Include products from live backend if reachable
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/products`, { cache: "no-store" });
+    if (res.ok) {
+      const items = await res.json();
+      if (Array.isArray(items)) {
+        items.forEach((item: { id?: number }) => {
+          if (item?.id) ids.add(item.id.toString());
+        });
+      }
+    }
+  } catch {
+    // Ignore fetch error at build time
+  }
+
+  return Array.from(ids).map((id) => ({
+    id,
   }));
 }
 
@@ -25,7 +52,8 @@ export async function generateMetadata({
 
   if (!product) {
     return {
-      title: "محصول یافت نشد | زیورآلات نفیسه عبادی",
+      title: "محصول زیورآلات نقره | زیورآلات نفیسه عبادی",
+      description: "زیورآلات دست‌ساز نقره استرلینگ ۹۲۵ و سنگ‌های طبیعی اصل نفیسه عبادی.",
     };
   }
 

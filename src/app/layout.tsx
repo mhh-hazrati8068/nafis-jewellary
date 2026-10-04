@@ -1,13 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
-import TopBar from "@/components/layout/TopBar";
-import CartDrawer from "@/components/cart/CartDrawer";
-import SearchModal from "@/components/search/SearchModal";
 import LanguageWrapper from "@/components/layout/LanguageWrapper";
-import OfficialReceiptModal from "@/components/receipt/OfficialReceiptModal";
+import StoreLayoutShell from "@/components/layout/StoreLayoutShell";
 
 const kalameh = localFont({
   src: [
@@ -215,15 +210,9 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col font-sans antialiased text-[#1A1816] bg-[#FFFFFF] dark:bg-[#FAF9F5] selection:bg-[#660000] selection:text-white transition-colors duration-300">
         <LanguageWrapper>
-          <TopBar />
-          <Header />
-          <main className="flex-1">
+          <StoreLayoutShell>
             {children}
-          </main>
-          <CartDrawer />
-          <SearchModal />
-          <OfficialReceiptModal />
-          <Footer />
+          </StoreLayoutShell>
         </LanguageWrapper>
       </body>
     </html>

@@ -12,7 +12,8 @@ import {
   API_BASE_URL,
   BackendProduct,
   BackendCategory,
-  fetchCategories as fetchCategoriesApi
+  fetchCategories as fetchCategoriesApi,
+  getCachedApiData
 } from '@/lib/api'
 
 export type { Product }
@@ -115,6 +116,7 @@ function mapBackendToFrontend(bp: BackendProduct): Product {
     nameAr: translateDynamicText(bp.name, 'ar'),
     price: bp.livePriceToman || 0,
     category: catSlug,
+    categoryId: effectiveCatId,
     categoryFa: effectiveCatName || (catSlug === 'rings' ? 'انگشتر' : catSlug === 'necklaces' ? 'گردنبند' : catSlug === 'bracelets' ? 'دستبند' : 'گوشواره'),
     categoryEn: translateDynamicText(effectiveCatName || catSlug, 'en'),
     categoryAr: translateDynamicText(effectiveCatName || catSlug, 'ar'),
@@ -168,6 +170,36 @@ export const useAppStore = create<AppState>()((set, get) => ({
   selectedCategoryId: null,
   setSelectedCategoryId: (catId) => {
     set({ selectedCategoryId: catId });
+
+    // 1. Instant optimistic local filtering (0ms feedback)
+    const { backendProducts } = get();
+    if (backendProducts && backendProducts.length > 0) {
+      const filtered = catId 
+        ? backendProducts.filter((p) => p.categoryId === catId || p.category?.id === catId)
+        : backendProducts;
+      if (filtered.length > 0) {
+        set({ products: filtered.map(mapBackendToFrontend) });
+      }
+    } else {
+      // Fallback filter from initial products
+      if (catId) {
+        const filtered = initialProducts.filter(p => {
+          if (p.categoryId === catId) return true;
+          if (catId === 1 && p.category === 'bracelets') return true;
+          if (catId === 2 && p.category === 'rings') return true;
+          if (catId === 3 && p.category === 'necklaces') return true;
+          if (catId === 4 && p.category === 'earrings') return true;
+          return false;
+        });
+        if (filtered.length > 0) {
+          set({ products: filtered });
+        }
+      } else {
+        set({ products: initialProducts });
+      }
+    }
+
+    // 2. Background server fetch and cache update
     get().fetchProducts(catId);
   },
   fetchCategories: async () => {
@@ -189,22 +221,28 @@ export const useAppStore = create<AppState>()((set, get) => ({
   getProductById: (id) => get().products.find((p) => p.id === id),
 
   fetchProducts: async (categoryId?: number | null) => {
-    set({ isLoadingProducts: true })
+    const targetCatId = categoryId !== undefined ? categoryId : get().selectedCategoryId;
+
+    // Only set loading if current product list is completely empty
+    if (!get().products || get().products.length === 0) {
+      set({ isLoadingProducts: true });
+    }
+
     try {
       const { token } = get();
-      const targetCatId = categoryId !== undefined ? categoryId : get().selectedCategoryId;
       const backendItems = await fetchAllProducts(targetCatId, token);
       if (backendItems && backendItems.length > 0) {
         const mapped = backendItems.map(mapBackendToFrontend);
         set({
           products: mapped,
-          backendProducts: backendItems,
+          backendProducts: targetCatId ? get().backendProducts : backendItems,
           isLoadingProducts: false,
         });
       } else {
         // Fallback filter if backend returns empty for category
         if (targetCatId) {
           const filtered = initialProducts.filter(p => {
+            if (p.categoryId === targetCatId) return true;
             if (targetCatId === 1 && p.category === 'bracelets') return true;
             if (targetCatId === 2 && p.category === 'rings') return true;
             if (targetCatId === 3 && p.category === 'necklaces') return true;
@@ -344,6 +382,25 @@ export const useAppStore = create<AppState>()((set, get) => ({
     if (langStr && (langStr === 'fa' || langStr === 'en' || langStr === 'ar')) {
       get().setLanguage(langStr);
     }
+
+    // Instant 0ms hydration from client cache
+    try {
+      const cachedCats = getCachedApiData<BackendCategory[]>('categories');
+      if (cachedCats && cachedCats.length > 0) {
+        set({ categories: cachedCats });
+      }
+      const cachedProds = getCachedApiData<BackendProduct[]>('products_all');
+      if (cachedProds && cachedProds.length > 0) {
+        set({ 
+          products: cachedProds.map(mapBackendToFrontend),
+          backendProducts: cachedProds 
+        });
+      }
+      const cachedSilver = getCachedApiData<number>('silver_price');
+      if (cachedSilver && cachedSilver > 0) {
+        set({ silverPricePerGramToman: cachedSilver });
+      }
+    } catch {}
 
     if (token) {
       let parsedUser = null;

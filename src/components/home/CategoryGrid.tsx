@@ -10,9 +10,9 @@ export default function CategoryGrid() {
   const { t, language, categories, products, fetchCategories, fetchProducts } = useAppStore();
 
   useEffect(() => {
-    fetchCategories();
-    fetchProducts();
-  }, [fetchCategories, fetchProducts]);
+    if (!categories || categories.length === 0) fetchCategories();
+    if (!products || products.length === 0) fetchProducts();
+  }, [categories, products, fetchCategories, fetchProducts]);
 
   const defaultCategoryImages: Record<string, string> = {
     "انگشتر": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=1000&auto=format&fit=crop",
@@ -21,13 +21,8 @@ export default function CategoryGrid() {
     "گوشواره": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1000&auto=format&fit=crop"
   };
 
-  const getCategoryHref = (name: string, id: number) => {
-    const lower = (name || "").toLowerCase();
-    if (lower.includes("انگشتر") || id === 2) return "/rings";
-    if (lower.includes("گردنبند") || id === 3) return "/necklaces";
-    if (lower.includes("دستبند") || id === 1) return "/bracelets";
-    if (lower.includes("گوشواره") || id === 4) return "/earrings";
-    return `/shop?category=${id}`;
+  const getCategoryHref = (_name: string, id: number) => {
+    return `/shop?categoryId=${id}`;
   };
 
   const apiCats = categories && categories.length > 0 ? categories : [

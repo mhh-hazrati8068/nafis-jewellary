@@ -113,6 +113,17 @@ export default function CollectionsPage() {
                     <p className="text-xs md:text-sm text-[#626667] leading-relaxed mb-6">
                       {desc}
                     </p>
+                    <div>
+                      <Link
+                        href={col.id === 'rings' ? '/shop?categoryId=2' : col.id === 'necklaces' ? '/shop?categoryId=3' : '/shop?categoryId=1'}
+                        className="inline-flex items-center gap-2 text-xs font-semibold text-[#660000] hover:text-[#C4852B] transition-colors"
+                      >
+                        <span>{language === 'fa' ? `مشاهده محصولات این کالکشن` : 'Explore Collection'}</span>
+                        <svg className="w-3.5 h-3.5 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </Link>
+                    </div>
                   </div>
                 </div>
 

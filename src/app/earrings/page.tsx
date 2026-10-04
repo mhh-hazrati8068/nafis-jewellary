@@ -2,11 +2,17 @@
 
 import { useAppStore } from "@/store/useAppStore";
 import Link from "next/link";
+import { useEffect } from "react";
 import { getProductName, getProductMaterial } from "@/lib/dynamicTranslator";
 
 export default function EarringsPage() {
-  const { products, language, addToCart, t } = useAppStore();
-  const earrings = products.filter(p => p.category === 'earrings');
+  const { products, language, addToCart, t, fetchProducts, isLoadingProducts } = useAppStore();
+
+  useEffect(() => {
+    fetchProducts(4);
+  }, [fetchProducts]);
+
+  const earrings = products.filter(p => p.categoryId === 4 || p.category === 'earrings');
 
   const getSubtitle = () => {
     if (language === 'fa') return 'گوشواره‌های مروارید طبیعی و نگین‌های درخشان با طراحی مینیمال و ارگونومیک.';

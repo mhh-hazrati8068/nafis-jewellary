@@ -2,11 +2,17 @@
 
 import { useAppStore } from "@/store/useAppStore";
 import Link from "next/link";
+import { useEffect } from "react";
 import { getProductName, getProductMaterial } from "@/lib/dynamicTranslator";
 
 export default function BraceletsPage() {
-  const { products, language, addToCart, t } = useAppStore();
-  const bracelets = products.filter(p => p.category === 'bracelets');
+  const { products, language, addToCart, t, fetchProducts, isLoadingProducts } = useAppStore();
+
+  useEffect(() => {
+    fetchProducts(1);
+  }, [fetchProducts]);
+
+  const bracelets = products.filter(p => p.categoryId === 1 || p.category === 'bracelets');
 
   const getSubtitle = () => {
     if (language === 'fa') return 'دستبندهای نقره ۹۲۵ با زنجیره‌های محکم، صیقلی و بافت اختصاصی.';

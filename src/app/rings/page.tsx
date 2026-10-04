@@ -2,11 +2,17 @@
 
 import { useAppStore } from "@/store/useAppStore";
 import Link from "next/link";
+import { useEffect } from "react";
 import { getProductName, getProductMaterial } from "@/lib/dynamicTranslator";
 
 export default function RingsPage() {
-  const { products, language, addToCart, t } = useAppStore();
-  const rings = products.filter(p => p.category === 'rings');
+  const { products, language, addToCart, t, fetchProducts, isLoadingProducts } = useAppStore();
+
+  useEffect(() => {
+    fetchProducts(2);
+  }, [fetchProducts]);
+
+  const rings = products.filter(p => p.categoryId === 2 || p.category === 'rings');
 
   const getSubtitle = () => {
     if (language === 'fa') return 'انگشترهای نقره ۹۲۵ دست‌ساز و سنگ‌های اصیل فیروزه و عقیق با شناسنامه اصالت کالا.';

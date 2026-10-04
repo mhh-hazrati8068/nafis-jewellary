@@ -2,11 +2,12 @@
 
 import { useAppStore } from "@/store/useAppStore";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { getProductName, getProductMaterial, translateDynamicText } from "@/lib/dynamicTranslator";
 import { getCategorySvgIcon, AllCollectionsIcon } from "@/components/icons/JewelryIcons";
 
-export default function ShopPage() {
+function ShopContent() {
   const { 
     products, 
     categories, 
@@ -19,23 +20,52 @@ export default function ShopPage() {
     isLoadingProducts 
   } = useAppStore();
 
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Sync categoryId from URL params on load and change
   useEffect(() => {
     fetchCategories();
-  }, [fetchCategories]);
+    const catParam = searchParams.get("categoryId") || searchParams.get("category");
+    if (catParam) {
+      const parsed = Number(catParam);
+      if (!isNaN(parsed)) {
+        setSelectedCategoryId(parsed);
+      }
+    }
+  }, [fetchCategories, searchParams, setSelectedCategoryId]);
+
+  const handleSelectCategory = (catId: number | null) => {
+    setSelectedCategoryId(catId);
+    if (catId) {
+      router.replace(`/shop?categoryId=${catId}`, { scroll: false });
+    } else {
+      router.replace("/shop", { scroll: false });
+    }
+  };
 
   const getPageTitle = () => {
-    if (language === 'fa') return 'تمامی زیورآلات نقره نفیسه عبادی';
-    if (language === 'ar') return 'جميع إبداعات الفضة الاسترليني نفيسة عبادي';
-    return 'All Silver Jewelry Creations';
+    if (selectedCategoryId) {
+      const activeCat = categories.find((c) => c.id === selectedCategoryId);
+      if (activeCat) {
+        const catName = language === "fa" ? activeCat.name : translateDynamicText(activeCat.name, language);
+        if (language === "fa") return `زیورآلات نقره - دسته‌بندی ${catName}`;
+        if (language === "ar") return `مجوهرات الفضة - فئة ${catName}`;
+        return `Silver Jewelry - ${catName}`;
+      }
+    }
+    if (language === "fa") return "تمامی زیورآلات نقره نفیسه عبادی";
+    if (language === "ar") return "جميع إبداعات الفضة الاسترليني نفيسة عبادي";
+    return "All Silver Jewelry Creations";
   };
 
   const getPageSubtitle = () => {
-    if (language === 'fa') return 'مجموعه کامل انگشترها، گردنبندها، دستبندها و گوشواره‌های نقره ۹۲۵، فیروزه نیشابور و عقیق طبیعی.';
-    if (language === 'ar') return 'التشكيلة الكاملة من الخواتم والقلائد والأساور والأقراط من الفضة الاسترليني 925 والأحجار الكريمة الطبيعية.';
-    return 'Complete catalog of handcrafted 925 sterling silver, Neyshabur turquoise, and natural agate jewelry.';
+    if (language === "fa") return "مجموعه کامل انگشترها، گردنبندها، دستبندها و گوشواره‌های نقره ۹۲۵، فیروزه نیشابور و عقیق طبیعی.";
+    if (language === "ar") return "التشكيلة الكاملة من الخواتم والقلائد والأساور والأقراط من الفضة الاسترليني 925 والأحجار الكريمة الطبيعية.";
+    return "Complete catalog of handcrafted 925 sterling silver, Neyshabur turquoise, and natural agate jewelry.";
   };
 
-  const allLabel = language === 'fa' ? 'همه محصولات' : language === 'ar' ? 'جميع المنتجات' : 'All Creations';
+  const allLabel = language === "fa" ? "همه محصولات" : language === "ar" ? "جميع المنتجات" : "All Creations";
 
   return (
     <div className="py-16 md:py-28 bg-[#FFFFFF] dark:bg-[#FAF9F5] text-zinc-950 min-h-screen transition-colors duration-500">
@@ -56,7 +86,7 @@ export default function ShopPage() {
         <div className="flex flex-wrap justify-center gap-3 mb-16">
           {/* All category pill */}
           <button
-            onClick={() => setSelectedCategoryId(null)}
+            onClick={() => handleSelectCategory(null)}
             className={`px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all border cursor-pointer flex items-center gap-2 ${
               selectedCategoryId === null 
                 ? "bg-[#660000] text-white border-[#660000] shadow-sm" 
@@ -69,12 +99,12 @@ export default function ShopPage() {
 
           {/* Dynamic categories from backend */}
           {categories.map((cat) => {
-            const catName = language === 'fa' ? cat.name : translateDynamicText(cat.name, language);
+            const catName = language === "fa" ? cat.name : translateDynamicText(cat.name, language);
             const isSelected = selectedCategoryId === cat.id;
             return (
               <button
                 key={cat.id}
-                onClick={() => setSelectedCategoryId(cat.id)}
+                onClick={() => handleSelectCategory(cat.id)}
                 className={`px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all border cursor-pointer flex items-center gap-2 ${
                   isSelected 
                     ? "bg-[#660000] text-white border-[#660000] shadow-sm" 
@@ -92,6 +122,16 @@ export default function ShopPage() {
           <div className="py-20 text-center text-xs text-zinc-500">
             در حال دریافت محصولات از سرور...
           </div>
+        ) : products.length === 0 ? (
+          <div className="py-20 text-center">
+            <p className="text-sm text-zinc-500 mb-4">هیچ محصولی در این دسته‌بندی یافت نشد.</p>
+            <button
+              onClick={() => handleSelectCategory(null)}
+              className="px-4 py-2 bg-[#660000] text-white text-xs rounded-lg font-semibold"
+            >
+              مشاهده تمامی محصولات
+            </button>
+          </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {products.map((product) => {
@@ -104,7 +144,13 @@ export default function ShopPage() {
                   className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-zinc-200 hover:border-[#C4852B] transition-all p-5 shadow-sm luxury-card-hover"
                 >
                   <Link href={`/product/${product.id}`} className="aspect-square rounded-xl overflow-hidden bg-[#F4F1EA] mb-4 block">
-                    <img src={product.image} alt={prodName} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img 
+                      src={product.image} 
+                      alt={prodName} 
+                      loading="lazy" 
+                      decoding="async" 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                    />
                   </Link>
                   
                   <div className="flex flex-col flex-1 justify-between">
@@ -144,5 +190,13 @@ export default function ShopPage() {
 
       </div>
     </div>
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <Suspense fallback={<div className="py-20 text-center text-xs text-zinc-400">بارگذاری فروشگاه...</div>}>
+      <ShopContent />
+    </Suspense>
   );
 }
