@@ -7,6 +7,7 @@ import {
   BackendProduct,
   BackendCategory,
   fetchAdminProducts,
+  fetchAllProducts,
   fetchAdminStones,
   fetchCategories,
   saveAdminProduct,
@@ -57,12 +58,50 @@ export default function AdminProductsPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const [prodList, stoneList, catList] = await Promise.all([
+      const [prodList, publicList, stoneList, catList] = await Promise.all([
         fetchAdminProducts(token),
+        fetchAllProducts(null, token),
         fetchAdminStones(token),
         fetchCategories(token),
       ]);
-      setProducts(prodList || []);
+
+      const publicPriceMap = new Map<number, number>();
+      (publicList || []).forEach((p) => {
+        if (p.id && typeof p.livePriceToman === "number" && p.livePriceToman > 0) {
+          publicPriceMap.set(p.id, p.livePriceToman);
+        }
+      });
+
+      const currentSilverRate = silverPricePerGramToman || 540040;
+
+      const enrichedProducts = (prodList || []).map((p) => {
+        const serverLivePrice = publicPriceMap.get(p.id);
+        let finalLivePrice = serverLivePrice || p.livePriceToman;
+
+        if (!finalLivePrice) {
+          if (p.pricingMethod === "METHOD_3_FIXED_PRICE") {
+            finalLivePrice = Number(p.fixedPrice || 0);
+          } else if (p.pricingMethod === "METHOD_4_STONE_ONLY") {
+            finalLivePrice = Number(p.stonePrice || 0);
+          } else {
+            const w = Number(p.weight || 0);
+            const rawSilver = Math.round(w * currentSilverRate);
+            const mkPct = Number(p.makingChargePercentage || 0);
+            const makingTotal = Math.round(rawSilver * (mkPct / 100) * 2);
+            const stPrice = p.pricingMethod === "METHOD_1_SILVER_MAKING_STONE"
+              ? Number(p.stonePrice || p.stone?.stonePrice || p.stone?.livePriceToman || 0)
+              : 0;
+            finalLivePrice = rawSilver + makingTotal + stPrice;
+          }
+        }
+
+        return {
+          ...p,
+          livePriceToman: finalLivePrice,
+        };
+      });
+
+      setProducts(enrichedProducts);
       setStones(stoneList || []);
       setCategories(catList || []);
       await fetchSilverPrice();
@@ -71,7 +110,7 @@ export default function AdminProductsPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [token, fetchSilverPrice]);
+  }, [token, fetchSilverPrice, silverPricePerGramToman]);
 
   useEffect(() => {
     loadData();
@@ -178,65 +217,73 @@ export default function AdminProductsPage() {
     setSelectedStoneId(stoneIdStr);
     if (stoneIdStr) {
       const found = stones.find((s) => String(s.id) === stoneIdStr);
-      if (found && found.livePriceToman) {
-        setStonePrice(String(found.livePriceToman));
+      if (found) {
+        const p = found.stonePrice || found.livePriceToman || 0;
+        setStonePrice(String(p));
       }
+    } else {
+      setStonePrice("");
     }
   };
 
+  const selectedStone = useMemo(() => {
+    return stones.find((s) => String(s.id) === selectedStoneId);
+  }, [stones, selectedStoneId]);
+
   // Step-by-Step Transparent Live Price Calculation Breakdown
   const calcDetails = useMemo(() => {
-    const silverRate = silverPricePerGramToman || 474820;
+    const silverRate = silverPricePerGramToman || 540040;
     const w = parseFloat(weight) || 0;
-    const mk = parseFloat(makingCharge) || 0; // In Tomans per gram
-    const stVal = parseFloat(stonePrice) || 0;
+    const mkPercent = parseFloat(makingCharge) || 0; // In Percentage (e.g. 15 for 15%)
+
+    // In Method 1, get stone price directly from the selected stone product in stones list
+    const foundStone = stones.find((s) => String(s.id) === selectedStoneId);
+    const selectedStoneVal = foundStone
+      ? Number(foundStone.stonePrice || foundStone.livePriceToman || 0)
+      : (parseFloat(stonePrice) || 0);
+
     const fixVal = parseFloat(fixedPrice) || 0;
+    const stVal = parseFloat(stonePrice) || 0;
 
     if (pricingMethod === "METHOD_3_FIXED_PRICE") {
       return {
         silverRate,
         silverRawValue: 0,
+        makingChargePercent: 0,
         makingTotalValue: 0,
         stoneValue: 0,
-        subTotalWithoutVat: fixVal,
-        vatAmount: 0,
-        finalTotalWithVat: fixVal,
+        finalTotal: fixVal,
       };
     }
 
     if (pricingMethod === "METHOD_4_STONE_ONLY") {
-      const vat = Math.round(stVal * 0.10);
-      const finalPrice = Math.round(stVal * 1.10);
       return {
         silverRate,
         silverRawValue: 0,
+        makingChargePercent: 0,
         makingTotalValue: 0,
         stoneValue: stVal,
-        subTotalWithoutVat: stVal,
-        vatAmount: vat,
-        finalTotalWithVat: finalPrice,
+        finalTotal: stVal,
       };
     }
 
     // Methods 1 & 2:
-    // (وزن محصول × قیمت روز نقره) + (وزن محصول × (اجرت ساخت هر گرم × ۲))
+    // وزن نقره خام = وزن محصول × قیمت روز نقره
     const silverRaw = Math.round(w * silverRate);
-    const makingTotal = Math.round(w * (mk * 2));
-    const effectiveStone = pricingMethod === "METHOD_1_SILVER_MAKING_STONE" ? stVal : 0;
-    const subTotal = silverRaw + makingTotal + effectiveStone;
-    const vat = Math.round(subTotal * 0.10);
-    const finalPrice = Math.round(subTotal * 1.10);
+    // اجرت ساخت به درصد با ضریب ۲ = ارزش نقره خام × (درصد اجرت / ۱۰۰) × ۲
+    const makingTotal = Math.round(silverRaw * (mkPercent / 100) * 2);
+    const effectiveStone = pricingMethod === "METHOD_1_SILVER_MAKING_STONE" ? selectedStoneVal : 0;
+    const finalPrice = silverRaw + makingTotal + effectiveStone;
 
     return {
       silverRate,
       silverRawValue: silverRaw,
+      makingChargePercent: mkPercent,
       makingTotalValue: makingTotal,
       stoneValue: effectiveStone,
-      subTotalWithoutVat: subTotal,
-      vatAmount: vat,
-      finalTotalWithVat: finalPrice,
+      finalTotal: finalPrice,
     };
-  }, [silverPricePerGramToman, weight, makingCharge, stonePrice, fixedPrice, pricingMethod]);
+  }, [silverPricePerGramToman, weight, makingCharge, stonePrice, fixedPrice, pricingMethod, selectedStoneId, stones]);
 
   const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -256,10 +303,15 @@ export default function AdminProductsPage() {
       }
       if (!makingCharge || parseFloat(makingCharge) <= 0) {
         setFormError(
-          "⚠️ قانون سیستم: اجرت ساخت هر گرم باید به صورت دستی وارد شود و نمی‌تواند خالی باشد."
+          "⚠️ قانون سیستم: درصد اجرت ساخت باید به صورت دستی وارد شود و نمی‌تواند خالی باشد."
         );
         return;
       }
+    }
+
+    if (pricingMethod === "METHOD_1_SILVER_MAKING_STONE" && !selectedStoneId) {
+      setFormError("لطفاً یک سنگ / نگین را از لیست انتخاب نمایید.");
+      return;
     }
 
     if (pricingMethod === "METHOD_3_FIXED_PRICE" && (!fixedPrice || parseFloat(fixedPrice) <= 0)) {
@@ -280,10 +332,20 @@ export default function AdminProductsPage() {
       formData.append("name", name.trim());
       formData.append("pricingMethod", pricingMethod);
       formData.append("weight", weight || "0");
-      // The server model maps the manual making charge per gram via this field
+      // The server model maps the manual making charge as percentage
       formData.append("makingChargePercentage", makingCharge || "0");
       formData.append("fixedPrice", fixedPrice || "0");
-      formData.append("stonePrice", stonePrice || "0");
+
+      if (pricingMethod === "METHOD_1_SILVER_MAKING_STONE") {
+        const foundStone = stones.find((s) => String(s.id) === selectedStoneId);
+        const sPrice = foundStone ? (foundStone.stonePrice || foundStone.livePriceToman || 0) : 0;
+        formData.append("stonePrice", String(sPrice));
+      } else if (pricingMethod === "METHOD_4_STONE_ONLY") {
+        formData.append("stonePrice", stonePrice || "0");
+      } else {
+        formData.append("stonePrice", "0");
+      }
+
       formData.append("stockQuantity", stockQuantity || "0");
       formData.append("badge", badge);
       formData.append("isVisible", String(isVisible));
@@ -475,7 +537,7 @@ export default function AdminProductsPage() {
                 <tr>
                   <th>محصول و دسته‌بندی</th>
                   <th>فرمول قیمت‌گذاری</th>
-                  <th>قیمت زنده با ۱۰٪ VAT</th>
+                  <th>قیمت زنده سرور (تومان)</th>
                   <th>موجودی</th>
                   <th>نشان لوکس</th>
                   <th>وضعیت نمایش</th>
@@ -540,22 +602,22 @@ export default function AdminProductsPage() {
                           ) : p.pricingMethod === "METHOD_2_SILVER_MAKING" ? (
                             <>
                               <span>روش ۲ | وزن: {p.weight ?? 0} گرم</span> |{" "}
-                              <span>اجرت هر گرم: {Number(p.makingChargePercentage || 0).toLocaleString("fa-IR")} ت</span>
+                              <span>اجرت: {Number(p.makingChargePercentage ?? 0)}٪</span>
                             </>
                           ) : (
                             <>
                               <span>روش ۱ | وزن: {p.weight ?? 0} گرم</span> |{" "}
-                              <span>اجرت هر گرم: {Number(p.makingChargePercentage || 0).toLocaleString("fa-IR")} ت</span>
-                              {p.stonePrice ? ` | سنگ: ${Number(p.stonePrice).toLocaleString("fa-IR")} ت` : ""}
+                              <span>اجرت: {Number(p.makingChargePercentage ?? 0)}٪</span>
+                              {(p.stoneName || p.stone?.name) ? ` | نگین: ${p.stoneName || p.stone?.name}` : ""}
                             </>
                           )}
                         </div>
                       </td>
                       <td>
                         <span className={styles.priceVal}>
-                          {p.livePriceToman
-                            ? `${Number(p.livePriceToman).toLocaleString("fa-IR")} تومان`
-                            : "محاسبه زنده"}
+                          {p.livePriceToman && p.livePriceToman > 0
+                            ? `${Math.round(p.livePriceToman).toLocaleString("fa-IR")} تومان`
+                            : "در حال استعلام"}
                         </span>
                       </td>
                       <td>
@@ -620,7 +682,7 @@ export default function AdminProductsPage() {
                 <div className={styles.systemLawText}>
                   <span className={styles.systemLawTitle}>قانون مهم سیستم قیمت‌گذاری:</span>
                   <span className={styles.systemLawDesc}>
-                    اجرت ساخت هر گرم برای هر محصول باید به صورت دستی (Manual) وارد شود. سیستم هیچ مقدار پیش‌فرضی برای اجرت ندارد.
+                    اجرت ساخت هر محصول باید به صورت درصد دستی (Manual) وارد شود. سیستم هیچ مقدار پیش‌فرضی برای اجرت ندارد.
                   </span>
                 </div>
               </div>
@@ -655,7 +717,7 @@ export default function AdminProductsPage() {
                     <h3 className={styles.methodCardTitle}>نقره + اجرت ساخت + سنگ قرآنی / نگین</h3>
                     <p className={styles.methodCardExample}>مانند گردن‌آویز گلبرگ، انگشتر نگین‌دار</p>
                     <div className={styles.methodCardFormula}>
-                      (وزن × نرخ نقره) + (وزن × (اجرت هر گرم × ۲)) + سنگ + ۱۰٪ مالیات
+                      (وزن × نرخ نقره) + (ارزش نقره × اجرت٪ × ۲) + قیمت استعلامی سنگ
                     </div>
                   </div>
 
@@ -675,7 +737,7 @@ export default function AdminProductsPage() {
                     <h3 className={styles.methodCardTitle}>نقره + اجرت ساخت (بدون سنگ)</h3>
                     <p className={styles.methodCardExample}>مانند زنجیر سوپر ابریشمی، النگو، حلقه نقره</p>
                     <div className={styles.methodCardFormula}>
-                      (وزن × نرخ نقره) + (وزن × (اجرت هر گرم × ۲)) + ۱۰٪ مالیات
+                      (وزن × نرخ نقره) + (ارزش نقره × اجرت٪ × ۲)
                     </div>
                   </div>
 
@@ -775,50 +837,65 @@ export default function AdminProductsPage() {
 
                   <div className={styles.formGroup}>
                     <label className={styles.label}>
-                      <span>اجرت ساخت هر گرم (تومان) *</span>
-                      <span className={styles.labelHint}>(بدون پیش‌فرض - ضربدر ۲ محاسبه می‌شود)</span>
+                      <span>درصد اجرت ساخت (%) *</span>
+                      <span className={styles.labelHint}>(به درصد وارد شود - ضریب ۲ محاسبه می‌شود)</span>
                     </label>
                     <input
                       type="number"
+                      step="any"
                       required
                       className={`${styles.input} ${styles.inputHighlight}`}
                       value={makingCharge}
                       onChange={(e) => setMakingCharge(e.target.value)}
-                      placeholder="مثال: 500000"
+                      placeholder="مثال: 15 یا 20"
                     />
                   </div>
                 </div>
               )}
 
-              {/* Method 1: Stone Price & Stone Selector */}
+              {/* Method 1: Stone Selection (Direct from server inventory) */}
               {pricingMethod === "METHOD_1_SILVER_MAKING_STONE" && (
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>قیمت سنگ قرآنی / نگین (تومان) *</label>
-                    <input
-                      type="number"
-                      className={styles.input}
-                      value={stonePrice}
-                      onChange={(e) => setStonePrice(e.target.value)}
-                      placeholder="مثال: 7500000"
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>انتخاب نگین از لیست سنگ‌های موجود</label>
-                    <select
-                      className={styles.select}
-                      value={selectedStoneId}
-                      onChange={(e) => handleSelectStone(e.target.value)}
-                    >
-                      <option value="">انتخاب سنگ از انبار (اختیاری)</option>
-                      {stones.map((s) => (
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>
+                    <span>انتخاب سنگ / نگین از انبار محصولات *</span>
+                    <span className={styles.labelHint}>(قیمت سنگ به صورت خودکار از سرور دریافت می‌شود)</span>
+                  </label>
+                  <select
+                    required
+                    className={`${styles.select} ${styles.inputHighlight}`}
+                    value={selectedStoneId}
+                    onChange={(e) => handleSelectStone(e.target.value)}
+                  >
+                    <option value="">-- لطفاً یک نگین یا سنگ از انبار انتخاب کنید --</option>
+                    {stones.map((s) => {
+                      const sPrice = Number(s.stonePrice || s.livePriceToman || 0);
+                      return (
                         <option key={s.id} value={String(s.id)}>
-                          {s.name} ({Number(s.livePriceToman || 0).toLocaleString("fa-IR")} ت)
+                          {s.name} {sPrice > 0 ? `— [قیمت سرور: ${sPrice.toLocaleString("fa-IR")} تومان]` : ""}
                         </option>
-                      ))}
-                    </select>
-                  </div>
+                      );
+                    })}
+                  </select>
+
+                  {selectedStone && (
+                    <div style={{
+                      marginTop: "6px",
+                      padding: "10px 14px",
+                      background: "#eff6ff",
+                      border: "1px solid #bfdbfe",
+                      borderRadius: "10px",
+                      fontSize: "13px",
+                      color: "#1e40af",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between"
+                    }}>
+                      <span>💎 نگین انتخاب‌شده: <strong>{selectedStone.name}</strong></span>
+                      <span style={{ direction: "ltr", fontWeight: 800 }}>
+                        قیمت نگین در سرور: {Number(selectedStone.stonePrice || selectedStone.livePriceToman || 0).toLocaleString("fa-IR")} تومان
+                      </span>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -863,7 +940,7 @@ export default function AdminProductsPage() {
                 <div className={styles.calcHeader}>
                   <span className={styles.calcHeaderTitle}>
                     <span>🧾</span>
-                    <span>پیش‌نمایش تفکیک محاسباتی و صدور فاکتور</span>
+                    <span>پیش‌نمایش تفکیک محاسباتی و صدور فاکتور (مطابق فرمول زنده سرور)</span>
                   </span>
                   <span className={styles.silverRateBadge}>
                     نرخ روز نقره: {calcDetails.silverRate.toLocaleString("fa-IR")} ت / گرم
@@ -888,7 +965,7 @@ export default function AdminProductsPage() {
                       <div className={styles.calcRow}>
                         <span className={styles.calcRowLabel}>اجرت ساخت دو برابری:</span>
                         <span className={styles.calcRowFormula}>
-                          ({weight || "۰"} گرم × ({Number(makingCharge || 0).toLocaleString("fa-IR")} ت × ۲))
+                          (ارزش نقره × {calcDetails.makingChargePercent || "۰"}٪ × ۲)
                         </span>
                         <span className={styles.calcRowVal}>
                           {calcDetails.makingTotalValue.toLocaleString("fa-IR")} تومان
@@ -898,43 +975,43 @@ export default function AdminProductsPage() {
                   )}
 
                   {/* Stone Price */}
-                  {(pricingMethod === "METHOD_1_SILVER_MAKING_STONE" ||
-                    pricingMethod === "METHOD_4_STONE_ONLY") && (
+                  {pricingMethod === "METHOD_1_SILVER_MAKING_STONE" && (
                     <div className={styles.calcRow}>
-                      <span className={styles.calcRowLabel}>قیمت سنگ / نگین:</span>
+                      <span className={styles.calcRowLabel}>قیمت نگین متصل‌شده (استعلام از سرور):</span>
+                      <span className={styles.calcRowFormula}>
+                        {selectedStone ? `(${selectedStone.name})` : "(بدون نگین)"}
+                      </span>
                       <span className={styles.calcRowVal}>
                         {calcDetails.stoneValue.toLocaleString("fa-IR")} تومان
                       </span>
                     </div>
                   )}
 
-                  {/* Subtotal without VAT */}
-                  {pricingMethod !== "METHOD_3_FIXED_PRICE" && (
-                    <div className={styles.calcRow} style={{ borderTop: "1px dashed #e2d4c4", paddingTop: "6px" }}>
-                      <span className={styles.calcRowLabel} style={{ fontWeight: 700 }}>
-                        قیمت کل محصول بدون مالیات:
-                      </span>
-                      <span className={styles.calcRowVal} style={{ fontWeight: 800 }}>
-                        {calcDetails.subTotalWithoutVat.toLocaleString("fa-IR")} تومان
+                  {pricingMethod === "METHOD_4_STONE_ONLY" && (
+                    <div className={styles.calcRow}>
+                      <span className={styles.calcRowLabel}>قیمت سنگ خام / تراش‌خورده:</span>
+                      <span className={styles.calcRowVal}>
+                        {calcDetails.stoneValue.toLocaleString("fa-IR")} تومان
                       </span>
                     </div>
                   )}
 
-                  {/* 10% VAT Row */}
-                  {pricingMethod !== "METHOD_3_FIXED_PRICE" && (
-                    <div className={styles.calcVatRow}>
-                      <span>➕ محاسبه ۱۰٪ مالیات بر ارزش افزوده (VAT):</span>
-                      <span>{calcDetails.vatAmount.toLocaleString("fa-IR")} تومان</span>
+                  {pricingMethod === "METHOD_3_FIXED_PRICE" && (
+                    <div className={styles.calcRow}>
+                      <span className={styles.calcRowLabel}>قیمت مقطوع تعیین‌شده:</span>
+                      <span className={styles.calcRowVal}>
+                        {calcDetails.finalTotal.toLocaleString("fa-IR")} تومان
+                      </span>
                     </div>
                   )}
 
                   {/* Final Total Row */}
                   <div className={styles.calcTotalRow}>
                     <span className={styles.calcTotalLabel}>
-                      💰 مبلغ قابل پرداخت / قیمت نهایی (تومان):
+                      💰 مبلغ کل و نهایی محصول (محاسبه رسمی سرور):
                     </span>
                     <span className={styles.calcTotalVal}>
-                      {calcDetails.finalTotalWithVat.toLocaleString("fa-IR")} تومان
+                      {calcDetails.finalTotal.toLocaleString("fa-IR")} تومان
                     </span>
                   </div>
                 </div>
