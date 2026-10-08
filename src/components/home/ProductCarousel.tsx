@@ -50,10 +50,15 @@ export default function ProductCarousel() {
                     className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108"
                   />
                   
-                  {/* 18K Gold Badge */}
-                  <span className="absolute top-3 left-3 bg-[#660000] text-white text-[9px] font-mono tracking-widest uppercase px-2.5 py-1 rounded-full shadow-md">
-                    {product.carat}
-                  </span>
+                  {/* Carat & AR Badge */}
+                  <div className="absolute top-3 inset-x-3 flex items-center justify-between pointer-events-none z-10">
+                    <span className="bg-[#660000] text-white text-[9px] font-mono tracking-widest uppercase px-2.5 py-1 rounded-full shadow-md font-bold">
+                      {product.carat}
+                    </span>
+                    <span className="bg-black/70 backdrop-blur-xs text-[#E5A84B] border border-[#C4852B]/40 text-[9px] font-mono tracking-wider uppercase px-2 py-0.5 rounded-full shadow-md font-bold">
+                      AR 3D
+                    </span>
+                  </div>
 
                   {/* Quick Add Overlay Button */}
                   <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 transform translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-400 ease-out bg-gradient-to-t from-black/60 to-transparent flex justify-center">

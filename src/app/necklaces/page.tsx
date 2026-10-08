@@ -15,7 +15,7 @@ export default function NecklacesPage() {
   const necklaces = products.filter(p => p.categoryId === 3 || p.category === 'necklaces');
 
   const getSubtitle = () => {
-    if (language === 'fa') return 'گردنبندهای عقیق سرخ، فیروزه نیشابور و نقره ۹۲۵ با تراش دست‌ساز و اصیل.';
+    if (language === 'fa') return 'گردنبندهای عقیق سرخ، دُرّ نجف شفاف و نقره ۹۲۵ با تراش دست‌ساز و اصیل.';
     if (language === 'ar') return 'قلائد العقيق الأحمر والفيروز النيسابوري المؤطرة بالفضة الإسترلينية 925 مع تصاميم فريدة.';
     return 'Authentic natural agate and turquoise pendant necklaces encased in handcrafted 925 sterling silver.';
   };

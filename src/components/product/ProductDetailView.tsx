@@ -9,6 +9,8 @@ import {
   getProductMaterial, 
   getProductDescription 
 } from "@/lib/dynamicTranslator";
+import { SparkleStarIcon } from "@/components/icons/JewelryIcons";
+import ARProductViewerModal from "@/components/product/ARProductViewerModal";
 
 interface ProductDetailViewProps {
   productId: number;
@@ -20,6 +22,7 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
   const product = getProductById(productId) || products[0];
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [qty, setQty] = useState(1);
+  const [isAROpen, setIsAROpen] = useState(false);
 
   const activeImg = selectedImage || product.image;
   const isWishlisted = wishlist.includes(product.id);
@@ -89,6 +92,28 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
                 ))}
               </div>
             )}
+            {/* 3D & AR Virtual Try-On Studio Trigger */}
+            <button
+              onClick={() => setIsAROpen(true)}
+              className="mt-3 w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#1A1816] via-[#2A1F18] to-[#1A1816] text-[#E5A84B] border border-[#C4852B]/60 hover:border-[#E5A84B] flex items-center justify-between gap-3 shadow-md hover:shadow-xl transition-all duration-300 group cursor-pointer"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-[#C4852B]/20 flex items-center justify-center text-[#E5A84B] group-hover:scale-110 transition-transform">
+                  <SparkleStarIcon className="w-4 h-4 text-[#E5A84B]" />
+                </div>
+                <div className="text-start">
+                  <span className="text-xs font-bold block text-white group-hover:text-[#E5A84B] transition-colors">
+                    {language === 'fa' ? 'شبیه‌ساز سه‌بعدی و تست روی دست (AR هوش مصنوعی)' : '3D Studio & Live AR Virtual Try-On'}
+                  </span>
+                  <span className="text-[10px] text-zinc-400">
+                    {language === 'fa' ? 'امکان شخصی‌سازی نگین به دُرّ نجف و عقیق یمنی' : 'Customize with natural Agate & Durr-e Najaf'}
+                  </span>
+                </div>
+              </div>
+              <span className="text-[9px] bg-[#660000] text-white px-2.5 py-1 rounded-full font-mono uppercase font-bold tracking-wider shrink-0">
+                LIVE AR 3D
+              </span>
+            </button>
           </div>
 
           <div className="flex flex-col justify-between">
@@ -175,10 +200,28 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
               >
                 {t.products.addToCart}
               </button>
+
+              <button
+                onClick={() => setIsAROpen(true)}
+                className="w-full sm:w-auto py-4 px-6 border-2 border-[#C4852B] text-[#A06314] hover:bg-[#C4852B]/10 font-bold text-xs uppercase tracking-[0.15em] rounded-full transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
+              >
+                <SparkleStarIcon className="w-4 h-4 text-[#C4852B]" />
+                <span>{language === 'fa' ? 'تست AR روی دست' : 'AR Try-On'}</span>
+              </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Interactive 3D & Live Camera AR Virtual Try-On Modal */}
+      {isAROpen && (
+        <ARProductViewerModal 
+          isOpen={isAROpen} 
+          onClose={() => setIsAROpen(false)} 
+          productTitle={name}
+          initialProduct={product}
+        />
+      )}
     </div>
   );
 }

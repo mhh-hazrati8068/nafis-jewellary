@@ -11,13 +11,13 @@ export default function CollectionsPage() {
   const collections = [
     {
       id: "rings",
-      titleFa: "کالکشن انگشترهای نقره ۹۲۵ و فیروزه",
+      titleFa: "کالکشن انگشترهای نقره ۹۲۵ و دُرّ نجف",
       titleEn: "Fine 925 Silver & Turquoise Ring Collection",
       titleAr: "مجموعة خواتم الفضة 925 والفيروز النيسابوري",
-      subtitleFa: "پیوند سنگ فیروزه نیشابور و نقره استرلینگ",
+      subtitleFa: "پیوند سنگ دُرّ نجف، عقیق و نقره استرلینگ",
       subtitleEn: "Neyshabur Turquoise & Fine Silver Fusion",
       subtitleAr: "تناغم الفيروز النيسابوري والفضة الإسترلينية",
-      descriptionFa: "مجموعه‌ای باشکوه از انگشترهای دست‌ساز نقره خالص ۹۲۵ و فیروزه اصیل نیشابور که با ظرافت استادکاران زرگر خلق شده‌اند.",
+      descriptionFa: "مجموعه‌ای باشکوه از انگشترهای دست‌ساز نقره خالص ۹۲۵، دُرّ نجف زلال و عقیق اصیل که با ظرافت استادکاران زرگر خلق شده‌اند.",
       descriptionEn: "A magnificent collection of handcrafted solid 925 sterling silver rings set with natural Neyshabur turquoise, celebrating heritage craftsmanship.",
       descriptionAr: "تشكيلة ساحرة من الخواتم الصياغة اليدوية بالفضة الإسترلينية 925 وأحجار الفيروز النيسابوري الفاخرة.",
       image: "/images/campaign_turquoise_ring.jpg",
@@ -60,7 +60,7 @@ export default function CollectionsPage() {
   };
 
   const getPageDesc = () => {
-    if (language === 'fa') return 'ورود به دنیای هنر و زیورآلات نفیسه عبادی؛ هر کالکشن روایتی منحصر‌به‌فرد از اصالت نقره ۹۲۵، سنگ عقیق و فیروزه نیشابور است.';
+    if (language === 'fa') return 'ورود به دنیای هنر و زیورآلات نفیسه عبادی؛ هر کالکشن روایتی منحصر‌به‌فرد از اصالت نقره ۹۲۵، سنگ‌های اصیل عقیق طبیعی و دُرّ نجف است.';
     if (language === 'ar') return 'ادخل عالم الإبداع مع مجوهرات نفيسة عبادي؛ كل مجموعة تروي حكاية فريدة من فخامة الفضة الإسترلينية 925 والأحجار الكريمة النادرة.';
     return 'Enter the world of Nafise Ebadi Jewellery; each collection presents an artistic narrative of 925 sterling silver and gemstones.';
   };

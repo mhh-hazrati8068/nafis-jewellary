@@ -15,22 +15,28 @@ export default function FeaturesRow() {
     },
     {
       number: "02",
-      title: t.features.craftedTitle,
-      description: t.features.craftedDesc,
-      tag: "ARTISAN WORKSHOP"
+      title: t.features.returnTitle,
+      description: t.features.returnDesc,
+      tag: "UNCONDITIONAL RETURN"
     },
     {
       number: "03",
       title: t.features.shippingTitle,
       description: t.features.shippingDesc,
       tag: "INSURED LOGISTICS"
+    },
+    {
+      number: "04",
+      title: t.features.craftedTitle,
+      description: t.features.craftedDesc,
+      tag: "ARTISAN WORKSHOP"
     }
   ];
 
   return (
     <section className="py-16 md:py-24 bg-[#F4F1EA] border-y border-[#C4852B]/20 transition-colors duration-500">
       <div className="container mx-auto px-4 md:px-12">
-        <MotionStaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-12">
+        <MotionStaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature, idx) => (
             <MotionStaggerItem key={idx}>
               <div 

@@ -140,7 +140,7 @@ export default function SilverCalculatorModal({ isOpen, onClose }: CalculatorPro
               <span>{Math.round(makingCharge).toLocaleString()} تومان</span>
             </div>
             <div className="flex justify-between text-[#626667]">
-              <span>{language === 'fa' ? 'ارزش نگین فیروزه / عقیق:' : language === 'ar' ? 'قيمة الحجر الطبيعي:' : 'Natural Gemstone (Turquoise/Agate):'}</span>
+              <span>{language === 'fa' ? 'ارزش نگین عقیق / دُرّ نجف:' : language === 'ar' ? 'قيمة حجر العقيق / در النجف:' : 'Natural Gemstone (Agate/Durr):'}</span>
               <span>{Math.round(gemstonePriceToman).toLocaleString()} تومان</span>
             </div>
             

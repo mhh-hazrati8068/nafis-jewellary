@@ -27,12 +27,12 @@ export default function AboutPage() {
     },
     {
       icon: <TurquoiseMineralIcon className="w-6 h-6 text-[#A06314]" />,
-      titleFa: "سنگ‌های اصیل فیروزه نیشابور و عقیق",
-      titleEn: "Authentic Neyshabur Turquoise & Agate",
-      titleAr: "أحجار الفيروز النيسابوري والعقيق الطبيعي",
-      descFa: "استفاده انحصاری از سنگ‌های معدنی ۱۰۰٪ طبیعی، شناسنامه‌دار و بدون بهسازی شیمیایی از کهن‌ترین معادن نیشابور و یمن.",
-      descEn: "100% natural, certified, untreated gemstones sourced directly from heritage mines of Neyshabur and Yemen.",
-      descAr: "أحجار كريمة طبيعية 100% مستخرجة من أقدم المناجم ومرفقة بشهادات فحص گوهرشناسی معتمدة.",
+      titleFa: "سنگ‌های اصیل عقیق طبیعی و دُرّ نجف",
+      titleEn: "Authentic Natural Agate & Durr-e Najaf",
+      titleAr: "أحجار العقيق الطبيعي ودر النجف الصافي",
+      descFa: "استفاده انحصاری از سنگ‌های معدنی ۱۰۰٪ طبیعی، شناسنامه‌دار و بدون بهسازی شیمیایی از جمله عقیق یمنی، کبدی و دُرّ نجف زلال.",
+      descEn: "100% natural, certified, untreated gemstones including Yemeni agate, dark liver agate, and crystalline Durr-e Najaf.",
+      descAr: "أحجار كريمة طبيعية 100% تشمل العقيق اليماني والكبدي ودر النجف الكريستالي ومرفقة بشهادات فحص معتمدة.",
     },
     {
       icon: <SilversmithHammerIcon className="w-6 h-6 text-[#A06314]" />,
@@ -61,9 +61,9 @@ export default function AboutPage() {
       titleFa: "تأسیس کارگاه تخصصی نفیسه عبادی",
       titleEn: "Founding the Master Silver Atelier",
       titleAr: "تأسيس ورشة صياغة الفضة",
-      descFa: "آغاز فعالیت با تمرکز بر طراحی مینیمال زیورآلات نقره و احیای هنر فیروزه‌نشانی اصیل نیشابور.",
-      descEn: "Inception with a focus on handcrafted minimalist silver jewelry and Neyshabur turquoise.",
-      descAr: "الانطلاق بالتركيز على صياغة الفضة اليدوية وترصيع الفيروز النيسابوري.",
+      descFa: "آغاز فعالیت با تمرکز بر طراحی مینیمال زیورآلات نقره و احیای هنر گوهرنشانی عقیق‌های کمیاب و دُرّ نجف.",
+      descEn: "Inception with a focus on handcrafted minimalist silver jewelry, rare agates, and crystalline Durr-e Najaf.",
+      descAr: "الانطلاق بالتركيز على صياغة الفضة اليدوية وترصيع العقيق النادر ودر النجف.",
     },
     {
       year: "۱۴۰۲",
@@ -117,10 +117,10 @@ export default function AboutPage() {
 
           <p className="text-sm md:text-base text-zinc-600 leading-relaxed max-w-2xl mx-auto font-sans">
             {language === 'fa'
-              ? 'روایتی از تلفیق هنر دست استادکاران نقره‌ساز ایرانی با مرغوب‌ترین نقره استرلینگ ۹۲۵، فیروزه اصل نیشابور و عقیق‌های اصیل معدنی؛ آثاری ماندگار برای کسانی که به اصالت و ظرافت وفادارند.'
+              ? 'روایتی از تلفیق هنر دست استادکاران نقره‌ساز ایرانی با مرغوب‌ترین نقره استرلینگ ۹۲۵، عقیق‌های اصیل معدنی و دُرّ نجف زلال؛ آثاری ماندگار برای کسانی که به اصالت و ظرافت وفادارند.'
               : language === 'ar'
-              ? 'قصة تدمج إبداع صائغي الفضة الإيرانية مع أجود أنواع الفضة الاسترليني 925، الفيروز النيسابوري الأصيل، والعقيق الطبيعي لتبقى قطعاً خالدة تتوارثها الأجيال.'
-              : 'A dedicated silver jewelry house committed to handcrafted 925 sterling silver, authentic Neyshabur turquoise, and certified natural agate gemstones.'}
+              ? 'قصة تدمج إبداع صائغي الفضة الإيرانية مع أجود أنواع الفضة الاسترليني 925، أحجار العقيق الطبيعية ودر النجف الصافي لتبقى قطعاً خالدة تتوارثها الأجيال.'
+              : 'A dedicated silver jewelry house committed to handcrafted 925 sterling silver, crystalline Durr-e Najaf, and certified natural agate gemstones.'}
           </p>
         </div>
 
@@ -157,10 +157,10 @@ export default function AboutPage() {
             </h2>
             <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-4">
               {language === 'fa'
-                ? 'در کارگاه زیورآلات نقره نفیسه عبادی، هر قطعه اثر یک سفر هنری و دست‌ساز است. از ذوب شمش‌های خالص نقره و آلیاژسازی دقیق به عیار ۹۲۵ گرفته تا سوهان‌کاری، قلم‌زنی ظریف، مرصع‌کاری نگین‌های فیروزه و عقیق و پرداخت نهایی آینه‌ای.'
+                ? 'در کارگاه زیورآلات نقره نفیسه عبادی، هر قطعه اثر یک سفر هنری و دست‌ساز است. از ذوب شمش‌های خالص نقره و آلیاژسازی دقیق به عیار ۹۲۵ گرفته تا سوهان‌کاری، قلم‌زنی ظریف، مرصع‌کاری نگین‌های عقیق و دُرّ نجف و پرداخت نهایی آینه‌ای.'
                 : language === 'ar'
-                ? 'في ورشة مجوهرات نفيسة عبادي، تمر كل قطعة برحلة حرفية دقيقة تبدأ من صهر سبائك الفضة النقية ودمجها بعيار 925 المعتمد، مروراً بالنقش والترصيع الدقيق، وحتى التلميع النهائي.'
-                : 'At the Nafise Ebadi studio, each creation begins with the finest silver bullion alloyed to 925 sterling purity, meticulously shaped, engraved, and hand-set with natural untreated gemstones.'}
+                ? 'في ورشة مجوهرات نفيسة عبادي، تمر كل قطعة برحلة حرفية دقيقة تبدأ من صهر سبائك الفضة النقية ودمجها بعيار 925 المعتمد، مروراً بالنقش والترصيع الدقيق لأحجار العقيق ودر النجف، وحتى التلميع النهائي.'
+                : 'At the Nafise Ebadi studio, each creation begins with the finest silver bullion alloyed to 925 sterling purity, meticulously shaped, engraved, and hand-set with natural untreated agates and crystalline Durr-e Najaf.'}
             </p>
             <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-6">
               {language === 'fa'
@@ -265,7 +265,7 @@ export default function AboutPage() {
             </h3>
             <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
               {language === 'fa'
-                ? 'آیا طرح خاصی در نظر دارید یا مایل به سفارش نقره ۹۲۵ با سنگ فیروزه نیشابور یا عقیق با تراش دلخواه هستید؟ کارشناسان ما آماده مشاوره به شما هستند.'
+                ? 'آیا طرح خاصی در نظر دارید یا مایل به سفارش نقره ۹۲۵ با سنگ‌های اصیل عقیق یا دُرّ نجف با تراش دلخواه هستید؟ کارشناسان ما آماده مشاوره به شما هستند.'
                 : 'Have a custom design or gemstone in mind? Our master craftsmen are available for personalized silver creations.'}
             </p>
           </div>

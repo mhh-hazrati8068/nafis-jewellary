@@ -1,102 +1,156 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import Link from "next/link";
-import { translateDynamicText } from "@/lib/dynamicTranslator";
 import { MotionFadeIn, MotionStaggerContainer, MotionStaggerItem, TiltCard } from "@/components/ui/MotionWrappers";
 
 export default function CategoryGrid() {
-  const { t, language, categories, products, fetchCategories, fetchProducts } = useAppStore();
+  const { t, language } = useAppStore();
+  const [activeMode, setActiveMode] = useState<"mode1" | "mode2">("mode1");
 
-  useEffect(() => {
-    if (!categories || categories.length === 0) fetchCategories();
-    if (!products || products.length === 0) fetchProducts();
-  }, [categories, products, fetchCategories, fetchProducts]);
-
-  const defaultCategoryImages: Record<string, string> = {
-    "انگشتر": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=1000&auto=format&fit=crop",
-    "گردنبند": "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=1000&auto=format&fit=crop",
-    "دستبند": "https://images.unsplash.com/photo-1611591475143-4f8a09e08390?q=80&w=1000&auto=format&fit=crop",
-    "گوشواره": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1000&auto=format&fit=crop"
-  };
-
-  const getCategoryHref = (_name: string, id: number) => {
-    return `/shop?categoryId=${id}`;
-  };
-
-  const apiCats = categories && categories.length > 0 ? categories : [
-    { id: 1, name: "دستبند", description: "دستبندهای نقره دست‌ساز و فاخر" },
-    { id: 2, name: "انگشتر", description: "انگشترهای نگین‌دار و نقره اصیل" },
-    { id: 3, name: "گردنبند", description: "گردنبند و آویزهای نقره نفیس" },
-    { id: 4, name: "گوشواره", description: "گوشواره‌های دست‌ساز هنری" }
+  // Mode 1: ست‌ها، مجموعه زنانه، مجموعه مردانه
+  const mode1Cards = [
+    {
+      id: "mode1-sets",
+      titleFa: "ست‌ها و نیم‌ست‌های نقره",
+      titleEn: "Signature Silver Sets",
+      titleAr: "أطقم الفضة الفاخرة",
+      href: "/collections",
+      image: "/images/campaign_durr_agate_ring.jpg",
+      colSpan: "col-span-1 lg:col-span-1"
+    },
+    {
+      id: "mode1-women",
+      titleFa: "مجموعه اختصاصی بانوان",
+      titleEn: "Women's High Jewellery",
+      titleAr: "مجموعة السيدات الراقية",
+      href: "/shop?filter=women",
+      image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=1000&auto=format&fit=crop",
+      colSpan: "col-span-1 lg:col-span-1"
+    },
+    {
+      id: "mode1-men",
+      titleFa: "مجموعه فاخر آقایان",
+      titleEn: "Men's Heritage Silver",
+      titleAr: "مجموعة الرجال الفاخرة",
+      href: "/shop?filter=men",
+      image: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=1000&auto=format&fit=crop",
+      colSpan: "col-span-1 lg:col-span-1"
+    }
   ];
 
-  const categoryCards = apiCats.map((cat, idx) => {
-    const matchingProd = products.find(p => 
-      p.categoryFa?.includes(cat.name) || 
-      p.nameFa?.includes(cat.name)
-    );
-    const img = matchingProd?.image || defaultCategoryImages[cat.name] || "https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=1000&auto=format&fit=crop";
-    const href = getCategoryHref(cat.name, cat.id);
-    const colSpan = idx === 0 || idx === apiCats.length - 1 ? "col-span-1 lg:col-span-2" : "col-span-1";
-    
-    return {
-      id: cat.id,
-      title: language === 'fa' ? cat.name : translateDynamicText(cat.name, language),
-      subtitle: cat.description || (language === 'fa' ? 'نقره استرلینگ ۹۲۵ دست‌ساز' : 'Handcrafted 925 Silver'),
-      href,
-      image: img,
-      colSpan
-    };
-  });
+  // Mode 2: ست‌ها، دستبند، انگشتر، گردن‌آویز
+  const mode2Cards = [
+    {
+      id: "mode2-sets",
+      titleFa: "ست‌ها و نیم‌ست‌ها",
+      titleEn: "Silver Sets",
+      titleAr: "أطقم الفضة",
+      href: "/collections",
+      image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1000&auto=format&fit=crop",
+      colSpan: "col-span-1 lg:col-span-1"
+    },
+    {
+      id: "mode2-bracelets",
+      titleFa: "دستبند و زنجیر نقره",
+      titleEn: "Silver Bracelets",
+      titleAr: "أساور وسلاسل فضة",
+      href: "/bracelets",
+      image: "/images/campaign_silver_bracelet.jpg",
+      colSpan: "col-span-1 lg:col-span-1"
+    },
+    {
+      id: "mode2-rings",
+      titleFa: "انگشتر نقره و عقیق",
+      titleEn: "Silver & Agate Rings",
+      titleAr: "خواتم فضة وعقيق",
+      href: "/rings",
+      image: "/images/campaign_durr_agate_ring.jpg",
+      colSpan: "col-span-1 lg:col-span-1"
+    },
+    {
+      id: "mode2-pendants",
+      titleFa: "گردن‌آویز و پلاک نقره",
+      titleEn: "Silver Pendants",
+      titleAr: "قلائد ومداليات فضة",
+      href: "/necklaces",
+      image: "/images/campaign_agate_necklace.jpg",
+      colSpan: "col-span-1 lg:col-span-1"
+    }
+  ];
+
+  const currentCards = activeMode === "mode1" ? mode1Cards : mode2Cards;
 
   return (
-    <section className="py-20 md:py-28 bg-[#FFFFFF] dark:bg-[#FAF9F5] text-zinc-950 transition-colors duration-500">
+    <section className="py-20 md:py-28 bg-[#FFFFFF] dark:bg-[#FAF9F5] text-zinc-950 transition-colors duration-500 border-t border-[#C4852B]/20">
       <div className="container mx-auto px-4 md:px-12">
         
         {/* Section Title */}
-        <MotionFadeIn direction="up" className="text-center max-w-2xl mx-auto mb-16">
+        <MotionFadeIn direction="up" className="text-center max-w-2xl mx-auto mb-10">
           <span className="text-[10px] text-[#C4852B] uppercase tracking-[0.3em] font-semibold mb-2 block font-mono">
             {t.categories.tag}
           </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold uppercase tracking-tight">
-            {t.categories.title}
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold uppercase tracking-tight mb-4">
+            {language === 'fa' ? 'کالکشن‌های اختصاصی' : t.categories.title}
           </h2>
+          <div className="w-20 h-0.5 bg-gradient-to-r from-[#C4852B] to-[#660000] mx-auto mb-6"></div>
+          
+          {/* Mode Switcher Buttons */}
+          <div className="inline-flex p-1 rounded-full bg-[#F4F1EA] border border-[#C4852B]/30 shadow-xs">
+            <button
+              onClick={() => setActiveMode("mode1")}
+              className={`px-5 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                activeMode === "mode1"
+                  ? "bg-[#660000] text-white shadow-sm"
+                  : "text-zinc-600 hover:text-zinc-950"
+              }`}
+            >
+              {language === 'fa' ? 'کالکشن‌های اختصاصی (ست‌ها، زنانه، مردانه)' : "Curated Collections"}
+            </button>
+            <button
+              onClick={() => setActiveMode("mode2")}
+              className={`px-5 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                activeMode === "mode2"
+                  ? "bg-[#660000] text-white shadow-sm"
+                  : "text-zinc-600 hover:text-zinc-950"
+              }`}
+            >
+              {language === 'fa' ? 'دسته‌بندی آثار (ست، دستبند، انگشتر، گردن‌آویز)' : "Jewellery Categories"}
+            </button>
+          </div>
         </MotionFadeIn>
 
-        {/* Categories Grid */}
-        <MotionStaggerContainer className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-          {categoryCards.map((cat) => (
+        {/* Clean Holder Visual Grid - without heavy cluttered details */}
+        <MotionStaggerContainer 
+          key={activeMode}
+          className={`grid grid-cols-1 sm:grid-cols-2 ${activeMode === 'mode1' ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-6 md:gap-8`}
+        >
+          {currentCards.map((cat) => (
             <MotionStaggerItem key={cat.id} className={cat.colSpan}>
               <TiltCard className="h-full">
                 <Link 
                   href={cat.href}
-                  className="group relative h-[320px] sm:h-[380px] rounded-3xl overflow-hidden border border-zinc-200 luxury-card-hover shadow-sm block w-full"
+                  className="group relative h-[300px] sm:h-[360px] rounded-3xl overflow-hidden border border-zinc-200/90 hover:border-[#C4852B] luxury-card-hover shadow-sm block w-full bg-[#1A1816]"
                 >
-                  {/* Image */}
+                  {/* Image Holder */}
                   <img 
                     src={cat.image} 
-                    alt={cat.title}
+                    alt={language === 'fa' ? cat.titleFa : cat.titleEn}
                     className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108"
                   />
                   
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1A1816]/90 via-[#1A1816]/25 to-transparent transition-opacity duration-500 group-hover:opacity-90"></div>
+                  {/* Sleek Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent transition-opacity duration-500 group-hover:opacity-90"></div>
 
-                  {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 flex flex-col justify-end">
-                    <span className="text-[10px] text-[#C4852B] font-mono uppercase tracking-[0.25em] mb-1 font-semibold">
-                      {cat.subtitle}
-                    </span>
-                    
-                    <h3 className="text-2xl sm:text-3xl font-bold text-white uppercase mb-4 tracking-wide group-hover:text-[#C4852B] transition-colors">
-                      {cat.title}
+                  {/* Clean Visual Holder - Title & Minimal Action */}
+                  <div className="absolute bottom-0 inset-x-0 p-6 flex items-center justify-between z-10">
+                    <h3 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-wide group-hover:text-[#FFDF73] transition-colors">
+                      {language === 'fa' ? cat.titleFa : language === 'ar' ? cat.titleAr : cat.titleEn}
                     </h3>
 
-                    <div className="flex items-center gap-2 text-xs font-bold text-white uppercase tracking-[0.2em]">
-                      <span>{t.categories.discover}</span>
-                      <span className="transform group-hover:translate-x-2 transition-transform duration-300">→</span>
+                    <div className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white group-hover:bg-[#660000] group-hover:scale-110 transition-all shrink-0">
+                      <span className="text-sm font-bold">{language === 'en' ? '→' : '←'}</span>
                     </div>
                   </div>
                 </Link>

@@ -7,6 +7,7 @@ import {
   BackendProduct,
   fetchCategories,
   createAdminCategory,
+  deleteAdminCategory,
   fetchAdminProducts,
   invalidateApiCache,
 } from "@/lib/api";
@@ -23,6 +24,7 @@ export default function AdminCategoriesPage() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const [statusMsg, setStatusMsg] = useState<{ text: string; type: "success" | "error" } | null>(null);
 
   const loadData = useCallback(async () => {
@@ -65,6 +67,31 @@ export default function AdminCategoriesPage() {
       });
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteCategory = async (id: number, catName: string) => {
+    if (!window.confirm(`آیا از حذف دسته‌بندی «${catName}» اطمینان دارید؟`)) return;
+
+    setDeletingId(id);
+    setStatusMsg(null);
+    try {
+      await deleteAdminCategory(id, token);
+      setStatusMsg({
+        text: `دسته‌بندی «${catName}» با موفقیت حذف شد.`,
+        type: "success",
+      });
+      await loadData();
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : "خطا در حذف دسته‌بندی";
+      setStatusMsg({
+        text: errMsg,
+        type: "error",
+      });
+      // Show alert popup as requested in specification
+      alert(errMsg);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -156,7 +183,8 @@ export default function AdminCategoriesPage() {
                 <th style={{ width: "80px" }}>شناسه</th>
                 <th>نام دسته‌بندی</th>
                 <th>توضیحات</th>
-                <th style={{ width: "160px" }}>تعداد محصولات</th>
+                <th style={{ width: "140px" }}>تعداد محصولات</th>
+                <th style={{ width: "110px", textAlign: "center" }}>عملیات</th>
               </tr>
             </thead>
             <tbody>
@@ -175,6 +203,23 @@ export default function AdminCategoriesPage() {
                     <span className={styles.productCountBadge}>
                       {getProductCount(c.id).toLocaleString("fa-IR")} محصول
                     </span>
+                  </td>
+                  <td style={{ textAlign: "center" }}>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteCategory(c.id, c.name)}
+                      className={styles.deleteBtn}
+                      disabled={deletingId === c.id}
+                      title="حذف دسته‌بندی"
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                        <line x1="10" y1="11" x2="10" y2="17" />
+                        <line x1="14" y1="11" x2="14" y2="17" />
+                      </svg>
+                      <span>{deletingId === c.id ? "در حال حذف..." : "حذف"}</span>
+                    </button>
                   </td>
                 </tr>
               ))}

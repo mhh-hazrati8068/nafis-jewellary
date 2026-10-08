@@ -73,7 +73,7 @@ export default function SearchModal() {
               <div className="flex flex-wrap justify-center gap-2">
                 {[
                   { fa: 'انگشتر نقره', en: 'Silver Ring', ar: 'خاتم فضة' },
-                  { fa: 'فیروزه نیشابور', en: 'Neyshabur Turquoise', ar: 'فيروز نيسابوري' },
+                  { fa: 'دُرّ نجف', en: 'Durr-e Najaf', ar: 'در النجف' },
                   { fa: 'عقیق سرخ', en: 'Red Agate', ar: 'عقيق أحمر' },
                   { fa: 'دستبند', en: 'Bracelet', ar: 'سوار' },
                   { fa: 'الماس VVS', en: 'VVS Diamond', ar: 'ألماس VVS' }
@@ -96,7 +96,7 @@ export default function SearchModal() {
               <p className="text-sm font-semibold mb-1">
                 {language === 'fa' ? 'نتیجه‌ای یافت نشد' : language === 'ar' ? 'لم يتم العثور على منتجات' : 'No products found'}
               </p>
-              <p className="opacity-75">{language === 'fa' ? 'کلمات دیگری مانند انگشتر، فیروزه یا نقره را امتحان کنید' : language === 'ar' ? 'جرب البحث عن خاتم، فيروز، أو فضة' : 'Try searching for ring, turquoise, or silver'}</p>
+              <p className="opacity-75">{language === 'fa' ? 'کلمات دیگری مانند انگشتر، عقیق، دُرّ نجف یا نقره را امتحان کنید' : language === 'ar' ? 'جرب البحث عن خاتم، فيروز، أو فضة' : 'Try searching for ring, turquoise, or silver'}</p>
             </div>
           ) : (
             <div className="flex flex-col gap-4">

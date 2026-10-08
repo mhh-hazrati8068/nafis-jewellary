@@ -5,6 +5,7 @@ import ProductCarousel from "@/components/home/ProductCarousel";
 import PackagingShowcase from "@/components/home/PackagingShowcase";
 import SocialCampaignSection from "@/components/home/SocialCampaignSection";
 import BrandStory from "@/components/home/BrandStory";
+import HomeContactSection from "@/components/home/HomeContactSection";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
       <PackagingShowcase />
       <SocialCampaignSection />
       <BrandStory />
+      <HomeContactSection />
     </>
   );
 }

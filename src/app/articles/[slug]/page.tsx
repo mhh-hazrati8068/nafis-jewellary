@@ -11,12 +11,12 @@ const STATIC_FALLBACK_SLUGS = [
 const ARTICLE_TITLES: Record<string, { title: string; summary: string; image: string }> = {
   "silver-and-gemstone-care-guide": {
     title: "راهنمای نگهداری و تمیز کردن زیورآلات نقره و سنگ‌های طبیعی",
-    summary: "چگونه از درخشش و جلای ماندگار نقره ۹۲۵ و سنگ‌های اصیل فیروزه و عقیق در برابر کدر شدن و سایش محافظت کنیم؟",
+    summary: "چگونه از درخشش و جلای ماندگار نقره ۹۲۵ و سنگ‌های اصیل عقیق و دُرّ نجف در برابر کدر شدن و سایش محافظت کنیم؟",
     image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=1000&auto=format&fit=crop",
   },
   "identifying-authentic-neyshabur-turquoise": {
-    title: "رازهای تشخیص سنگ فیروزه اصل نیشابور از نمونه‌های بهسازی‌شده",
-    summary: "بررسی شناسنامه سنگ، طیف رنگی آبی آسمانی تا سبز زیتونی و شناخت رگه‌های شجری در فیروزه فاخر نیشابور.",
+    title: "رازهای شناخت و اصالت سنگ دُرّ نجف شفاف و عقیق یمنی اصل",
+    summary: "بررسی شناسنامه گوهرشناسی، بلور شفاف و زلال دُرّ نجف، و شناخت طیف رنگی عقیق سرخ، کبدی و یشمی.",
     image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=1000&auto=format&fit=crop",
   },
   "art-of-minimalist-silver-jewelry-styling": {
@@ -62,7 +62,7 @@ export async function generateMetadata({
     description: summary,
     keywords: [
       "زیورآلات نقره ۹۲۵",
-      "فیروزه نیشابور",
+      "دُرّ نجف",
       "عقیق یمنی",
       "نگهداری نقره",
       "گوهرشناسی",

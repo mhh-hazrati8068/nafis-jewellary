@@ -21,7 +21,7 @@ export default function BrandStory() {
             <div className="relative aspect-[4/3] sm:aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-[#C4852B]/30 luxury-card-hover">
               <img 
                 src="/images/brand_atelier_story.jpg" 
-                alt="کارگاه تخصصی نقره‌سازی و گوهرنشانی فیروزه نیشابور - زیورآلات نفیسه عبادی" 
+                alt="کارگاه تخصصی نقره‌سازی و گوهرنشانی عقیق اصیل و دُرّ نجف - زیورآلات نفیسه عبادی" 
                 className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>

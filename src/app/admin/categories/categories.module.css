@@ -216,3 +216,31 @@
   background: #fbf0ee;
   color: #660000;
 }
+
+.deleteBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  background: #fff5f5;
+  border: 1px solid #ffd8d8;
+  border-radius: 8px;
+  color: #c92a2a;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.deleteBtn:hover:not(:disabled) {
+  background: #ffe3e3;
+  border-color: #ffc9c9;
+  color: #a61e1e;
+}
+
+.deleteBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+

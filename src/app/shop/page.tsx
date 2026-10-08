@@ -60,7 +60,7 @@ function ShopContent() {
   };
 
   const getPageSubtitle = () => {
-    if (language === "fa") return "مجموعه کامل انگشترها، گردنبندها، دستبندها و گوشواره‌های نقره ۹۲۵، فیروزه نیشابور و عقیق طبیعی.";
+    if (language === "fa") return "مجموعه کامل انگشترها، گردنبندها، دستبندها و گوشواره‌های نقره ۹۲۵، عقیق‌های معدنی و دُرّ نجف شفاف.";
     if (language === "ar") return "التشكيلة الكاملة من الخواتم والقلائد والأساور والأقراط من الفضة الاسترليني 925 والأحجار الكريمة الطبيعية.";
     return "Complete catalog of handcrafted 925 sterling silver, Neyshabur turquoise, and natural agate jewelry.";
   };

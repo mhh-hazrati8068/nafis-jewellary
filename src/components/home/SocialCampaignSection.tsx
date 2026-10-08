@@ -11,17 +11,17 @@ export default function SocialCampaignSection() {
   const campaignCards = [
     {
       id: "hands-rings",
-      titleFa: "انگشترهای فاخر نقره با گوهرنشانی فیروزه نیشابور",
-      titleEn: "Mastercrafted 925 Silver Rings with Natural Turquoise",
-      categoryFa: "انگشتر نقره دست‌ساز و سنگ‌های قیمتی",
+      titleFa: "انگشترهای فاخر نقره با گوهرنشانی دُرّ نجف و عقیق یمنی",
+      titleEn: "Mastercrafted 925 Silver Rings with Durr-e Najaf & Yemeni Agate",
+      categoryFa: "انگشتر نقره دست‌ساز و سنگ‌های اصیل",
       categoryEn: "Handcrafted Silver Ring Collection",
       href: "/rings",
-      image: "/images/campaign_turquoise_ring.jpg",
-      altFa: "انگشتر نقره ۹۲۵ دست‌ساز با سنگ فیروزه اصل نیشابور",
-      altEn: "Handcrafted 925 sterling silver ring with natural Neyshabur turquoise",
+      image: "/images/campaign_durr_agate_ring.jpg",
+      altFa: "انگشتر نقره ۹۲۵ دست‌ساز با سنگ دُرّ نجف و عقیق اصل معدنی",
+      altEn: "Handcrafted 925 sterling silver ring with natural Durr-e Najaf and agate",
       badgeText: "SIGNATURE 01",
-      tagFa: "فیروزه اصل نیشابور",
-      tagEn: "Neyshabur Turquoise",
+      tagFa: "دُرّ نجف و عقیق اصیل",
+      tagEn: "Durr-e Najaf & Natural Agate",
     },
     {
       id: "hands-pendant",
@@ -75,8 +75,8 @@ export default function SocialCampaignSection() {
 
           <p className="text-xs sm:text-sm text-[#626667] leading-relaxed max-w-2xl mx-auto">
             {language === 'fa'
-              ? 'هر اثر از زیورآلات نقره نفیسه عبادی با تلفیق هنر قلم‌زنی استادکاران، گوهرنشانی فیروزه نیشابور و عقیق طبیعی و صیقل بی‌نقص زرگری آفریده شده است تا شکوهی جاودان به استایل شما ببخشد.'
-              : 'Every piece from Nafise Ebadi Jewellery combines traditional master silversmithing, authentic Neyshabur turquoise and Yemeni agate setting, creating timeless elegance and refined personal style.'}
+              ? 'هر اثر از زیورآلات نقره نفیسه عبادی با تلفیق هنر قلم‌زنی استادکاران، گوهرنشانی سنگ‌های اصیل عقیق طبیعی و دُرّ نجف شفاف و صیقل بی‌نقص زرگری آفریده شده است تا شکوهی جاودان به استایل شما ببخشد.'
+              : 'Every piece from Nafise Ebadi Jewellery combines traditional master silversmithing, authentic natural agate and crystal-clear Durr-e Najaf gemstones, creating timeless elegance and refined personal style.'}
           </p>
         </div>
 

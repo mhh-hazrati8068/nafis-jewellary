@@ -13,6 +13,7 @@ export interface BackendProduct {
   livePriceToman: number;
   stockQuantity: number;
   imageUrl?: string;
+  galleryImages?: string[];
   stoneName?: string;
   badge?: 'NONE' | 'SPECIAL_OFFER' | 'BEST_SELLER' | 'NEW_ARRIVAL' | string;
   categoryId?: number;
@@ -329,6 +330,35 @@ export async function createAdminCategory(name: string, description?: string, to
   return res.json();
 }
 
+export async function deleteAdminCategory(id: number, token?: string | null): Promise<void> {
+  const res = await fetch(`${API_BASE_URL}/api/admin/categories/${id}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(token),
+  });
+  if (!res.ok) {
+    if (res.status === 403) {
+      throw new Error(
+        'خطای عدم دسترسی (۴۰۳ Forbidden): روت DELETE /api/admin/categories در SecurityConfig بک‌اند برای دسترسی ADMIN مجاز نشده است. لطفاً به توسعه‌دهنده بک‌اند اطلاع دهید.'
+      );
+    }
+    let errText = '';
+    try {
+      errText = await res.text();
+    } catch {}
+    if (
+      errText.includes('associated products') ||
+      errText.includes('Cannot delete category') ||
+      res.status === 400 ||
+      res.status === 500
+    ) {
+      throw new Error('این دسته‌بندی شامل محصول است و ابتدا باید محصولات آن را حذف یا جابجا کنید.');
+    }
+    throw new Error(errText || 'خطا در حذف دسته‌بندی');
+  }
+  invalidateApiCache('categories');
+  invalidateApiCache('admin_products');
+}
+
 const CATEGORY_OVERRIDES_KEY = 'nafis_product_category_overrides';
 
 export function saveProductCategoryOverride(productId: number, categoryId: number) {
@@ -566,7 +596,7 @@ export async function createCheckout(
             livePriceToman: it.price,
             stockQuantity: 10,
             imageUrl: it.image,
-            stoneName: it.name.includes('فیروزه') ? 'فیروزه نیشابور' : it.name.includes('عقیق') ? 'عقیق طبیعی' : 'نگین اصیل',
+            stoneName: it.name.includes('دُرّ') ? 'دُرّ نجف' : it.name.includes('عقیق') ? 'عقیق طبیعی' : 'نگین اصیل معدنی',
             weight: 4.5,
             pricingMethod: 'METHOD_1_SILVER_MAKING_STONE',
             visible: true
@@ -619,7 +649,7 @@ export async function createCheckout(
           livePriceToman: it.price,
           stockQuantity: 10,
           imageUrl: it.image,
-          stoneName: it.name.includes('فیروزه') ? 'فیروزه نیشابور' : it.name.includes('عقیق') ? 'عقیق طبیعی' : 'نگین اصیل',
+          stoneName: it.name.includes('دُرّ') ? 'دُرّ نجف' : it.name.includes('عقیق') ? 'عقیق طبیعی' : 'نگین اصیل معدنی',
           weight: 4.5,
           pricingMethod: 'METHOD_1_SILVER_MAKING_STONE',
           visible: true

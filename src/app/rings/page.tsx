@@ -15,7 +15,7 @@ export default function RingsPage() {
   const rings = products.filter(p => p.categoryId === 2 || p.category === 'rings');
 
   const getSubtitle = () => {
-    if (language === 'fa') return 'انگشترهای نقره ۹۲۵ دست‌ساز و سنگ‌های اصیل فیروزه و عقیق با شناسنامه اصالت کالا.';
+    if (language === 'fa') return 'انگشترهای نقره ۹۲۵ دست‌ساز مرصع به دُرّ نجف و عقیق‌های اصیل معدنی با شناسنامه اصالت کالا.';
     if (language === 'ar') return 'خواتم من الفضة الإسترلينية 925 والأحجار الكريمة الطبيعية مع شهادة أصالة معتمدة.';
     return 'Handcrafted 925 sterling silver rings featuring natural turquoise and agate gemstone settings.';
   };

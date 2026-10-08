@@ -109,6 +109,11 @@ function mapBackendToFrontend(bp: BackendProduct): Product {
   const effectiveCatName = bp.categoryName || bp.category?.name;
   const catSlug = inferCategorySlug(bp.name, effectiveCatName, effectiveCatId);
 
+  const galleryUrls = (bp.galleryImages || [])
+    .filter(Boolean)
+    .map((img) => (img.startsWith('http') ? img : `${API_BASE_URL}${img}`));
+  const allImages = [imageUrl, ...galleryUrls.filter((u) => u !== imageUrl)];
+
   return {
     id: bp.id,
     nameFa: bp.name,
@@ -120,16 +125,16 @@ function mapBackendToFrontend(bp: BackendProduct): Product {
     categoryFa: effectiveCatName || (catSlug === 'rings' ? 'انگشتر' : catSlug === 'necklaces' ? 'گردنبند' : catSlug === 'bracelets' ? 'دستبند' : 'گوشواره'),
     categoryEn: translateDynamicText(effectiveCatName || catSlug, 'en'),
     categoryAr: translateDynamicText(effectiveCatName || catSlug, 'ar'),
-    materialFa: `نقره ۹۹۹ عیار خالص ${bp.weight ? `(${bp.weight} گرم)` : ''}`,
-    materialEn: `999 Fine Pure Silver ${bp.weight ? `(${bp.weight}g)` : ''}`,
-    materialAr: `فضة نقية عيار 999 ${bp.weight ? `(${bp.weight} جرام)` : ''}`,
+    materialFa: `نقره ۹۲۵ عیار خالص ${bp.weight ? `(${bp.weight} گرم)` : ''}`,
+    materialEn: `Certified 925 Sterling Silver ${bp.weight ? `(${bp.weight}g)` : ''}`,
+    materialAr: `فضة نقية استرليني عيار 925 ${bp.weight ? `(${bp.weight} جرام)` : ''}`,
     descriptionFa: `طراحی اصیل نقره با فرمول قیمت‌گذاری پویا بر پایه نرخ لحظه‌ای TGJU. موجودی: ${bp.stockQuantity} عدد`,
     descriptionEn: `Authentic fine silver with dynamic TGJU live pricing. In stock: ${bp.stockQuantity} pcs`,
     descriptionAr: `فضة نقية أصيلة مع تسعير مباشر وفق أسعار السوق الحية. المتوفر: ${bp.stockQuantity} قطع`,
     image: imageUrl,
-    images: [imageUrl],
+    images: allImages.length > 0 ? allImages : [imageUrl],
     weightGram: bp.weight || 4.2,
-    carat: "Silver 999",
+    carat: "Silver 925",
     featured: bp.badge === 'BEST_SELLER' || bp.badge === 'SPECIAL_OFFER',
   };
 }

@@ -70,12 +70,12 @@ export default function PackagingShowcase() {
       titleFa: "شناسنامه عیار نقره ۹۲۵ و گوهرشناسی",
       titleEn: "925 Sterling Silver & Gemstone Registry Certificate",
       titleAr: "شهادة نقاوة الفضة 925 وتوثيق الأحجار",
-      descFa: "سند رسمی ضمانت خلوص نقره ۹۲۵، ثبت شماره سریال اختصاصی محصول، هولوگرام زرین و تاییدیه اصالت سنگ فیروزه اصیل نیشابور و عقیق طبیعی.",
-      descEn: "Official certificate verifying 925 sterling silver purity, serialized product code, golden hologram seal, and natural Neyshabur turquoise / agate origin report.",
-      descAr: "وثيقة رسمية لضمان عيار الفضة 925 ورقم تسلسلي محفور مع ختم التوثيق لحجر الفيروز النيشابوري والعقيق الطبيعي.",
-      specsFa: ["تاییدیه رسمی خلوص نقره استرلینگ ۹۲۵", "شناسنامه فیروزه نیشابور و عقیق معدنی", "ثبت آنلاین شماره سریال محصول", "مهر و هولوگرام زرین اصالت"],
-      specsEn: ["925 Sterling silver purity verification", "Natural turquoise & agate grading report", "Online serial code registry", "Gold hologram security seal"],
-      specsAr: ["تأكيد نقاوة الفضة 925", "شهادة فحص الفيروز والعقيق الطبيعي", "تسجيل الرقم التسلسلي أونلاين", "ختم أمان هولوغرام ذهبي"],
+      descFa: "سند رسمی ضمانت خلوص نقره ۹۲۵، ثبت شماره سریال اختصاصی محصول، هولوگرام زرین و تاییدیه اصالت سنگ‌های اصیل عقیق یمنی و دُرّ نجف زلال.",
+      descEn: "Official certificate verifying 925 sterling silver purity, serialized product code, golden hologram seal, and natural Yemeni agate / crystalline Durr-e Najaf origin report.",
+      descAr: "وثيقة رسمية لضمان عيار الفضة 925 ورقم تسلسلي محفور مع ختم التوثيق لأحجار العقيق اليماني ودر النجف الكريستالي الصافي.",
+      specsFa: ["تاییدیه رسمی خلوص نقره استرلینگ ۹۲۵", "شناسنامه عقیق یمنی و دُرّ نجف معدنی", "ثبت آنلاین شماره سریال محصول", "مهر و هولوگرام زرین اصالت"],
+      specsEn: ["925 Sterling silver purity verification", "Natural agate & Durr-e Najaf grading report", "Online serial code registry", "Gold hologram security seal"],
+      specsAr: ["تأكيد نقاوة الفضة 925", "شهادة فحص العقيق الطبيعي ودر النجف", "تسجيل الرقم التسلسلي أونلاين", "ختم أمان هولوغرام ذهبي"],
       image: "/images/luxury_certificate_seal.jpg"
     },
     {

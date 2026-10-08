@@ -50,8 +50,8 @@ export default function AdminProductsPage() {
   const [stockQuantity, setStockQuantity] = useState<string>("");
   const [badge, setBadge] = useState<string>("NONE");
   const [isVisible, setIsVisible] = useState(true);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
@@ -103,8 +103,8 @@ export default function AdminProductsPage() {
     setStockQuantity("");
     setBadge("NONE");
     setIsVisible(true);
-    setImageFile(null);
-    setImagePreviewUrl(null);
+    setImageFiles([]);
+    setImagePreviews([]);
     setFormError(null);
     setIsModalOpen(true);
   };
@@ -135,24 +135,42 @@ export default function AdminProductsPage() {
     );
     setBadge(prod.badge || "NONE");
     setIsVisible(prod.isVisible ?? prod.visible ?? true);
-    setImageFile(null);
-    setImagePreviewUrl(
-      prod.imageUrl
-        ? prod.imageUrl.startsWith("http")
+    setImageFiles([]);
+    
+    // Populate existing images (main image + gallery)
+    const existingPreviews: string[] = [];
+    if (prod.imageUrl) {
+      existingPreviews.push(
+        prod.imageUrl.startsWith("http")
           ? prod.imageUrl
           : `${API_BASE_URL}${prod.imageUrl}`
-        : null
-    );
+      );
+    }
+    if (Array.isArray(prod.galleryImages)) {
+      for (const g of prod.galleryImages) {
+        if (g) {
+          const u = g.startsWith("http") ? g : `${API_BASE_URL}${g}`;
+          if (!existingPreviews.includes(u)) existingPreviews.push(u);
+        }
+      }
+    }
+    setImagePreviews(existingPreviews);
     setFormError(null);
     setIsModalOpen(true);
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setImageFile(file);
-      setImagePreviewUrl(URL.createObjectURL(file));
+  const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selected = Array.from(e.target.files);
+      setImageFiles((prev) => [...prev, ...selected]);
+      const newUrls = selected.map((f) => URL.createObjectURL(f));
+      setImagePreviews((prev) => [...prev, ...newUrls]);
     }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setImageFiles((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   // Synchronize stone price if an existing stone is chosen from the list
@@ -275,8 +293,9 @@ export default function AdminProductsPage() {
         formData.append("categoryId", selectedCategoryId);
       }
 
-      if (imageFile) {
-        formData.append("image", imageFile);
+      // Backend accepts multiple images under the key "images"
+      for (let i = 0; i < imageFiles.length; i++) {
+        formData.append("images", imageFiles[i]);
       }
 
       const stoneIdNumber = selectedStoneId ? Number(selectedStoneId) : undefined;
@@ -473,16 +492,37 @@ export default function AdminProductsPage() {
                     <tr key={p.id}>
                       <td>
                         <div className={styles.productCell}>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={imgUrl}
-                            alt={p.name}
-                            className={styles.thumb}
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src =
-                                "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=100&q=80";
-                            }}
-                          />
+                          <div style={{ position: "relative", display: "inline-block" }}>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={imgUrl}
+                              alt={p.name}
+                              className={styles.thumb}
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src =
+                                  "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=100&q=80";
+                              }}
+                            />
+                            {p.galleryImages && p.galleryImages.length > 0 && (
+                              <span
+                                style={{
+                                  position: "absolute",
+                                  bottom: "-3px",
+                                  right: "-3px",
+                                  background: "#1e293b",
+                                  color: "#ffffff",
+                                  fontSize: "9.5px",
+                                  fontWeight: 800,
+                                  padding: "1px 5px",
+                                  borderRadius: "6px",
+                                  boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
+                                }}
+                                title={`شامل ${p.galleryImages.length} عکس گالری`}
+                              >
+                                +{p.galleryImages.length}
+                              </span>
+                            )}
+                          </div>
                           <div className={styles.productInfo}>
                             <span className={styles.productName}>{p.name}</span>
                             <span className={styles.categoryTag}>
@@ -673,7 +713,7 @@ export default function AdminProductsPage() {
                       }`} />
                     </div>
                     <h3 className={styles.methodCardTitle}>فروش تنها سنگ</h3>
-                    <p className={styles.methodCardExample}>سنگ عقیق، فیروزه اصل، سنگ خام یا حکاکی</p>
+                    <p className={styles.methodCardExample}>سنگ عقیق یمنی، دُرّ نجف اصل، سنگ خام یا حکاکی</p>
                     <div className={styles.methodCardFormula}>
                       قیمت سنگ + ۱۰٪ مالیات بر ارزش افزوده (بدون نقره و اجرت)
                     </div>
@@ -928,36 +968,63 @@ export default function AdminProductsPage() {
                 </div>
               </div>
 
-              {/* 6. Image Upload */}
+              {/* 6. Multiple Images Upload */}
               <div className={styles.formGroup}>
-                <label className={styles.label}>تصویر محصول</label>
-                <div className={styles.imageUploadBox}>
-                  {imagePreviewUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={imagePreviewUrl} alt="Preview" className={styles.imagePreview} />
-                  ) : (
-                    <div
-                      className={styles.imagePreview}
-                      style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#8c9096" }}
-                    >
-                      بدون عکس
-                    </div>
-                  )}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                  <label className={styles.label}>
+                    <span>تصاویر محصول (عکس اصلی + گالری)</span>
+                    <span className={styles.labelHint}>(انتخاب همزمان چند عکس)</span>
+                  </label>
                   <label className={styles.fileInputLabel}>
                     <input
                       type="file"
+                      multiple
                       accept="image/*"
                       style={{ display: "none" }}
-                      onChange={handleImageChange}
+                      onChange={handleImagesChange}
                     />
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                       <polyline points="17 8 12 3 7 8" />
                       <line x1="12" y1="3" x2="12" y2="15" />
                     </svg>
-                    <span>{imageFile ? "تغییر تصویر انتخابی" : "آپلود تصویر جدید"}</span>
+                    <span>{imageFiles.length > 0 ? "افزودن عکس‌های بیشتر" : "انتخاب تصاویر (چندگانه)"}</span>
                   </label>
                 </div>
+
+                {imagePreviews.length > 0 ? (
+                  <div className={styles.imagePreviewsGrid}>
+                    {imagePreviews.map((previewUrl, idx) => (
+                      <div key={idx} className={styles.imagePreviewCard}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={previewUrl} alt={`Preview ${idx + 1}`} className={styles.imagePreviewThumb} />
+                        <span className={idx === 0 ? styles.mainImageTag : styles.galleryImageTag}>
+                          {idx === 0 ? "عکس اصلی" : `گالری ${idx}`}
+                        </span>
+                        <button
+                          type="button"
+                          className={styles.removeImageBtn}
+                          onClick={() => handleRemoveImage(idx)}
+                          title="حذف این عکس"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className={styles.noImagesBox}>
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.5">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                      <circle cx="8.5" cy="8.5" r="1.5" />
+                      <polyline points="21 15 16 10 5 21" />
+                    </svg>
+                    <span>هیچ تصویری برای این محصول بارگذاری نشده است.</span>
+                  </div>
+                )}
+                <p className={styles.imageHelperText}>
+                  💡 تصویر اول به صورت خودکار به عنوان <strong>عکس اصلی</strong> و تصاویر بعدی به عنوان <strong>گالری تکمیلی</strong> ذخیره می‌شوند.
+                </p>
               </div>
 
               {/* Visibility Checkbox */}
