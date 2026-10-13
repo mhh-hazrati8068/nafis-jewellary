@@ -1,5 +1,39 @@
 // API client for Silver Shop Spring Boot Backend
-export const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://nafiseebadijewellery.com').replace(/\/+$/, '');
+export const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://nafiseebadijewellery.com').replace(/\/+$/, '');
+
+export function extractCleanErrorMessage(raw: string, defaultMsg = 'خطا در برقراری ارتباط با سرور'): string {
+  if (!raw) return defaultMsg;
+  // If it's an HTML page (like ParsPack / Nginx / WCDN / Cloudflare proxy error)
+  if (raw.includes('<!DOCTYPE') || raw.includes('<html') || raw.includes('<body') || raw.includes('<div') || raw.includes('<svg')) {
+    if (raw.includes('400') || raw.includes('Bad Request')) {
+      return 'خطای درخواست نامعتبر (کد ۴۰۰). لطفاً اطلاعات ورودی و اقلام سبد خرید را بررسی فرمایید.';
+    }
+    if (raw.includes('401') || raw.includes('Unauthorized')) {
+      return 'نیاز به ورود به حساب کاربری دارد (کد ۴۰۱). لطفاً مجدداً وارد شوید.';
+    }
+    if (raw.includes('403') || raw.includes('Forbidden')) {
+      return 'عدم دسترسی به این بخش (کد ۴۰۳).';
+    }
+    if (raw.includes('404') || raw.includes('Not Found')) {
+      return 'موردی با این مشخصات در سرور یافت نشد (کد ۴۰۴).';
+    }
+    if (raw.includes('500') || raw.includes('502') || raw.includes('503') || raw.includes('Upstream Error')) {
+      return 'سرور موقتاً با اختلال مواجه شده است (Upstream Error). لطفاً دقایقی دیگر تلاش فرمایید.';
+    }
+    return defaultMsg;
+  }
+  // Try parsing JSON error
+  try {
+    const json = JSON.parse(raw);
+    if (typeof json === 'string') return json;
+    if (json.message) return json.message;
+    if (json.error) return json.error;
+  } catch {}
+
+  // Strip any accidental HTML tags
+  const stripped = raw.replace(/<[^>]*>/g, '').trim();
+  return stripped.length > 0 && stripped.length < 250 ? stripped : defaultMsg;
+}
 
 export interface BackendCategory {
   id: number;
@@ -577,8 +611,10 @@ export async function createCheckout(
     }
 
     const errText = await res.text();
+    const cleanErr = extractCleanErrorMessage(errText, 'خطا در ثبت سفارش');
+
     // Detect the backend Spring Boot bug where Invoice.getItems() is null
-    if (errText.includes('getItems()') || errText.includes('NullPointerException') || res.status === 400 || res.status === 500) {
+    if (errText.includes('getItems()') || errText.includes('NullPointerException')) {
       // Fallback: Create the real database invoice record with empty cartItems map
       const fallbackRes = await fetch(`${API_BASE_URL}/api/invoices/checkout`, {
         method: 'POST',
@@ -635,11 +671,11 @@ export async function createCheckout(
       }
     }
 
-    throw new Error(errText || 'Checkout failed');
+    throw new Error(cleanErr);
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : String(err);
     if (!errorMsg.includes('getItems()')) {
-      throw err;
+      throw new Error(extractCleanErrorMessage(errorMsg, 'خطا در ثبت سفارش'));
     }
 
     // Offline / Local synthetic invoice fallback

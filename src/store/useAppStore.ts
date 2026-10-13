@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { Language, translations } from '@/lib/translations'
-import { Product, initialProducts } from '@/data/products'
+import { Product } from '@/data/products'
 import { translateDynamicText } from '@/lib/dynamicTranslator'
 import { 
   UserProfile, 
@@ -176,41 +176,25 @@ export const useAppStore = create<AppState>()((set, get) => ({
     { id: 1, name: "دستبند" },
     { id: 2, name: "انگشتر" },
     { id: 3, name: "گردنبند" },
-    { id: 4, name: "گوشواره" }
+    { id: 4, name: "گوشواره" },
+    { id: 6, name: "سنگ" }
   ],
   selectedCategoryId: null,
   setSelectedCategoryId: (catId) => {
     set({ selectedCategoryId: catId });
 
-    // 1. Instant optimistic local filtering (0ms feedback)
+    // 1. Instant optimistic local filtering (0ms feedback) from loaded backend products
     const { backendProducts } = get();
     if (backendProducts && backendProducts.length > 0) {
       const filtered = catId 
-        ? backendProducts.filter((p) => p.categoryId === catId || p.category?.id === catId)
+        ? backendProducts.filter((p) => (p.categoryId === catId || p.category?.id === catId))
         : backendProducts;
-      if (filtered.length > 0) {
-        set({ products: filtered.map(mapBackendToFrontend) });
-      }
+      set({ products: filtered.map(mapBackendToFrontend) });
     } else {
-      // Fallback filter from initial products
-      if (catId) {
-        const filtered = initialProducts.filter(p => {
-          if (p.categoryId === catId) return true;
-          if (catId === 1 && p.category === 'bracelets') return true;
-          if (catId === 2 && p.category === 'rings') return true;
-          if (catId === 3 && p.category === 'necklaces') return true;
-          if (catId === 4 && p.category === 'earrings') return true;
-          return false;
-        });
-        if (filtered.length > 0) {
-          set({ products: filtered });
-        }
-      } else {
-        set({ products: initialProducts });
-      }
+      set({ isLoadingProducts: true });
     }
 
-    // 2. Background server fetch and cache update
+    // 2. Fetch fresh from server for this category
     get().fetchProducts(catId);
   },
   fetchCategories: async () => {
@@ -225,8 +209,8 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
   },
 
-  // Products
-  products: initialProducts,
+  // Products (only real products from live backend)
+  products: [],
   backendProducts: [],
   isLoadingProducts: false,
   getProductById: (id) => get().products.find((p) => p.id === id),
@@ -265,27 +249,15 @@ export const useAppStore = create<AppState>()((set, get) => ({
         const mapped = backendItems.map(mapBackendToFrontend);
         set({
           products: mapped,
-          backendProducts: targetCatId ? get().backendProducts : backendItems,
+          backendProducts: targetCatId ? (get().backendProducts.length > 0 ? get().backendProducts : backendItems) : backendItems,
           isLoadingProducts: false,
         });
       } else {
-        // Fallback filter if backend returns empty for category
-        if (targetCatId) {
-          const filtered = initialProducts.filter(p => {
-            if (p.categoryId === targetCatId) return true;
-            if (targetCatId === 1 && p.category === 'bracelets') return true;
-            if (targetCatId === 2 && p.category === 'rings') return true;
-            if (targetCatId === 3 && p.category === 'necklaces') return true;
-            if (targetCatId === 4 && p.category === 'earrings') return true;
-            return false;
-          });
-          set({ products: filtered.length > 0 ? filtered : initialProducts, isLoadingProducts: false });
-        } else {
-          set({ products: initialProducts, isLoadingProducts: false });
-        }
+        set({ products: [], isLoadingProducts: false });
       }
-    } catch {
-      set({ products: initialProducts, isLoadingProducts: false });
+    } catch (err) {
+      console.warn('Could not load products from backend:', err);
+      set({ products: [], isLoadingProducts: false });
     }
   },
 

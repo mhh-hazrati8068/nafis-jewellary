@@ -17,7 +17,8 @@ function ShopContent() {
     language, 
     addToCart, 
     t, 
-    isLoadingProducts 
+    isLoadingProducts,
+    fetchProducts
   } = useAppStore();
 
   const searchParams = useSearchParams();
@@ -31,8 +32,10 @@ function ShopContent() {
       const parsed = Number(catParam);
       if (!isNaN(parsed)) {
         setSelectedCategoryId(parsed);
+        return;
       }
     }
+    setSelectedCategoryId(null);
   }, [fetchCategories, searchParams, setSelectedCategoryId]);
 
   const handleSelectCategory = (catId: number | null) => {

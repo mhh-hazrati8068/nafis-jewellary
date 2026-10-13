@@ -2,7 +2,7 @@
 
 import { useAppStore } from "@/store/useAppStore";
 import { useState } from "react";
-import { createCheckout, payInvoice, Invoice } from "@/lib/api";
+import { createCheckout, payInvoice, Invoice, extractCleanErrorMessage } from "@/lib/api";
 import IranLocationSelector from "@/components/ui/IranLocationSelector";
 import { OfficialReceiptIcon, CreditCardPayIcon, ShoppingBagLuxuryIcon } from "@/components/icons/JewelryIcons";
 
@@ -62,6 +62,18 @@ export default function CartDrawer() {
       return;
     }
 
+    // Auto-remove any legacy mock products (IDs < 19)
+    const hasMockItems = cart.some((item) => item.id < 19);
+    if (hasMockItems) {
+      setErrorMsg(
+        language === "fa" 
+          ? "برخی از محصولات آزمایشی قدیمی در سبد شما بودند که حذف شدند. لطفاً محصول مدنظر را از فروشگاه اضافه فرمایید." 
+          : "Legacy mock products removed from cart. Please select live products from shop."
+      );
+      cart.filter((item) => item.id < 19).forEach((item) => removeFromCart(item.id));
+      return;
+    }
+
     setIsLoading(true);
     setErrorMsg(null);
 
@@ -78,7 +90,7 @@ export default function CartDrawer() {
       setIsCheckingOut(false);
     } catch (err: unknown) {
       const error = err as { message?: string };
-      setErrorMsg(error.message || (language === "fa" ? "خطا در ثبت سفارش" : language === "ar" ? "خطأ في إنشاء الطلب" : "Checkout error"));
+      setErrorMsg(extractCleanErrorMessage(error?.message || "", language === "fa" ? "خطا در ثبت سفارش" : "Checkout error"));
     } finally {
       setIsLoading(false);
     }
