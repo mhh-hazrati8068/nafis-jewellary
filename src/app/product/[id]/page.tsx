@@ -1,28 +1,19 @@
 import type { Metadata } from "next";
-import { initialProducts } from "@/data/products";
 import ProductDetailView from "@/components/product/ProductDetailView";
-
 import { API_BASE_URL } from "@/lib/api";
 
-// Explicitly tell Next.js not to try server-rendering unknown IDs
+// Required for next export / static builds
 export const dynamicParams = false;
 
+// Real product IDs existing in the backend database
+const KNOWN_BACKEND_PRODUCT_IDS = [
+  "19", "20", "21", "22", "23", "24", "25", "26", 
+  "27", "28", "35", "36", "37", "38", "39"
+];
+
 export async function generateStaticParams() {
-  const ids = new Set<string>();
+  const ids = new Set<string>(KNOWN_BACKEND_PRODUCT_IDS);
 
-  // 1. Static initial products
-  if (initialProducts && initialProducts.length > 0) {
-    initialProducts.forEach((product) => {
-      ids.add(product.id.toString());
-    });
-  }
-
-  // 2. Pre-generate range 1..100 so all current and upcoming product IDs are exported
-  for (let i = 1; i <= 100; i++) {
-    ids.add(i.toString());
-  }
-
-  // 3. Include products from live backend if reachable
   try {
     const res = await fetch(`${API_BASE_URL}/api/products`, { cache: "no-store" });
     if (res.ok) {
@@ -34,7 +25,7 @@ export async function generateStaticParams() {
       }
     }
   } catch {
-    // Ignore fetch error at build time
+    // Fallback to known backend product IDs
   }
 
   return Array.from(ids).map((id) => ({
@@ -48,40 +39,37 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const product = initialProducts.find((p) => p.id === Number(id));
+  let title = "زیورآلات نقره نفیسه عبادی";
+  let description = "زیورآلات دست‌ساز نقره استرلینگ ۹۲۵ و سنگ‌های طبیعی اصل نفیسه عبادی.";
+  let imageUrl = "https://nafiseebadijewellery.com/favicon.png";
 
-  if (!product) {
-    return {
-      title: "محصول زیورآلات نقره | زیورآلات نفیسه عبادی",
-      description: "زیورآلات دست‌ساز نقره استرلینگ ۹۲۵ و سنگ‌های طبیعی اصل نفیسه عبادی.",
-    };
-  }
-
-  const title = `${product.nameFa} | زیورآلات دست‌ساز نفیسه عبادی`;
-  const description = `${product.descriptionFa} ساخته شده از نقره استرلینگ ۹۲۵ و سنگ‌های طبیعی اصل. قیمت: ${product.price.toLocaleString()} تومان.`;
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/products/${id}`, { next: { revalidate: 60 } });
+    if (res.ok) {
+      const bp = await res.json();
+      if (bp && bp.name) {
+        title = `${bp.name} | زیورآلات دست‌ساز نفیسه عبادی`;
+        description = `${bp.name} نقره استرلینگ ۹۲۵ و گوهرسنگ اصیل. قیمت: ${Number(bp.livePriceToman || 0).toLocaleString()} تومان.`;
+        if (bp.imageUrl) {
+          imageUrl = bp.imageUrl.startsWith("http") ? bp.imageUrl : `${API_BASE_URL}${bp.imageUrl}`;
+        }
+      }
+    }
+  } catch {}
 
   return {
     title,
     description,
-    keywords: [
-      product.nameFa,
-      product.nameEn,
-      product.categoryFa,
-      product.materialFa,
-      "زیورآلات نقره ۹۲۵",
-      "خرید آنلاین نقره دست‌ساز",
-      "نقره نفیسه عبادی"
-    ],
     openGraph: {
       title,
       description,
-      url: `https://nafiseebadijewellery.com/product/${product.id}`,
+      url: `https://nafiseebadijewellery.com/product/${id}`,
       images: [
         {
-          url: product.image,
+          url: imageUrl,
           width: 800,
           height: 800,
-          alt: product.nameFa,
+          alt: title,
         },
       ],
       type: "article",
@@ -90,7 +78,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title,
       description,
-      images: [product.image],
+      images: [imageUrl],
     },
   };
 }
@@ -101,45 +89,9 @@ export default async function ProductPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const product = initialProducts.find((p) => p.id === Number(id));
-
-  const productJsonLd = product
-    ? {
-        "@context": "https://schema.org",
-        "@type": "Product",
-        "name": product.nameFa,
-        "image": product.image,
-        "description": product.descriptionFa,
-        "sku": `NF-${product.id}`,
-        "brand": {
-          "@type": "Brand",
-          "name": "زیورآلات نفیسه عبادی"
-        },
-        "material": product.materialFa,
-        "offers": {
-          "@type": "Offer",
-          "url": `https://nafiseebadijewellery.com/product/${product.id}`,
-          "priceCurrency": "IRT",
-          "price": product.price,
-          "availability": "https://schema.org/InStock",
-          "itemCondition": "https://schema.org/NewCondition",
-          "seller": {
-            "@type": "Organization",
-            "name": "زیورآلات نفیسه عبادی"
-          }
-        }
-      }
-    : null;
+  const numId = Number(id);
 
   return (
-    <>
-      {productJsonLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
-        />
-      )}
-      <ProductDetailView productId={Number(id)} />
-    </>
+    <ProductDetailView productId={numId} />
   );
 }

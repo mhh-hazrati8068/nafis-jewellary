@@ -32,7 +32,7 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
     }
   }, [productId, getProductById, fetchSingleProduct]);
 
-  const product = loadedProduct || getProductById(productId) || products[0];
+  const product = loadedProduct || getProductById(productId);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [qty, setQty] = useState(1);
   const [isAROpen, setIsAROpen] = useState(false);
@@ -62,6 +62,19 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
     if (language === 'ar') return 'المعدن والعيار';
     return 'Material & Carat';
   };
+
+  if (!product) {
+    return (
+      <div className="py-24 bg-[#FFFFFF] dark:bg-[#FAF9F5] text-zinc-950 min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-12 h-12 border-2 border-[#C4852B] border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="text-xs text-zinc-500 font-mono">
+            {language === 'fa' ? 'در حال بارگذاری جزئیات اثر فاخر...' : 'Loading creation details...'}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="py-16 md:py-28 bg-[#FFFFFF] dark:bg-[#FAF9F5] text-zinc-950 min-h-screen transition-colors duration-500">

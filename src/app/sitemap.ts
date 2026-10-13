@@ -1,9 +1,14 @@
 import { MetadataRoute } from 'next';
-import { initialProducts } from '@/data/products';
+import { API_BASE_URL } from '@/lib/api';
 
 export const dynamic = "force-static";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+const KNOWN_PRODUCT_IDS = [
+  "19", "20", "21", "22", "23", "24", "25", "26", 
+  "27", "28", "35", "36", "37", "38", "39"
+];
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://nafiseebadijewellery.com';
   const currentDate = new Date();
 
@@ -40,9 +45,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.75,
   }));
 
-  // Product detail dynamic routes
-  const productRoutes = initialProducts.map((product) => ({
-    url: `${baseUrl}/product/${product.id}`,
+  // Real Product routes
+  const productIds = new Set<string>(KNOWN_PRODUCT_IDS);
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/products`, { cache: 'no-store' });
+    if (res.ok) {
+      const items = await res.json();
+      if (Array.isArray(items)) {
+        items.forEach((it: any) => {
+          if (it?.id) productIds.add(it.id.toString());
+        });
+      }
+    }
+  } catch {}
+
+  const productRoutes: MetadataRoute.Sitemap = Array.from(productIds).map((id) => ({
+    url: `${baseUrl}/product/${id}`,
     lastModified: currentDate,
     changeFrequency: 'weekly' as const,
     priority: 0.8,

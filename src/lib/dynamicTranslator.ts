@@ -145,9 +145,10 @@ export function translateDynamicText(text: string | undefined | null, lang: Lang
  * Helper to get localized product name
  */
 export function getProductName(
-  product: { nameFa?: string; nameEn?: string; nameAr?: string; name?: string },
+  product: { nameFa?: string; nameEn?: string; nameAr?: string; name?: string } | undefined | null,
   lang: Language
 ): string {
+  if (!product) return '';
   if (lang === 'fa') return product.nameFa || product.name || '';
   if (lang === 'ar') {
     if (product.nameAr) return product.nameAr;
@@ -162,9 +163,10 @@ export function getProductName(
  * Helper to get localized product category
  */
 export function getProductCategory(
-  product: { categoryFa?: string; categoryEn?: string; categoryAr?: string; category?: string },
+  product: { categoryFa?: string; categoryEn?: string; categoryAr?: string; category?: string } | undefined | null,
   lang: Language
 ): string {
+  if (!product) return '';
   if (lang === 'fa') return product.categoryFa || product.category || '';
   if (lang === 'ar') {
     if (product.categoryAr) return product.categoryAr;
@@ -179,9 +181,10 @@ export function getProductCategory(
  * Helper to get localized product material
  */
 export function getProductMaterial(
-  product: { materialFa?: string; materialEn?: string; materialAr?: string },
+  product: { materialFa?: string; materialEn?: string; materialAr?: string } | undefined | null,
   lang: Language
 ): string {
+  if (!product) return '';
   if (lang === 'fa') return product.materialFa || '';
   if (lang === 'ar') {
     if (product.materialAr) return product.materialAr;
@@ -196,9 +199,10 @@ export function getProductMaterial(
  * Helper to get localized product description
  */
 export function getProductDescription(
-  product: { descriptionFa?: string; descriptionEn?: string; descriptionAr?: string },
+  product: { descriptionFa?: string; descriptionEn?: string; descriptionAr?: string } | undefined | null,
   lang: Language
 ): string {
+  if (!product) return '';
   if (lang === 'fa') return product.descriptionFa || '';
   if (lang === 'ar') {
     if (product.descriptionAr) return product.descriptionAr;
