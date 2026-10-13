@@ -46,8 +46,8 @@ export default function NecklacesPage() {
                 key={product.id} 
                 className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-zinc-200 hover:border-[#C4852B] transition-all p-5 shadow-sm luxury-card-hover"
               >
-                <Link href={`/product/${product.id}`} className="aspect-square rounded-xl overflow-hidden bg-[#F4F1EA] mb-4 block">
-                  <img src={product.image} alt={prodName} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <Link href={`/product/${product.id}`} className="aspect-[4/5] rounded-xl overflow-hidden bg-white mb-4 block border border-zinc-100">
+                  <img src={product.image} alt={prodName} className="w-full h-full object-contain group-hover:scale-[1.02] transition-transform duration-500" />
                 </Link>
                 
                 <div className="flex flex-col flex-1 justify-between">

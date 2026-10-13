@@ -66,11 +66,11 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start mb-24">
           <div className="flex flex-col gap-4">
-            <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-[#F4F1EA] border border-zinc-200 shadow-xl group">
+            <div className="relative aspect-[4/5] w-full rounded-2xl overflow-hidden bg-white border border-zinc-200 shadow-xl group">
               <img 
                 src={activeImg} 
                 alt={name}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-[1.02]"
               />
               <span className="absolute top-4 right-4 bg-[#660000] text-white text-[9px] font-mono tracking-widest uppercase px-3 py-1 rounded-full shadow-md font-bold">
                 CERTIFIED AUTHENTIC
@@ -83,11 +83,11 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
                   <button
                     key={idx}
                     onClick={() => setSelectedImage(img)}
-                    className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
-                      activeImg === img ? "border-[#C4852B] scale-105" : "border-transparent opacity-60 hover:opacity-100"
+                    className={`relative w-20 h-24 rounded-xl overflow-hidden bg-white border-2 transition-all cursor-pointer ${
+                      activeImg === img ? "border-[#C4852B] scale-105" : "border-zinc-200 opacity-60 hover:opacity-100"
                     }`}
                   >
-                    <img src={img} alt="Thumbnail" className="w-full h-full object-cover" />
+                    <img src={img} alt="Thumbnail" className="w-full h-full object-contain" />
                   </button>
                 ))}
               </div>

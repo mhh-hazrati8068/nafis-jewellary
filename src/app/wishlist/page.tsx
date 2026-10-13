@@ -137,14 +137,14 @@ export default function WishlistPage() {
                     {/* Product Image Link */}
                     <Link
                       href={`/product/${product.id}`}
-                      className="relative aspect-square rounded-2xl overflow-hidden bg-[#F4F1EA] mb-3 block"
+                      className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-white mb-3 block border border-zinc-100"
                     >
                       <Image
                         src={product.image}
                         alt={prodName}
                         fill
                         sizes="(max-width: 768px) 100vw, 300px"
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="object-contain group-hover:scale-[1.02] transition-transform duration-500"
                       />
                     </Link>
 

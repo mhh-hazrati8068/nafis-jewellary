@@ -42,17 +42,17 @@ export default function ProductCarousel() {
                 {/* Product Image */}
                 <Link 
                   href={`/product/${product.id}`}
-                  className="relative aspect-square w-full rounded-xl overflow-hidden bg-[#F4F1EA] mb-5 block"
+                  className="relative aspect-[4/5] w-full rounded-xl overflow-hidden bg-white mb-5 block border border-zinc-100"
                 >
                   <img 
                     src={product.image} 
                     alt={getProductName(product, language)}
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108"
+                    className="w-full h-full object-contain transition-transform duration-700 ease-out group-hover:scale-[1.02]"
                   />
                   
                   {/* Carat & AR Badge */}
-                  <div className="absolute top-3 inset-x-3 flex items-center justify-between pointer-events-none z-10">
-                    <span className="bg-[#660000] text-white text-[9px] font-mono tracking-widest uppercase px-2.5 py-1 rounded-full shadow-md font-bold">
+                  <div className="absolute top-2.5 inset-x-2.5 flex items-center justify-between pointer-events-none z-10">
+                    <span className="bg-[#660000] text-white text-[9px] font-mono tracking-widest uppercase px-2 py-0.5 rounded-full shadow-md font-bold">
                       {product.carat}
                     </span>
                     <span className="bg-black/70 backdrop-blur-xs text-[#E5A84B] border border-[#C4852B]/40 text-[9px] font-mono tracking-wider uppercase px-2 py-0.5 rounded-full shadow-md font-bold">
@@ -61,7 +61,7 @@ export default function ProductCarousel() {
                   </div>
 
                   {/* Quick Add Overlay Button */}
-                  <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 transform translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-400 ease-out bg-gradient-to-t from-black/60 to-transparent flex justify-center">
+                  <div className="absolute inset-x-0 bottom-0 p-3 opacity-0 transform translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out bg-gradient-to-t from-black/60 to-transparent flex justify-center">
                     <button
                       onClick={(e) => {
                         e.preventDefault();
@@ -72,7 +72,7 @@ export default function ProductCarousel() {
                           image: product.image
                         });
                       }}
-                      className="w-full py-2.5 bg-[#C4852B] hover:bg-[#A76E1F] text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg transition-colors cursor-pointer"
+                      className="w-full py-2 bg-[#C4852B] hover:bg-[#A76E1F] text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg transition-colors cursor-pointer"
                     >
                       {t.products.quickAdd}
                     </button>

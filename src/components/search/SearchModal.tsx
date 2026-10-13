@@ -116,7 +116,7 @@ export default function SearchModal() {
                       onClick={() => toggleSearch(false)}
                       className="flex items-center gap-4 flex-1"
                     >
-                      <img src={p.image} alt={prodName} className="w-14 h-14 object-cover rounded-lg bg-[#F4F1EA]" />
+                      <img src={p.image} alt={prodName} className="w-14 h-16 object-contain rounded-lg bg-white border border-zinc-100 p-0.5" />
                       <div>
                         <h4 className="font-bold text-sm text-zinc-950">
                           {prodName}

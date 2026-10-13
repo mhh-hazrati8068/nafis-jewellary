@@ -233,13 +233,13 @@ export default function CollectionsMegaMenu() {
                 </div>
 
                 {/* Sample Product Image */}
-                <div className="relative w-full h-44 rounded-xl overflow-hidden bg-zinc-100 border border-zinc-200/80 mb-3 group">
+                <div className="relative w-full h-44 rounded-xl overflow-hidden bg-white border border-zinc-200/80 mb-3 group">
                   <Image
                     src={sampleProduct.image}
                     alt={getProductName(sampleProduct, language)}
                     fill
                     sizes="(max-width: 768px) 100vw, 300px"
-                    className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                    className="object-contain object-center transition-transform duration-500 group-hover:scale-[1.02]"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 pointer-events-none" />
                   <div className="absolute bottom-2 start-2 end-2 flex justify-between items-end text-white">
