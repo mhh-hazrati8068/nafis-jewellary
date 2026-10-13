@@ -5,7 +5,7 @@ import { useState } from "react";
 import SilverCalculatorModal from "@/components/calculator/SilverCalculatorModal";
 
 export default function TopBar() {
-  const { silverPricePerGramToman, t } = useAppStore();
+  const { silverPricePerGramToman, isSilverPriceStale, silverPriceError, t } = useAppStore();
   const [isCalcOpen, setIsCalcOpen] = useState(false);
 
   return (
@@ -15,9 +15,13 @@ export default function TopBar() {
           <button 
             onClick={() => setIsCalcOpen(true)}
             className="flex items-center gap-2 hover:opacity-85 transition-opacity group cursor-pointer"
-            title={t.topBar.calculatorTooltip}
+            title={isSilverPriceStale ? (silverPriceError || "هشدار: قیمت نقره به‌روز نیست") : t.topBar.calculatorTooltip}
           >
-            <span className="inline-block w-2 h-2 rounded-full bg-[#C4852B] animate-pulse"></span>
+            {isSilverPriceStale ? (
+              <span className="inline-flex items-center justify-center w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+            ) : (
+              <span className="inline-block w-2 h-2 rounded-full bg-[#C4852B] animate-pulse"></span>
+            )}
             <span className="text-zinc-600 font-medium">
               {t.topBar.silverRate}
             </span>
@@ -27,9 +31,17 @@ export default function TopBar() {
             <span className="text-zinc-500 font-medium text-[10px]">
               {t.topBar.perGram}
             </span>
-            <span className="hidden sm:inline-block text-[9px] text-[#660000] bg-[#660000]/10 px-2.5 py-0.5 rounded-full font-bold">
-              {t.topBar.calculator}
-            </span>
+
+            {isSilverPriceStale ? (
+              <span className="inline-flex items-center gap-1 text-[9px] text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-full font-bold">
+                <span>⚠️</span>
+                <span>قیمت به‌روز نیست</span>
+              </span>
+            ) : (
+              <span className="hidden sm:inline-block text-[9px] text-[#660000] bg-[#660000]/10 px-2.5 py-0.5 rounded-full font-bold">
+                {t.topBar.calculator}
+              </span>
+            )}
           </button>
           
           <div className="hidden sm:flex items-center gap-5 text-zinc-500 text-[11px]">

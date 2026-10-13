@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useAppStore } from "@/store/useAppStore";
-import { Invoice, fetchMyOrders, payInvoice, updateUserProfile } from "@/lib/api";
+import { Invoice, fetchMyOrders, payInvoice, updateUserProfile, deleteMyOrder } from "@/lib/api";
 import IranLocationSelector from "@/components/ui/IranLocationSelector";
 import JalaliDatePicker from "@/components/ui/JalaliDatePicker";
 import { OfficialReceiptIcon, CreditCardPayIcon, UserAvatarIcon } from "@/components/icons/JewelryIcons";
@@ -97,6 +97,23 @@ function ProfileModalContent() {
       loadOrders();
     } catch (err: unknown) {
       const errorText = err instanceof Error ? err.message : "خطا در پرداخت";
+      alert(errorText);
+    }
+  };
+
+  const handleDeleteOrder = async (invoiceId: number) => {
+    const confirmMsg = language === "fa" 
+      ? "آیا از لغو و حذف این سفارش اطمینان دارید؟" 
+      : language === "ar" 
+      ? "هل أنت متأكد من إلغاء هذا الطلب؟" 
+      : "Are you sure you want to cancel and delete this order?";
+    if (!confirm(confirmMsg)) return;
+
+    try {
+      await deleteMyOrder(invoiceId, token);
+      await loadOrders();
+    } catch (err: unknown) {
+      const errorText = err instanceof Error ? err.message : "خطا در لغو سفارش";
       alert(errorText);
     }
   };
@@ -323,13 +340,23 @@ function ProfileModalContent() {
                       </button>
 
                       {!invoice.isPaid && (
-                        <button
-                          onClick={() => handlePay(invoice.id)}
-                          className="flex-1 py-2 bg-green-600 hover:bg-green-700 text-white font-bold text-xs rounded-lg transition-colors cursor-pointer shadow-2xs flex items-center justify-center gap-1.5"
-                        >
-                          <CreditCardPayIcon className="w-4 h-4" />
-                          <span>{language === "fa" ? "پرداخت" : language === "ar" ? "دفع" : "Pay"}</span>
-                        </button>
+                        <>
+                          <button
+                            onClick={() => handlePay(invoice.id)}
+                            className="flex-1 py-2 bg-green-600 hover:bg-green-700 text-white font-bold text-xs rounded-lg transition-colors cursor-pointer shadow-2xs flex items-center justify-center gap-1.5"
+                          >
+                            <CreditCardPayIcon className="w-4 h-4" />
+                            <span>{language === "fa" ? "پرداخت" : language === "ar" ? "دفع" : "Pay"}</span>
+                          </button>
+                          <button
+                            onClick={() => handleDeleteOrder(invoice.id)}
+                            className="py-2 px-3 bg-red-50 hover:bg-red-100 text-[#660000] border border-red-200 font-bold text-xs rounded-lg transition-colors cursor-pointer shadow-2xs flex items-center justify-center gap-1"
+                            title={language === "fa" ? "لغو و حذف این سفارش" : "Cancel & Delete Order"}
+                          >
+                            <span>🗑️</span>
+                            <span>{language === "fa" ? "لغو" : language === "ar" ? "إلغاء" : "Cancel"}</span>
+                          </button>
+                        </>
                       )}
                     </div>
                   </div>

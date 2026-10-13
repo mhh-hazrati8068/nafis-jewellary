@@ -12,6 +12,7 @@ import {
   fetchCategories,
   saveAdminProduct,
   deleteAdminProduct,
+  deleteProductGalleryImage,
   invalidateApiCache,
   API_BASE_URL,
 } from "@/lib/api";
@@ -53,6 +54,9 @@ export default function AdminProductsPage() {
   const [isVisible, setIsVisible] = useState(true);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [retainedImages, setRetainedImages] = useState<string[]>([]);
+  const [primaryImageUrl, setPrimaryImageUrl] = useState<string>("");
+  const [replaceImages, setReplaceImages] = useState<boolean>(false);
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
@@ -144,6 +148,9 @@ export default function AdminProductsPage() {
     setIsVisible(true);
     setImageFiles([]);
     setImagePreviews([]);
+    setRetainedImages([]);
+    setPrimaryImageUrl("");
+    setReplaceImages(false);
     setFormError(null);
     setIsModalOpen(true);
   };
@@ -177,23 +184,23 @@ export default function AdminProductsPage() {
     setImageFiles([]);
     
     // Populate existing images (main image + gallery)
-    const existingPreviews: string[] = [];
+    const existingList: string[] = [];
     if (prod.imageUrl) {
-      existingPreviews.push(
-        prod.imageUrl.startsWith("http")
-          ? prod.imageUrl
-          : `${API_BASE_URL}${prod.imageUrl}`
-      );
+      existingList.push(prod.imageUrl);
     }
     if (Array.isArray(prod.galleryImages)) {
       for (const g of prod.galleryImages) {
-        if (g) {
-          const u = g.startsWith("http") ? g : `${API_BASE_URL}${g}`;
-          if (!existingPreviews.includes(u)) existingPreviews.push(u);
+        if (g && !existingList.includes(g)) {
+          existingList.push(g);
         }
       }
     }
-    setImagePreviews(existingPreviews);
+    setRetainedImages(existingList);
+    setPrimaryImageUrl(prod.imageUrl || existingList[0] || "");
+    setReplaceImages(false);
+
+    const fullPreviews = existingList.map((u) => (u.startsWith("http") ? u : `${API_BASE_URL}${u}`));
+    setImagePreviews(fullPreviews);
     setFormError(null);
     setIsModalOpen(true);
   };
@@ -208,8 +215,32 @@ export default function AdminProductsPage() {
   };
 
   const handleRemoveImage = (index: number) => {
-    setImageFiles((prev) => prev.filter((_, i) => i !== index));
+    const previewToRemove = imagePreviews[index];
     setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+
+    // Check if it's an existing retained image
+    const matchingRetained = retainedImages.find((img) => 
+      previewToRemove.endsWith(img) || img.endsWith(previewToRemove) || previewToRemove === img || `${API_BASE_URL}${img}` === previewToRemove
+    );
+
+    if (matchingRetained) {
+      setRetainedImages((prev) => prev.filter((img) => img !== matchingRetained));
+      if (primaryImageUrl === matchingRetained) {
+        setPrimaryImageUrl("");
+      }
+      if (editingProduct?.id && token) {
+        // Call backend DELETE endpoint directly as specified in guide
+        deleteProductGalleryImage(editingProduct.id, matchingRetained, token).catch((err) => {
+          console.warn("Could not delete gallery image immediately:", err);
+        });
+      }
+    } else {
+      // It was a newly added file
+      const newFilesIndex = index - retainedImages.length;
+      if (newFilesIndex >= 0) {
+        setImageFiles((prev) => prev.filter((_, i) => i !== newFilesIndex));
+      }
+    }
   };
 
   // Synchronize stone price if an existing stone is chosen from the list
@@ -355,6 +386,19 @@ export default function AdminProductsPage() {
         formData.append("categoryId", selectedCategoryId);
       }
 
+      // Backend image sync parameters (Section 1 of API Guide):
+      if (editingProduct) {
+        retainedImages.forEach((imgUrl) => {
+          formData.append("retainedImages", imgUrl.replace(API_BASE_URL, ""));
+        });
+        if (primaryImageUrl) {
+          formData.append("primaryImageUrl", primaryImageUrl.replace(API_BASE_URL, ""));
+        }
+        if (replaceImages) {
+          formData.append("replaceImages", "true");
+        }
+      }
+
       // Backend accepts multiple images under the key "images"
       for (let i = 0; i < imageFiles.length; i++) {
         formData.append("images", imageFiles[i]);
@@ -369,7 +413,10 @@ export default function AdminProductsPage() {
         editingProduct?.id,
         stoneIdNumber,
         categoryIdNumber,
-        token
+        token,
+        retainedImages,
+        primaryImageUrl,
+        replaceImages
       );
 
       setIsModalOpen(false);
@@ -1075,8 +1122,13 @@ export default function AdminProductsPage() {
                       <div key={idx} className={styles.imagePreviewCard}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={previewUrl} alt={`Preview ${idx + 1}`} className={styles.imagePreviewThumb} />
-                        <span className={idx === 0 ? styles.mainImageTag : styles.galleryImageTag}>
-                          {idx === 0 ? "عکس اصلی" : `گالری ${idx}`}
+                        <span 
+                          onClick={() => setPrimaryImageUrl(previewUrl)}
+                          className={primaryImageUrl === previewUrl || (!primaryImageUrl && idx === 0) ? styles.mainImageTag : styles.galleryImageTag}
+                          style={{ cursor: "pointer" }}
+                          title="کلیک برای انتخاب به عنوان عکس اصلی (کاور)"
+                        >
+                          {primaryImageUrl === previewUrl || (!primaryImageUrl && idx === 0) ? "⭐ عکس اصلی" : `گالری ${idx}`}
                         </span>
                         <button
                           type="button"

@@ -18,7 +18,7 @@ const pageTitles: Record<string, string> = {
 export default function AdminTopBar() {
   const router = useRouter();
   const pathname = usePathname();
-  const { silverPricePerGramToman, fetchSilverPrice, token, logout } = useAppStore();
+  const { silverPricePerGramToman, isSilverPriceStale, fetchSilverPrice, setSilverPriceManual, token, logout } = useAppStore();
   const [adminUser, setAdminUser] = useState<{ username?: string; role?: string } | null>(null);
   const [todayDate, setTodayDate] = useState<string>("");
   const [isUpdatingPrice, setIsUpdatingPrice] = useState(false);
@@ -50,6 +50,22 @@ export default function AdminTopBar() {
     }
   };
 
+  const handleSetManualPrice = async () => {
+    const promptVal = prompt("مبلغ جدید هر گرم نقره ۹۲۵ را به تومان وارد نمایید:", String(silverPricePerGramToman || ""));
+    if (!promptVal) return;
+    const num = parseFloat(promptVal.replace(/,/g, ''));
+    if (isNaN(num) || num <= 0) {
+      alert("مبلغ وارد شده نامعتبر است.");
+      return;
+    }
+    try {
+      await setSilverPriceManual(num);
+      alert(`نرخ نقره با موفقیت به ${num.toLocaleString('fa-IR')} تومان تغییر یافت.`);
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "خطا در ثبت دستی نرخ نقره");
+    }
+  };
+
   const handleLogout = () => {
     removeAdminSession();
     logout();
@@ -67,7 +83,12 @@ export default function AdminTopBar() {
 
       <div className={styles.userSection}>
         {/* Live silver price pill */}
-        <div className={styles.silverPill}>
+        <div className={styles.silverPill} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          {isSilverPriceStale && (
+            <span style={{ background: '#fef3c7', color: '#92400e', border: '1px solid #fcd34d', borderRadius: '12px', padding: '1px 7px', fontSize: '10px', fontWeight: 800 }}>
+              ⚠️ آفلاین
+            </span>
+          )}
           <span className={styles.silverPillLabel}>نقره ۹۲۵:</span>
           <span className={styles.silverPillPrice}>
             {silverPricePerGramToman ? Number(silverPricePerGramToman).toLocaleString("fa-IR") : "---"} ت
@@ -81,6 +102,22 @@ export default function AdminTopBar() {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
             </svg>
+          </button>
+          <button
+            onClick={handleSetManualPrice}
+            style={{
+              background: '#C4852B',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              padding: '2px 8px',
+              fontSize: '10px',
+              fontWeight: 700,
+              cursor: 'pointer'
+            }}
+            title="ثبت دستی نرخ نقره توسط ادمین"
+          >
+            ثبت دستی
           </button>
         </div>
 

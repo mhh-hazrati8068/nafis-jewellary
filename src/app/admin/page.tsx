@@ -21,7 +21,7 @@ import OfficialReceiptModal from "@/components/receipt/OfficialReceiptModal";
 import styles from "./dashboard.module.css";
 
 export default function AdminDashboardPage() {
-  const { token, silverPricePerGramToman, fetchSilverPrice } = useAppStore();
+  const { token, silverPricePerGramToman, isSilverPriceStale, fetchSilverPrice, setSilverPriceManual } = useAppStore();
 
   const [products, setProducts] = useState<BackendProduct[]>([]);
   const [categories, setCategories] = useState<BackendCategory[]>([]);
@@ -185,11 +185,42 @@ export default function AdminDashboardPage() {
             </svg>
           </div>
           <div className={styles.statInfo}>
-            <span className={styles.statLabel}>نرخ لحظه‌ای نقره ۹۲۵</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span className={styles.statLabel}>نرخ لحظه‌ای نقره ۹۲۵</span>
+              {isSilverPriceStale && (
+                <span style={{ fontSize: '10px', background: '#fef3c7', color: '#92400e', border: '1px solid #fcd34d', padding: '1px 6px', borderRadius: '10px', fontWeight: 800 }}>
+                  ⚠️ نرخ آفلاین
+                </span>
+              )}
+            </div>
             <span className={styles.statValue}>
               {silverPricePerGramToman ? Number(silverPricePerGramToman).toLocaleString("fa-IR") : "---"} ت
             </span>
-            <span className={styles.statSub}>قیمت روز به ازای هر گرم (TGJU)</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+              <span className={styles.statSub}>قیمت روز به ازای هر گرم (TGJU)</span>
+              <button
+                onClick={async () => {
+                  const val = prompt("مبلغ جدید هر گرم نقره ۹۲۵ (تومان):", String(silverPricePerGramToman || ""));
+                  if (!val) return;
+                  const n = parseFloat(val.replace(/,/g, ''));
+                  if (isNaN(n) || n <= 0) return alert("مبلغ نامعتبر است");
+                  await setSilverPriceManual(n);
+                  alert("نرخ جدید نقره با موفقیت ثبت شد.");
+                }}
+                style={{
+                  background: '#f4f1ea',
+                  color: '#660000',
+                  border: '1px solid #C4852B',
+                  borderRadius: '6px',
+                  padding: '2px 8px',
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                ✏️ تغییر دستی
+              </button>
+            </div>
           </div>
         </div>
 

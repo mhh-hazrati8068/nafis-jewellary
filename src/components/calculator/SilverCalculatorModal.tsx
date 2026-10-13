@@ -9,7 +9,7 @@ interface CalculatorProps {
 }
 
 export default function SilverCalculatorModal({ isOpen, onClose }: CalculatorProps) {
-  const { language, silverPricePerGramToman } = useAppStore();
+  const { language, silverPricePerGramToman, isSilverPriceStale } = useAppStore();
   const [weight, setWeight] = useState<number>(6.5);
   const [purity, setPurity] = useState<number>(925);
   const [makingFeePercent, setMakingFeePercent] = useState<number>(15);
@@ -54,6 +54,25 @@ export default function SilverCalculatorModal({ isOpen, onClose }: CalculatorPro
 
         {/* Form Controls */}
         <div className="p-6 sm:p-8 space-y-6 text-xs">
+          
+          {/* Stale Price Warning Banner */}
+          {isSilverPriceStale && (
+            <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-300 text-amber-900 flex items-start gap-2.5">
+              <span className="text-base shrink-0">⚠️</span>
+              <div className="space-y-0.5">
+                <p className="font-bold text-xs">
+                  {language === 'fa' ? 'هشدار: نرخ نقره به‌روز نیست' : language === 'ar' ? 'تحذير: سعر الفضة غير محدث' : 'Warning: Silver price is not up to date'}
+                </p>
+                <p className="text-[11px] text-amber-800 leading-relaxed">
+                  {language === 'fa' 
+                    ? 'به دلیل اختلال موقت در اتصال به سامانه TGJU، نرخ فعلی آخرین نرخ معتبر ثبت‌شده در سیستم است و ممکن است تغییر کرده باشد.'
+                    : language === 'ar'
+                    ? 'نظراً لعدم توفر الاتصال المباشر بنظام TGJU، يتم الحساب بناءً على آخر سعر محفوظ.'
+                    : 'Due to temporary disruption with TGJU live feed, calculations use the last recorded rate.'}
+                </p>
+              </div>
+            </div>
+          )}
           
           {/* Weight Slider */}
           <div>

@@ -430,32 +430,49 @@ export async function fetchProductById(id: number | string, token?: string | nul
   }, 60000, 4000);
 }
 
-export async function fetchLiveSilverPrice(token?: string | null): Promise<number> {
-  return fastFetch('silver_price', async (signal) => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/products/silver-price`, {
-        method: 'GET',
-        headers: getAuthHeaders(token),
-        signal,
-      });
-      if (res.ok) {
-        const text = await res.text();
-        if (!text) return 502680;
-        try {
-          const data = JSON.parse(text);
-          if (typeof data === 'number') return data;
-          if (data && typeof data.pricePerGramToman === 'number') return data.pricePerGramToman;
-          if (data && typeof data.price === 'number') return data.price;
-          if (data && typeof data.silverPrice === 'number') return data.silverPrice;
-        } catch {
-          const num = parseFloat(text);
-          if (!isNaN(num) && num > 0) return num;
-        }
+export interface SilverPriceResult {
+  price: number;
+  isStale: boolean;
+  error?: string | null;
+}
+
+export async function fetchLiveSilverPriceWithStatus(token?: string | null): Promise<SilverPriceResult> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/products/silver-price`, {
+      method: 'GET',
+      headers: getAuthHeaders(token),
+    });
+    if (res.ok) {
+      const text = await res.text();
+      let price = 0;
+      try {
+        const data = JSON.parse(text);
+        if (typeof data === 'number') price = data;
+        else if (data && typeof data.pricePerGramToman === 'number') price = data.pricePerGramToman;
+        else if (data && typeof data.price === 'number') price = data.price;
+        else if (data && typeof data.silverPrice === 'number') price = data.silverPrice;
+      } catch {
+        const num = parseFloat(text);
+        if (!isNaN(num) && num > 0) price = num;
       }
-    } catch {
-      // Graceful fallback when TGJU or server endpoint is offline
+      if (price > 0) {
+        return { price, isStale: false };
+      }
     }
-    return 502680;
+    return { price: 522980, isStale: true, error: 'پاسخ نامعتبر از سرور (عدم اتصال به TGJU)' };
+  } catch (err: unknown) {
+    return {
+      price: 522980,
+      isStale: true,
+      error: err instanceof Error ? err.message : 'عدم دسترسی به سامانه TGJU',
+    };
+  }
+}
+
+export async function fetchLiveSilverPrice(token?: string | null): Promise<number> {
+  return fastFetch('silver_price', async () => {
+    const res = await fetchLiveSilverPriceWithStatus(token);
+    return res.price;
   }, 30000, 4000); // 30s TTL, 4s timeout
 }
 
@@ -855,7 +872,10 @@ export async function saveAdminProduct(
   id?: number,
   stoneId?: number,
   categoryId?: number,
-  token?: string | null
+  token?: string | null,
+  retainedImages?: string[],
+  primaryImageUrl?: string,
+  replaceImages?: boolean
 ): Promise<BackendProduct> {
   let url = isEdit ? `${API_BASE_URL}/api/admin/products/${id}` : `${API_BASE_URL}/api/admin/products`;
   const queryParams: string[] = [];
@@ -873,6 +893,19 @@ export async function saveAdminProduct(
   if (stoneId) {
     formData.set('stone.id', String(stoneId));
     formData.set('stoneId', String(stoneId));
+  }
+
+  // Backend image sync parameters:
+  if (retainedImages && retainedImages.length > 0 && !formData.has('retainedImages')) {
+    retainedImages.forEach((img) => {
+      formData.append('retainedImages', img.replace(API_BASE_URL, ''));
+    });
+  }
+  if (primaryImageUrl && !formData.has('primaryImageUrl')) {
+    formData.set('primaryImageUrl', primaryImageUrl.replace(API_BASE_URL, ''));
+  }
+  if (replaceImages !== undefined && !formData.has('replaceImages')) {
+    formData.set('replaceImages', String(replaceImages));
   }
 
   const res = await fetch(url, {
@@ -902,6 +935,26 @@ export async function saveAdminProduct(
   return saved;
 }
 
+export async function deleteProductGalleryImage(
+  productId: number,
+  imageUrl: string,
+  token?: string | null
+): Promise<string> {
+  const cleanUrl = imageUrl.replace(API_BASE_URL, '');
+  const res = await fetch(`${API_BASE_URL}/api/admin/products/${productId}/gallery?imageUrl=${encodeURIComponent(cleanUrl)}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(token),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(err || 'Failed to delete gallery image');
+  }
+  invalidateApiCache('products_');
+  invalidateApiCache(`product_${productId}`);
+  invalidateApiCache('admin_products');
+  return res.text();
+}
+
 export async function deleteAdminProduct(id: number, token?: string | null): Promise<string> {
   const res = await fetch(`${API_BASE_URL}/api/admin/products/${id}`, {
     method: 'DELETE',
@@ -916,7 +969,34 @@ export async function deleteAdminProduct(id: number, token?: string | null): Pro
   return res.text();
 }
 
+export async function setAdminSilverPrice(price: number, token?: string | null): Promise<string> {
+  const res = await fetch(`${API_BASE_URL}/api/admin/set-silver-price?price=${encodeURIComponent(price)}`, {
+    method: 'POST',
+    headers: getAuthHeaders(token),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(err || 'Failed to set silver price');
+  }
+  invalidateApiCache('silver_price');
+  invalidateApiCache('products_');
+  return res.text();
+}
+
 export async function forceUpdateSilverPrice(token?: string | null): Promise<string> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/admin/set-silver-price?price=522980`, {
+      method: 'POST',
+      headers: getAuthHeaders(token),
+    });
+    if (res.ok) {
+      invalidateApiCache('silver_price');
+      invalidateApiCache('products_');
+      return res.text();
+    }
+  } catch {
+    // fallback to legacy endpoint
+  }
   const res = await fetch(`${API_BASE_URL}/api/admin/update-silver-price`, {
     method: 'POST',
     headers: getAuthHeaders(token),
@@ -924,6 +1004,19 @@ export async function forceUpdateSilverPrice(token?: string | null): Promise<str
   if (!res.ok) throw new Error('Failed to update silver price');
   invalidateApiCache('silver_price');
   invalidateApiCache('products_');
+  return res.text();
+}
+
+export async function deleteMyOrder(invoiceId: number, token?: string | null): Promise<string> {
+  const res = await fetch(`${API_BASE_URL}/api/invoices/${invoiceId}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(token),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(err || 'Failed to delete order');
+  }
+  invalidateApiCache('my_orders');
   return res.text();
 }
 

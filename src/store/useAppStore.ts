@@ -5,7 +5,9 @@ import { translateDynamicText } from '@/lib/dynamicTranslator'
 import { 
   UserProfile, 
   fetchAllProducts, 
-  fetchLiveSilverPrice as getLiveSilverPriceApi,
+  fetchLiveSilverPriceWithStatus,
+  fetchProductById,
+  setAdminSilverPrice,
   verifyOtp,
   adminLogin as adminLoginApi,
   getUserProfile,
@@ -47,6 +49,7 @@ interface AppState {
   backendProducts: BackendProduct[]
   isLoadingProducts: boolean
   getProductById: (id: number) => Product | undefined
+  fetchSingleProduct: (id: number) => Promise<Product | null>
   fetchProducts: (categoryId?: number | null) => Promise<void>
 
   // Search modal state
@@ -68,8 +71,11 @@ interface AppState {
 
   // Live Silver & Gold Price Ticker
   silverPricePerGramToman: number
+  isSilverPriceStale: boolean
+  silverPriceError: string | null
   goldPricePerGram: number
   fetchSilverPrice: () => Promise<void>
+  setSilverPriceManual: (price: number) => Promise<void>
 
   // Authentication state
   token: string | null
@@ -225,6 +231,25 @@ export const useAppStore = create<AppState>()((set, get) => ({
   isLoadingProducts: false,
   getProductById: (id) => get().products.find((p) => p.id === id),
 
+  fetchSingleProduct: async (id: number) => {
+    const existing = get().products.find((p) => p.id === id);
+    if (existing) return existing;
+    try {
+      const { token } = get();
+      const bp = await fetchProductById(id, token);
+      if (bp) {
+        const mapped = mapBackendToFrontend(bp);
+        set((state) => ({
+          products: [...state.products.filter((p) => p.id !== id), mapped],
+        }));
+        return mapped;
+      }
+    } catch (err) {
+      console.warn(`Failed to fetch single product ${id}:`, err);
+    }
+    return null;
+  },
+
   fetchProducts: async (categoryId?: number | null) => {
     const targetCatId = categoryId !== undefined ? categoryId : get().selectedCategoryId;
 
@@ -273,15 +298,29 @@ export const useAppStore = create<AppState>()((set, get) => ({
   // Cart State
   cart: [],
   isCartOpen: false,
-  silverPricePerGramToman: 474820,
+  silverPricePerGramToman: 522980,
+  isSilverPriceStale: false,
+  silverPriceError: null,
   goldPricePerGram: 85.50,
 
   fetchSilverPrice: async () => {
     const { token } = get();
-    const price = await getLiveSilverPriceApi(token);
-    if (price && price > 0) {
-      set({ silverPricePerGramToman: price });
-    }
+    const res = await fetchLiveSilverPriceWithStatus(token);
+    set({ 
+      silverPricePerGramToman: res.price,
+      isSilverPriceStale: res.isStale,
+      silverPriceError: res.isStale ? (res.error || 'نرخ نقره به‌روز نیست (آفلاین)') : null,
+    });
+  },
+
+  setSilverPriceManual: async (price: number) => {
+    const { token } = get();
+    await setAdminSilverPrice(price, token);
+    set({
+      silverPricePerGramToman: price,
+      isSilverPriceStale: false,
+      silverPriceError: null,
+    });
   },
 
   addToCart: (product) => set((state) => {

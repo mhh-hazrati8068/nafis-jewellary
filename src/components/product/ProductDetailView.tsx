@@ -1,7 +1,7 @@
 "use client";
 
 import { useAppStore } from "@/store/useAppStore";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { 
   getProductName, 
@@ -17,15 +17,28 @@ interface ProductDetailViewProps {
 }
 
 export default function ProductDetailView({ productId }: ProductDetailViewProps) {
-  const { getProductById, products, addToCart, toggleWishlist, wishlist, language, t } = useAppStore();
+  const { getProductById, fetchSingleProduct, products, addToCart, toggleWishlist, wishlist, language, isSilverPriceStale, t } = useAppStore();
 
-  const product = getProductById(productId) || products[0];
+  const [loadedProduct, setLoadedProduct] = useState(getProductById(productId));
+
+  useEffect(() => {
+    const existing = getProductById(productId);
+    if (existing) {
+      setLoadedProduct(existing);
+    } else {
+      fetchSingleProduct(productId).then((p) => {
+        if (p) setLoadedProduct(p);
+      });
+    }
+  }, [productId, getProductById, fetchSingleProduct]);
+
+  const product = loadedProduct || getProductById(productId) || products[0];
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [qty, setQty] = useState(1);
   const [isAROpen, setIsAROpen] = useState(false);
 
-  const activeImg = selectedImage || product.image;
-  const isWishlisted = wishlist.includes(product.id);
+  const activeImg = selectedImage || product?.image;
+  const isWishlisted = product ? wishlist.includes(product.id) : false;
 
   const name = getProductName(product, language);
   const category = getProductCategory(product, language);
@@ -138,9 +151,16 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
                 {name}
               </h1>
 
-              <div className="font-mono text-2xl font-bold text-[#C4852B] mb-6">
+              <div className="font-mono text-2xl font-bold text-[#C4852B] mb-2">
                 {product.price.toLocaleString()} تومان
               </div>
+
+              {isSilverPriceStale && (
+                <div className="inline-flex items-center gap-1.5 text-[11px] text-amber-800 bg-amber-50 border border-amber-300 px-3 py-1.5 rounded-xl font-medium mb-5">
+                  <span>⚠️</span>
+                  <span>{language === 'fa' ? 'توجه: نرخ نقره به‌روز نیست و قیمت بر پایه آخرین نرخ ثبت‌شده محاسبه شده است.' : 'Note: Silver rate is not up to date; calculated with last recorded rate.'}</span>
+                </div>
+              )}
 
               <p className="text-xs md:text-sm text-[#626667] leading-relaxed mb-8">
                 {description}
