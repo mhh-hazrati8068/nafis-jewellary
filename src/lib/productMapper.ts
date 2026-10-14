@@ -26,6 +26,14 @@ export function mapBackendToFrontend(bp: BackendProduct): Product {
     .map((img) => (img.startsWith('http') ? img : `${API_BASE_URL}${img}`));
   const allImages = [imageUrl, ...galleryUrls.filter((u) => u !== imageUrl)];
 
+  const purity = bp.purity || "925";
+  const sizeSuffix = bp.size ? ` (${bp.size})` : "";
+
+  // Dynamic description using server description or graceful fallback
+  const descriptionFa = bp.description || `طراحی اصیل نقره با فرمول قیمت‌گذاری پویا بر پایه نرخ لحظه‌ای TGJU. موجودی: ${bp.stockQuantity} عدد`;
+  const descriptionEn = bp.description ? translateDynamicText(bp.description, 'en') : `Authentic fine silver with dynamic TGJU live pricing. In stock: ${bp.stockQuantity} pcs`;
+  const descriptionAr = bp.description ? translateDynamicText(bp.description, 'ar') : `فضة نقية أصيلة مع تسعير مباشر وفق أسعار السوق الحية. المتوفر: ${bp.stockQuantity} قطع`;
+
   return {
     id: bp.id,
     nameFa: bp.name,
@@ -37,16 +45,21 @@ export function mapBackendToFrontend(bp: BackendProduct): Product {
     categoryFa: effectiveCatName || (catSlug === 'rings' ? 'انگشتر' : catSlug === 'necklaces' ? 'گردنبند' : catSlug === 'bracelets' ? 'دستبند' : 'گوشواره'),
     categoryEn: translateDynamicText(effectiveCatName || catSlug, 'en'),
     categoryAr: translateDynamicText(effectiveCatName || catSlug, 'ar'),
-    materialFa: `نقره ۹۲۵ عیار خالص ${bp.weight ? `(${bp.weight} گرم)` : ''}`,
-    materialEn: `Certified 925 Sterling Silver ${bp.weight ? `(${bp.weight}g)` : ''}`,
-    materialAr: `فضة نقية استرليني عيار 925 ${bp.weight ? `(${bp.weight} جرام)` : ''}`,
-    descriptionFa: `طراحی اصیل نقره با فرمول قیمت‌گذاری پویا بر پایه نرخ لحظه‌ای TGJU. موجودی: ${bp.stockQuantity} عدد`,
-    descriptionEn: `Authentic fine silver with dynamic TGJU live pricing. In stock: ${bp.stockQuantity} pcs`,
-    descriptionAr: `فضة نقية أصيلة مع تسعير مباشر وفق أسعار السوق الحية. المتوفر: ${bp.stockQuantity} قطع`,
+    materialFa: `نقره ${purity} عیار خالص ${bp.weight ? `(${bp.weight} گرم)` : ''}${sizeSuffix}`,
+    materialEn: `Certified ${purity} Sterling Silver ${bp.weight ? `(${bp.weight}g)` : ''}${sizeSuffix}`,
+    materialAr: `فضة نقية استرليني عيار ${purity} ${bp.weight ? `(${bp.weight} جرام)` : ''}${sizeSuffix}`,
+    descriptionFa,
+    descriptionEn,
+    descriptionAr,
+    description: bp.description,
+    purity,
+    size: bp.size,
+    createdAt: bp.createdAt,
+    updatedAt: bp.updatedAt,
     image: imageUrl,
     images: allImages.length > 0 ? allImages : [imageUrl],
     weightGram: bp.weight || 4.2,
-    carat: "Silver 925",
+    carat: `Silver ${purity}`,
     featured: bp.badge === 'BEST_SELLER' || bp.badge === 'SPECIAL_OFFER',
   };
 }

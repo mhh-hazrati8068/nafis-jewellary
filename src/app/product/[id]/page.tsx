@@ -49,7 +49,7 @@ export async function generateMetadata({
       const bp = await res.json();
       if (bp && bp.name) {
         title = `${bp.name} | زیورآلات دست‌ساز نفیسه عبادی`;
-        description = `${bp.name} نقره استرلینگ ۹۲۵ و گوهرسنگ اصیل. قیمت: ${Number(bp.livePriceToman || 0).toLocaleString()} تومان.`;
+        description = bp.description || `${bp.name} نقره استرلینگ ۹۲۵ و گوهرسنگ اصیل. قیمت: ${Number(bp.livePriceToman || 0).toLocaleString()} تومان.`;
         if (bp.imageUrl) {
           imageUrl = bp.imageUrl.startsWith("http") ? bp.imageUrl : `${API_BASE_URL}${bp.imageUrl}`;
         }

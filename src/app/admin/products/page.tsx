@@ -42,6 +42,9 @@ export default function AdminProductsPage() {
 
   // Product Form Fields (NO default values as per system law)
   const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [purity, setPurity] = useState("925");
+  const [size, setSize] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [pricingMethod, setPricingMethod] = useState<string>("METHOD_1_SILVER_MAKING_STONE");
   const [weight, setWeight] = useState<string>(""); // Strictly empty by default
@@ -135,6 +138,9 @@ export default function AdminProductsPage() {
   const handleOpenCreate = () => {
     setEditingProduct(null);
     setName("");
+    setDescription("");
+    setPurity("925");
+    setSize("");
     setSelectedCategoryId(categories[0]?.id ? String(categories[0].id) : "");
     setPricingMethod("METHOD_1_SILVER_MAKING_STONE");
     // Strictly empty as per system law: "اجرت ساخت هر گرم برای هر محصول باید به صورت دستی وارد شود. سیستم هیچ مقدار پیش‌فرضی ندارد"
@@ -158,6 +164,9 @@ export default function AdminProductsPage() {
   const handleOpenEdit = (prod: BackendProduct) => {
     setEditingProduct(prod);
     setName(prod.name || "");
+    setDescription(prod.description || "");
+    setPurity(prod.purity || "925");
+    setSize(prod.size || "");
     const catId = prod.categoryId
       ? String(prod.categoryId)
       : prod.category?.id
@@ -361,6 +370,11 @@ export default function AdminProductsPage() {
     try {
       const formData = new FormData();
       formData.append("name", name.trim());
+      formData.append("description", description.trim());
+      formData.append("purity", purity.trim() || "925");
+      if (size.trim()) {
+        formData.append("size", size.trim());
+      }
       formData.append("pricingMethod", pricingMethod);
       formData.append("weight", weight || "0");
       // The server model maps the manual making charge as percentage
@@ -634,9 +648,19 @@ export default function AdminProductsPage() {
                           </div>
                           <div className={styles.productInfo}>
                             <span className={styles.productName}>{p.name}</span>
-                            <span className={styles.categoryTag}>
-                              {p.categoryName || p.category?.name || "بدون دسته‌بندی"}
-                            </span>
+                            <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginTop: "3px" }}>
+                              <span className={styles.categoryTag}>
+                                {p.categoryName || p.category?.name || "بدون دسته‌بندی"}
+                              </span>
+                              <span style={{ fontSize: "11px", background: "#f1f5f9", color: "#475569", padding: "1px 6px", borderRadius: "4px", fontWeight: 600 }}>
+                                عیار {p.purity || "925"}
+                              </span>
+                              {p.size && (
+                                <span style={{ fontSize: "11px", background: "#fef3c7", color: "#92400e", padding: "1px 6px", borderRadius: "4px", fontWeight: 600 }}>
+                                  {p.size}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </td>
@@ -859,6 +883,52 @@ export default function AdminProductsPage() {
                     ))}
                   </select>
                 </div>
+              </div>
+
+              {/* 2.1 Purity & Size/Dimensions */}
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>
+                    <span>عیار نقره (Purity)</span>
+                    <span className={styles.labelHint}>(پیش‌فرض: ۹۲۵)</span>
+                  </label>
+                  <input
+                    type="text"
+                    className={styles.input}
+                    value={purity}
+                    onChange={(e) => setPurity(e.target.value)}
+                    placeholder="مثال: 925"
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>
+                    <span>سایز / ابعاد محصول (اختیاری)</span>
+                    <span className={styles.labelHint}>(مثال: سایز ۵۶ یا طول ۴۵ سانتی‌متر)</span>
+                  </label>
+                  <input
+                    type="text"
+                    className={styles.input}
+                    value={size}
+                    onChange={(e) => setSize(e.target.value)}
+                    placeholder="مثال: سایز ۵۸ یا طول ۴۵ سانتیمتر"
+                  />
+                </div>
+              </div>
+
+              {/* 2.2 Product Description */}
+              <div className={styles.formGroup}>
+                <label className={styles.label}>
+                  <span>توضیحات کامل محصول (Description)</span>
+                  <span className={styles.labelHint}>(متن چندخطی برای صفحه جزئیات کالا)</span>
+                </label>
+                <textarea
+                  rows={3}
+                  className={styles.textarea}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="طراحی دست‌ساز رکاب صفوی نقره استرلینگ به همراه نگین فیروزه طبیعی نیشابور اصل با شناسنامه اصالت..."
+                />
               </div>
 
               {/* 3. Method-Specific Fields */}

@@ -30,8 +30,8 @@ export const translations = {
     },
     hero: {
       badge: "Handcrafted 925 Silver Collection 2026",
-      title: "Artisan 925 Sterling Silver & Genuine Gems",
-      subtitle: "Where pure artistry meets fine 925 sterling silver. Handcrafted silver creations with Neyshabur turquoise and natural agate designed for timeless elegance.",
+      title: "Authentic 925 Silver & Whole Quran Inscribed Gemstones",
+      subtitle: "Where pure artistry meets fine 925 sterling silver. Handcrafted silver creations with gemstones inscribed with the complete Holy Quran for timeless grace.",
       explore: "Explore Silver Collection",
       philosophy: "Brand Heritage",
       mouseGuide: "Move cursor to inspect"
@@ -170,8 +170,8 @@ export const translations = {
     },
     hero: {
       badge: "کالکشن دست‌ساز نقره ۹۲۵ نفیسه عبادی ۲۰۲۶",
-      title: "اصالت نقره ۹۲۵ دست‌ساز و سنگ‌های طبیعی",
-      subtitle: "پیوند هنر تمام‌عیار با نقره خالص استرلینگ ۹۲۵، سنگ‌های اصیل عقیق طبیعی و دُرّ نجف زلال برای درخشش ماندگار شما.",
+      title: "اصالت نقره ۹۲۵ و سنگ‌های مزین به کل قرآن",
+      subtitle: "پیوند هنر تمام‌عیار با نقره خالص استرلینگ ۹۲۵، سنگ‌های اصیل مزین به کل قرآن کریم، عقیق طبیعی و دُرّ نجف زلال.",
       explore: "مشاهده کالکشن نقره",
       philosophy: "درباره برند نفیسه عبادی",
       mouseGuide: "برای چرخش نشانگر را حرکت دهید"
@@ -310,8 +310,8 @@ export const translations = {
     },
     hero: {
       badge: "مجموعة الفضة الاسترليني 925 المصوغة يدوياً 2026",
-      title: "الفخامة والأصالة في الفضة الاسترليني 925",
-      subtitle: "حيث يلتقي الفن الخالص بالفضة الاسترليني 925 وأحجار العقيق الطبيعية ودر النجف الكريستالي لإشراقة أبدية.",
+      title: "أصالة الفضة 925 والأحجار المزينة بالقرآن الكريم كاملاً",
+      subtitle: "حيث يلتقي الفن الخالص بالفضة الاسترليني 925 وأحجار العقيق المزينة بالقرآن الكريم ودر النجف الكريستالي لإشراقة أبدية.",
       explore: "استكشف مجموعة الفضة",
       philosophy: "فلسفة علامتنا",
       mouseGuide: "حرك المؤشر للتفاعل"

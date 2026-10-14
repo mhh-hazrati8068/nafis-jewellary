@@ -20,6 +20,11 @@ export interface Product {
   weightGram: number
   carat: string
   featured?: boolean
+  description?: string
+  purity?: string
+  size?: string
+  createdAt?: string
+  updatedAt?: string
 }
 
 export const initialProducts: Product[] = [

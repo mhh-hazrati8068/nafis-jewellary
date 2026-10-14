@@ -155,12 +155,38 @@ export default function CartDrawer() {
               </span>
             )}
           </div>
-          <button 
-            onClick={() => { toggleCart(false); setCreatedInvoice(null); setIsCheckingOut(false); }}
-            className="p-2 text-zinc-500 hover:text-[#660000] transition-colors cursor-pointer"
-          >
-            ✕
-          </button>
+          <div className="flex items-center gap-2">
+            {!createdInvoice && cart.length > 0 && (
+              <button 
+                type="button"
+                onClick={() => {
+                  if (window.confirm(language === "fa" ? "آیا از خالی کردن سبد خرید اطمینان دارید؟ (کش اقلام قبلی پاک می‌شود)" : "Clear all items in cart?")) {
+                    clearCart();
+                    setErrorMsg(null);
+                    setIsCheckingOut(false);
+                  }
+                }}
+                className="p-1.5 px-2 text-zinc-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 text-xs border border-zinc-200"
+                title={language === "fa" ? "خالی کردن سبد خرید (ریست کش)" : "Empty Cart"}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                  <line x1="10" y1="11" x2="10" y2="17" />
+                  <line x1="14" y1="11" x2="14" y2="17" />
+                </svg>
+                <span className="text-[11px] font-medium hidden sm:inline">
+                  {language === "fa" ? "خالی کردن سبد" : language === "ar" ? "تفريغ السلة" : "Clear"}
+                </span>
+              </button>
+            )}
+            <button 
+              onClick={() => { toggleCart(false); setCreatedInvoice(null); setIsCheckingOut(false); }}
+              className="p-2 text-zinc-500 hover:text-[#660000] transition-colors cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
         </div>
 
         {/* INVOICE SUCCESS VIEW */}
@@ -262,8 +288,24 @@ export default function CartDrawer() {
               </div>
 
               {errorMsg && (
-                <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg">
-                  {errorMsg}
+                <div className="p-3.5 bg-red-50 border border-red-200 text-red-800 text-xs rounded-xl flex flex-col gap-2 shadow-xs">
+                  <div className="flex items-start gap-2">
+                    <span className="text-base leading-none">⚠️</span>
+                    <span className="flex-1 leading-relaxed font-medium">{errorMsg}</span>
+                  </div>
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-red-100">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        clearCart();
+                        setErrorMsg(null);
+                        setIsCheckingOut(false);
+                      }}
+                      className="text-[11px] text-red-700 hover:text-red-900 underline font-bold cursor-pointer"
+                    >
+                      {language === "fa" ? "خالی کردن سبد و ریست کالاها" : "Clear cart & reset items"}
+                    </button>
+                  </div>
                 </div>
               )}
 

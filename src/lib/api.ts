@@ -27,12 +27,20 @@ export function extractCleanErrorMessage(raw: string, defaultMsg = 'خطا در 
     const json = JSON.parse(raw);
     if (typeof json === 'string') return json;
     if (json.message) return json.message;
-    if (json.error) return json.error;
+    if (json.detail) return json.detail;
+    if (json.error && json.error !== 'Bad Request') return json.error;
+    if (json.title && json.title !== 'Bad Request') return json.title;
+    if (Array.isArray(json.errors) && json.errors.length > 0) {
+      const first = json.errors[0];
+      if (typeof first === 'string') return first;
+      if (first?.defaultMessage) return first.defaultMessage;
+      if (first?.message) return first.message;
+    }
   } catch {}
 
   // Strip any accidental HTML tags
   const stripped = raw.replace(/<[^>]*>/g, '').trim();
-  return stripped.length > 0 && stripped.length < 250 ? stripped : defaultMsg;
+  return stripped.length > 0 && stripped.length < 1000 ? stripped : defaultMsg;
 }
 
 export interface BackendCategory {
@@ -44,6 +52,9 @@ export interface BackendCategory {
 export interface BackendProduct {
   id: number;
   name: string;
+  description?: string; // توضیحات محصول برای نمایش در صفحه محصول
+  purity?: string;      // عیار نقره (پیش‌فرض "925")
+  size?: string;        // سایز انگشتر، ابعاد یا طول زنجیر (اختیاری)
   livePriceToman: number;
   stockQuantity: number;
   imageUrl?: string;
@@ -61,6 +72,8 @@ export interface BackendProduct {
   stone?: BackendProduct;
   isVisible?: boolean;
   visible?: boolean;
+  createdAt?: string;   // تاریخ ثبت (ISO)
+  updatedAt?: string;   // تاریخ ویرایش (ISO)
 }
 
 export interface UserProfile {
@@ -613,8 +626,8 @@ export async function createCheckout(
     const errText = await res.text();
     const cleanErr = extractCleanErrorMessage(errText, 'خطا در ثبت سفارش');
 
-    // Detect the backend Spring Boot bug where Invoice.getItems() is null
-    if (errText.includes('getItems()') || errText.includes('NullPointerException')) {
+    // Detect legacy backend bug only if getItems() null error occurs
+    if (errText.includes('getItems()') && errText.includes('NullPointerException')) {
       // Fallback: Create the real database invoice record with empty cartItems map
       const fallbackRes = await fetch(`${API_BASE_URL}/api/invoices/checkout`, {
         method: 'POST',
@@ -1076,4 +1089,32 @@ export async function updateInvoiceStatus(id: number, status: string, token?: st
   if (!res.ok) throw new Error('Failed to update invoice status');
   invalidateApiCache('admin_invoices');
   return res.text();
+}
+
+// ---------------- AR & 3D Helpers ----------------
+export interface ArGenerationApiResponse {
+  id: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  arImageUrl?: string | null;
+  message?: string;
+  cached?: boolean;
+  error?: string | null;
+}
+
+export async function generateProductArImage(
+  productId: number | string,
+  imageUrl?: string,
+  force = false
+): Promise<ArGenerationApiResponse> {
+  const res = await fetch(`/api/products/${productId}/generate-ar${force ? '?force=true' : ''}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ imageUrl }),
+  });
+  return res.json();
+}
+
+export async function fetchProductArStatus(productId: number | string): Promise<ArGenerationApiResponse> {
+  const res = await fetch(`/api/products/${productId}/generate-ar`);
+  return res.json();
 }

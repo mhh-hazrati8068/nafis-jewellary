@@ -179,7 +179,7 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
                 {description}
               </p>
 
-              <div className="p-6 rounded-2xl bg-[#F4F1EA] border border-[#C4852B]/30 mb-8 grid grid-cols-2 gap-4 text-xs">
+              <div className="p-6 rounded-2xl bg-[#F4F1EA] border border-[#C4852B]/30 mb-8 grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
                 <div>
                   <span className="text-[10px] text-[#626667] uppercase tracking-widest block font-mono mb-1 font-bold">
                     {getMaterialLabel()}
@@ -196,6 +196,16 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
                     {product.weightGram} {getWeightUnit()}
                   </span>
                 </div>
+                {product.size && (
+                  <div>
+                    <span className="text-[10px] text-[#626667] uppercase tracking-widest block font-mono mb-1 font-bold">
+                      {language === 'fa' ? 'سایز / ابعاد' : language === 'ar' ? 'المقاس / الأبعاد' : 'Size / Dimensions'}
+                    </span>
+                    <span className="font-semibold text-zinc-950 font-mono">
+                      {product.size}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
 

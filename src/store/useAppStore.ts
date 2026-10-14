@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { Language, translations } from '@/lib/translations'
 import { Product } from '@/data/products'
+import { mapBackendToFrontend } from '@/lib/productMapper'
 import { translateDynamicText } from '@/lib/dynamicTranslator'
 import { 
   UserProfile, 
@@ -92,58 +93,16 @@ interface AppState {
   logout: () => void
   loadUserFromStorage: () => Promise<void>
   refreshProfile: () => Promise<void>
+
+  // AR & 3D Try-On modal
+  isArModalOpen: boolean
+  openArModal: (product?: Product, targetImage?: string) => void
+  closeArModal: () => void
+  arProduct: Product | null
+  arTargetImage: string | null
 }
 
-function inferCategorySlug(name: string, categoryName?: string, categoryId?: number): 'rings' | 'necklaces' | 'bracelets' | 'earrings' {
-  const combined = `${name} ${categoryName || ''}`.toLowerCase();
-  if (categoryId === 1 || combined.includes('دستبند') || combined.includes('bracelet')) return 'bracelets';
-  if (categoryId === 2 || combined.includes('انگشتر') || combined.includes('ring') || combined.includes('حلقه')) return 'rings';
-  if (categoryId === 3 || combined.includes('گردنبند') || combined.includes('آویز') || combined.includes('necklace') || combined.includes('pendant')) return 'necklaces';
-  if (categoryId === 4 || combined.includes('گوشواره') || combined.includes('earring')) return 'earrings';
-  return 'rings';
-}
 
-// Convert Backend product to Frontend product with automatic localization
-function mapBackendToFrontend(bp: BackendProduct): Product {
-  const imageUrl = bp.imageUrl 
-    ? (bp.imageUrl.startsWith('http') ? bp.imageUrl : `${API_BASE_URL}${bp.imageUrl}`)
-    : "https://images.unsplash.com/photo-1605100804763-247f66126e28?q=80&w=800&auto=format&fit=crop";
-
-  const stoneEn = bp.stoneName ? translateDynamicText(bp.stoneName, 'en') : '';
-  const stoneAr = bp.stoneName ? translateDynamicText(bp.stoneName, 'ar') : '';
-  const effectiveCatId = bp.categoryId ?? bp.category?.id;
-  const effectiveCatName = bp.categoryName || bp.category?.name;
-  const catSlug = inferCategorySlug(bp.name, effectiveCatName, effectiveCatId);
-
-  const galleryUrls = (bp.galleryImages || [])
-    .filter(Boolean)
-    .map((img) => (img.startsWith('http') ? img : `${API_BASE_URL}${img}`));
-  const allImages = [imageUrl, ...galleryUrls.filter((u) => u !== imageUrl)];
-
-  return {
-    id: bp.id,
-    nameFa: bp.name,
-    nameEn: translateDynamicText(bp.name, 'en'),
-    nameAr: translateDynamicText(bp.name, 'ar'),
-    price: bp.livePriceToman || 0,
-    category: catSlug,
-    categoryId: effectiveCatId,
-    categoryFa: effectiveCatName || (catSlug === 'rings' ? 'انگشتر' : catSlug === 'necklaces' ? 'گردنبند' : catSlug === 'bracelets' ? 'دستبند' : 'گوشواره'),
-    categoryEn: translateDynamicText(effectiveCatName || catSlug, 'en'),
-    categoryAr: translateDynamicText(effectiveCatName || catSlug, 'ar'),
-    materialFa: `نقره ۹۲۵ عیار خالص ${bp.weight ? `(${bp.weight} گرم)` : ''}`,
-    materialEn: `Certified 925 Sterling Silver ${bp.weight ? `(${bp.weight}g)` : ''}`,
-    materialAr: `فضة نقية استرليني عيار 925 ${bp.weight ? `(${bp.weight} جرام)` : ''}`,
-    descriptionFa: `طراحی اصیل نقره با فرمول قیمت‌گذاری پویا بر پایه نرخ لحظه‌ای TGJU. موجودی: ${bp.stockQuantity} عدد`,
-    descriptionEn: `Authentic fine silver with dynamic TGJU live pricing. In stock: ${bp.stockQuantity} pcs`,
-    descriptionAr: `فضة نقية أصيلة مع تسعير مباشر وفق أسعار السوق الحية. المتوفر: ${bp.stockQuantity} قطع`,
-    image: imageUrl,
-    images: allImages.length > 0 ? allImages : [imageUrl],
-    weightGram: bp.weight || 4.2,
-    carat: "Silver 925",
-    featured: bp.badge === 'BEST_SELLER' || bp.badge === 'SPECIAL_OFFER',
-  };
-}
 
 export const useAppStore = create<AppState>()((set, get) => ({
   // Language & Direction
@@ -246,10 +205,17 @@ export const useAppStore = create<AppState>()((set, get) => ({
       const { token } = get();
       const backendItems = await fetchAllProducts(targetCatId, token);
       if (backendItems && backendItems.length > 0) {
-        const mapped = backendItems.map(mapBackendToFrontend);
+        // Sort newest first by createdAt (ISO date) or fallback to ID
+        const sortedItems = [...backendItems].sort((a, b) => {
+          if (a.createdAt && b.createdAt) {
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          }
+          return (b.id || 0) - (a.id || 0);
+        });
+        const mapped = sortedItems.map(mapBackendToFrontend);
         set({
           products: mapped,
-          backendProducts: targetCatId ? (get().backendProducts.length > 0 ? get().backendProducts : backendItems) : backendItems,
+          backendProducts: targetCatId ? (get().backendProducts.length > 0 ? get().backendProducts : sortedItems) : sortedItems,
           isLoadingProducts: false,
         });
       } else {
@@ -349,6 +315,17 @@ export const useAppStore = create<AppState>()((set, get) => ({
   isAuthModalOpen: false,
   isProfileModalOpen: false,
   activeReceiptInvoice: null,
+
+  // AR & 3D Try-On modal
+  isArModalOpen: false,
+  arProduct: null,
+  arTargetImage: null,
+  openArModal: (product, targetImage) => set({
+    isArModalOpen: true,
+    arProduct: product || null,
+    arTargetImage: targetImage || null,
+  }),
+  closeArModal: () => set({ isArModalOpen: false }),
 
   setAuthModalOpen: (open) => set({ isAuthModalOpen: open }),
   setProfileModalOpen: (open) => set({ isProfileModalOpen: open }),

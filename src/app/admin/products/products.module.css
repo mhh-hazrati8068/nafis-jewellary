@@ -620,7 +620,8 @@
 }
 
 .input,
-.select {
+.select,
+.textarea {
   padding: 11px 14px;
   background: #f8fafc;
   border: 1.5px solid #dcdfe4;
@@ -632,8 +633,15 @@
   font-family: inherit;
 }
 
+.textarea {
+  resize: vertical;
+  min-height: 85px;
+  line-height: 1.6;
+}
+
 .input:focus,
-.select:focus {
+.select:focus,
+.textarea:focus {
   background: #ffffff;
   border-color: #660000;
   box-shadow: 0 0 0 3px rgba(102, 0, 0, 0.08);
