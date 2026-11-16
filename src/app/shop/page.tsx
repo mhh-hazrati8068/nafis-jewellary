@@ -313,20 +313,6 @@ function ShopContent() {
                 </button>
               );
             })}
-
-            {/* Relative Collection Quick Pills */}
-            <Link
-              href="/shop?filter=men"
-              className="px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all border bg-white text-zinc-700 border-zinc-300 hover:border-[#C4852B] flex items-center gap-2"
-            >
-              <span>{language === "fa" ? "مردانه" : language === "ar" ? "رجالي" : "Men's"}</span>
-            </Link>
-            <Link
-              href="/shop?filter=women"
-              className="px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all border bg-white text-zinc-700 border-zinc-300 hover:border-[#C4852B] flex items-center gap-2"
-            >
-              <span>{language === "fa" ? "زنانه" : language === "ar" ? "نسائي" : "Women's"}</span>
-            </Link>
           </div>
         )}
 
