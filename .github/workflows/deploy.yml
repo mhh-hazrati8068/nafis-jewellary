@@ -56,16 +56,25 @@ jobs:
             exit 1
           fi
 
-          PORT="${SERVER_PORT:-22}"
+          # Sanitize accidental whitespace/newlines, URL schemes, or 'ssh user@' prefixes pasted into secrets
+          CLEAN_HOST="$(printf '%s' "$SERVER_HOST" | sed -E 's/^ssh[[:space:]]+//i; s#^https?://##i; s#/.*$##; s/^[^@]+@//' | tr -d '[:space:]')"
+          CLEAN_USER="$(printf '%s' "$SERVER_USER" | tr -d '[:space:]')"
+          CLEAN_PORT="$(printf '%s' "${SERVER_PORT:-22}" | tr -d '[:space:]')"
+          CLEAN_PORT="${CLEAN_PORT:-22}"
+
+          if [ -z "$CLEAN_HOST" ] || ! [[ "$CLEAN_HOST" =~ ^[A-Za-z0-9.-]+$ ]]; then
+            echo "::error::Invalid SERVER_HOST secret format. Set SERVER_HOST to only the IP/domain (e.g. 188.212.99.215)."
+            exit 1
+          fi
 
           if [ -n "${SSH_PRIVATE_KEY:-}" ]; then
             mkdir -p ~/.ssh
             printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_deploy
             chmod 600 ~/.ssh/id_deploy
-            SSH_CMD=(ssh -i ~/.ssh/id_deploy -o BatchMode=yes -o StrictHostKeyChecking=accept-new -p "$PORT" "${SERVER_USER}@${SERVER_HOST}")
+            SSH_CMD=(ssh -i ~/.ssh/id_deploy -o BatchMode=yes -o StrictHostKeyChecking=accept-new -p "$CLEAN_PORT" "${CLEAN_USER}@${CLEAN_HOST}")
           elif [ -n "${SERVER_PASSWORD:-}" ]; then
-            export SSHPASS="$SERVER_PASSWORD"
-            SSH_CMD=(sshpass -e ssh -o PreferredAuthentications=keyboard-interactive,password -o PubkeyAuthentication=no -o StrictHostKeyChecking=accept-new -p "$PORT" "${SERVER_USER}@${SERVER_HOST}")
+            export SSHPASS="$(printf '%s' "$SERVER_PASSWORD" | tr -d '\r\n')"
+            SSH_CMD=(sshpass -e ssh -o PreferredAuthentications=keyboard-interactive,password -o PubkeyAuthentication=no -o StrictHostKeyChecking=accept-new -p "$CLEAN_PORT" "${CLEAN_USER}@${CLEAN_HOST}")
           else
             echo "::error::Neither SSH_PRIVATE_KEY nor SERVER_PASSWORD secret is configured."
             exit 1
