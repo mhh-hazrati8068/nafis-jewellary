@@ -38,15 +38,40 @@ jobs:
     needs: verify
     runs-on: ubuntu-latest
     steps:
+      - name: Install sshpass (for password / keyboard-interactive SSH)
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          port: ${{ secrets.SERVER_PORT || 22 }}
-          script_stop: true
-          script: |
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${SERVER_HOST:-}" ] || [ -z "${SERVER_USER:-}" ]; then
+            echo "::error::Missing SERVER_HOST or SERVER_USER secret in GitHub repository settings."
+            exit 1
+          fi
+
+          PORT="${SERVER_PORT:-22}"
+
+          if [ -n "${SSH_PRIVATE_KEY:-}" ]; then
+            mkdir -p ~/.ssh
+            printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_deploy
+            chmod 600 ~/.ssh/id_deploy
+            SSH_CMD=(ssh -i ~/.ssh/id_deploy -o BatchMode=yes -o StrictHostKeyChecking=accept-new -p "$PORT" "${SERVER_USER}@${SERVER_HOST}")
+          elif [ -n "${SERVER_PASSWORD:-}" ]; then
+            export SSHPASS="$SERVER_PASSWORD"
+            SSH_CMD=(sshpass -e ssh -o PreferredAuthentications=keyboard-interactive,password -o PubkeyAuthentication=no -o StrictHostKeyChecking=accept-new -p "$PORT" "${SERVER_USER}@${SERVER_HOST}")
+          else
+            echo "::error::Neither SSH_PRIVATE_KEY nor SERVER_PASSWORD secret is configured."
+            exit 1
+          fi
+
+          "${SSH_CMD[@]}" 'bash -s' <<'EOF'
             # Load Node / npm PATH in non-interactive SSH sessions before strict nounset
             export NVM_DIR="$HOME/.nvm"
             if [ -s "$NVM_DIR/nvm.sh" ]; then
@@ -78,3 +103,4 @@ jobs:
             # 4. Replace old site with new static build
             rm -rf /var/www/html/*
             cp -r out/. /var/www/html/
+          EOF
