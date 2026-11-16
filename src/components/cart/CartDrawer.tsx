@@ -2,7 +2,8 @@
 
 import { useAppStore } from "@/store/useAppStore";
 import { useState } from "react";
-import { createCheckout, payInvoice, Invoice, extractCleanErrorMessage } from "@/lib/api";
+import { createCheckout, payInvoice, Invoice, extractCleanErrorMessage, isAuthRequiredError } from "@/lib/api";
+import { isValidToken } from "@/lib/adminAuth";
 import IranLocationSelector from "@/components/ui/IranLocationSelector";
 import { OfficialReceiptIcon, CreditCardPayIcon, ShoppingBagLuxuryIcon } from "@/components/icons/JewelryIcons";
 
@@ -18,6 +19,7 @@ export default function CartDrawer() {
     language, 
     token, 
     user, 
+    logout,
     setAuthModalOpen,
     setProfileModalOpen,
     setActiveReceiptInvoice
@@ -36,9 +38,26 @@ export default function CartDrawer() {
   const taxToman = Math.round(subtotalToman * 0.10); // 10% VAT
   const finalTotalToman = subtotalToman + taxToman;
 
-  const handleStartCheckout = () => {
-    if (!token) {
+  const ensureAuthenticated = () => {
+    const activeToken = token || (typeof window !== "undefined" ? localStorage.getItem("nafis_token") : null);
+    if (!isValidToken(activeToken)) {
+      logout();
+      setIsCheckingOut(false);
       setAuthModalOpen(true);
+      setErrorMsg(
+        language === "fa"
+          ? "برای ثبت سفارش و پرداخت باید وارد حساب کاربری خود شوید."
+          : language === "ar"
+          ? "يرجى تسجيل الدخول لإتمام الطلب والدفع."
+          : "Please sign in to proceed with checkout and payment."
+      );
+      return false;
+    }
+    return true;
+  };
+
+  const handleStartCheckout = () => {
+    if (!ensureAuthenticated()) {
       return;
     }
     if (user?.province) setProvince(user.province);
@@ -51,6 +70,9 @@ export default function CartDrawer() {
 
   const handleConfirmOrder = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!ensureAuthenticated()) {
+      return;
+    }
     if (!province.trim() || !city.trim() || !address.trim() || !postalCode.trim()) {
       setErrorMsg(
         language === "fa" 
@@ -89,6 +111,11 @@ export default function CartDrawer() {
       clearCart();
       setIsCheckingOut(false);
     } catch (err: unknown) {
+      if (isAuthRequiredError(err)) {
+        logout();
+        setIsCheckingOut(false);
+        setAuthModalOpen(true);
+      }
       const error = err as { message?: string };
       setErrorMsg(extractCleanErrorMessage(error?.message || "", language === "fa" ? "خطا در ثبت سفارش" : "Checkout error"));
     } finally {
@@ -98,7 +125,11 @@ export default function CartDrawer() {
 
   const handlePayment = async () => {
     if (!createdInvoice) return;
+    if (!ensureAuthenticated()) {
+      return;
+    }
     setIsLoading(true);
+    setErrorMsg(null);
     try {
       await payInvoice(createdInvoice.id, token);
       alert(
@@ -112,8 +143,14 @@ export default function CartDrawer() {
       toggleCart(false);
       setProfileModalOpen(true);
     } catch (err: unknown) {
+      if (isAuthRequiredError(err)) {
+        logout();
+        setAuthModalOpen(true);
+      }
       const error = err as { message?: string };
-      alert(error.message || (language === "fa" ? "خطا در پرداخت" : language === "ar" ? "خطأ في الدفع" : "Payment failed"));
+      const clean = extractCleanErrorMessage(error?.message || "", language === "fa" ? "خطا در پرداخت" : language === "ar" ? "خطأ في الدفع" : "Payment failed");
+      setErrorMsg(clean);
+      alert(clean);
     } finally {
       setIsLoading(false);
     }
@@ -242,6 +279,11 @@ export default function CartDrawer() {
             </div>
 
             <div className="space-y-2 pt-4">
+              {errorMsg && (
+                <div className="p-3 bg-red-50 border border-red-200 text-red-800 text-xs rounded-xl">
+                  {errorMsg}
+                </div>
+              )}
               <button
                 onClick={() => {
                   setActiveReceiptInvoice(createdInvoice);

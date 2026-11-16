@@ -148,25 +148,27 @@ export default function PackagingShowcase() {
           
           {/* 3D Tilt Card Visual */}
           <TiltCard className="w-full">
-            <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border border-[#C4852B]/40 group bg-zinc-900">
+            <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-lg border border-[#C4852B]/25 group bg-[#F4F1EA]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img 
                 src={currentItem.image} 
                 alt={currentItem.titleFa}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-103"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
               
-              {/* Brand Logo Watermark Overlay */}
-              <div className="absolute top-6 left-6 p-3 rounded-2xl bg-black/40 backdrop-blur-md border border-[#C4852B]/30">
-                <BrandLogo variant="white" size="sm" showSubline={false} />
+              {/* Brand Logo Frosted Glass Overlay */}
+              <div className="absolute top-5 start-5 p-2.5 rounded-2xl bg-white/80 backdrop-blur-md border border-white/90 shadow-xs">
+                <BrandLogo size="sm" showSubline={false} />
               </div>
 
-              {/* Floating Badge */}
-              <div className="absolute bottom-6 right-6 px-4 py-2 bg-[#660000] text-white rounded-xl shadow-xl border border-[#C4852B]/50">
-                <span className="text-[10px] font-mono uppercase tracking-widest block font-bold text-[#C4852B]">
+              {/* Minimal Light Floating Badge */}
+              <div className="absolute bottom-5 end-5 px-4 py-2 bg-white/85 backdrop-blur-md text-[#1A1816] rounded-xl shadow-sm border border-[#C4852B]/30">
+                <span className="text-[10px] font-mono uppercase tracking-widest block font-bold text-[#660000]">
                   100% SILVER 925
                 </span>
-                <span className="text-[9px] text-zinc-200">
+                <span className="text-[10px] text-zinc-700 font-medium">
                   {language === 'fa' ? 'بسته‌بندی رسمی و شناسنامه اصالت' : language === 'ar' ? 'تغليف رسمي وشهادة الأصالة' : 'Certified Luxury Presentation'}
                 </span>
               </div>
@@ -210,7 +212,7 @@ export default function PackagingShowcase() {
                     <SparkleStarIcon className="w-4 h-4" />
                   </span>
                   <span className="text-[11px] text-[#626667]">
-                    {language === 'fa' ? 'شامل تمامی سفارش‌های بالاتر از $200' : language === 'ar' ? 'مشمول مجاناً للطلبات التي تتجاوز 200$' : 'Complimentary on orders above $200'}
+                    {language === 'fa' ? 'ارائه‌شده همراه با تمامی سفارش‌های رسمی مجموعه' : language === 'ar' ? 'مرفق مجاناً مع جميع الطلبات الرسمية' : 'Complimentary with all official boutique orders'}
                   </span>
                 </div>
               </div>

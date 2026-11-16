@@ -3,8 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { adminLogin } from "@/lib/api";
-import { isAdminLoggedIn, setAdminSession } from "@/lib/adminAuth";
+import { isAdminLoggedIn } from "@/lib/adminAuth";
 import { useAppStore } from "@/store/useAppStore";
 import styles from "./login.module.css";
 
@@ -14,7 +13,15 @@ export default function AdminLoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("reason") === "expired") {
+        return "نشست مدیریت منقضی شده یا نامعتبر است. لطفاً مجدداً وارد شوید.";
+      }
+    }
+    return null;
+  });
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
@@ -32,13 +39,6 @@ export default function AdminLoginPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const token = await adminLogin(username.trim(), password);
-      setAdminSession(token, {
-        username: username.trim(),
-        role: "ADMIN",
-        firstName: "مدیر",
-        lastName: "سیستم",
-      });
       await loginAsAdmin(username.trim(), password);
       router.replace("/admin");
     } catch (err: unknown) {

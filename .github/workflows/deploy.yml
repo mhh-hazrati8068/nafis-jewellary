@@ -6,10 +6,37 @@ on:
       - main
   workflow_dispatch:
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+concurrency:
+  group: deploy-frontend-production
+  cancel-in-progress: false
 
+jobs:
+  verify:
+    name: Typecheck & Build Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run TypeScript check
+        run: npx tsc --noEmit
+
+      - name: Test production build
+        run: npm run build
+
+  deploy:
+    name: Deploy to Production Server
+    needs: verify
+    runs-on: ubuntu-latest
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -17,21 +44,37 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          script_stop: true
           script: |
-            # ورود به مسیر پروژه
+            # Load Node / npm PATH in non-interactive SSH sessions before strict nounset
+            export NVM_DIR="$HOME/.nvm"
+            if [ -s "$NVM_DIR/nvm.sh" ]; then
+              . "$NVM_DIR/nvm.sh"
+            fi
+            if [ -s "$HOME/.profile" ]; then
+              . "$HOME/.profile"
+            fi
+
+            set -euo pipefail
+
+            # 1. Enter frontend directory
             cd /root/nafis-jewellary
-            
-            # دریافت آخرین تغییرات از گیت‌هاب
-            git pull
-            
-            # نصب پکیج‌ها در صورت وجود پکیج جدید
-            npm install
-            
-            # بیلد گرفتن از پروژه
+
+            # 2. Pull latest code from GitHub
+            git pull --ff-only origin main
+
+            # 3. Install dependencies and build static export (`out/`)
+            npm ci
+            rm -rf out
             npm run build
-            
-            # پاک کردن فایل‌های قبلی سایت
+
+            # Guard: verify build succeeded before touching live web root
+            if [ ! -f "out/index.html" ]; then
+              echo "Build error: out/index.html not found; aborting deploy."
+              exit 1
+            fi
+
+            # 4. Replace old site with new static build
             rm -rf /var/www/html/*
-            
-            # کپی کردن فایل‌های جدید
-            cp -r out/* /var/www/html/
+            cp -r out/. /var/www/html/

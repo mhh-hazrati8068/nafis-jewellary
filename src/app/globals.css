@@ -99,8 +99,9 @@
   --color-brand-gold: var(--brand-gold);
   --color-brand-burgundy: var(--brand-burgundy);
   --color-brand-gray: var(--brand-gray);
-  --font-sans: 'Kalameh', var(--font-kalameh), -apple-system, sans-serif;
+  --font-sans: 'Kalameh', var(--font-kalameh), tahoma, sans-serif;
   --font-serif: 'Clash Display', var(--font-clash), serif;
+  --font-mono: 'Kalameh', var(--font-kalameh), tahoma, sans-serif;
   --font-clash: 'Clash Display', var(--font-clash), -apple-system, sans-serif;
   --font-kalameh: 'Kalameh', var(--font-kalameh), tahoma, sans-serif;
 }
@@ -108,6 +109,8 @@
 /* Smooth Scroll & Base Performance */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 7.5rem;
+  font-family: var(--font-kalameh), 'Kalameh', tahoma, sans-serif;
 }
 
 html, body {
@@ -120,9 +123,20 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Apply Official Brand Typography */
+/* Apply Official Brand Typography to ALL text, UI controls & numbers */
 body, [dir="rtl"] {
   font-family: var(--font-kalameh), 'Kalameh', tahoma, sans-serif;
+  font-size-adjust: from-font;
+}
+
+@supports not (font-size-adjust: from-font) {
+  body, [dir="rtl"] {
+    line-height: 1.65;
+  }
+}
+
+input, textarea, select, option, optgroup, button, label, table, th, td, code, pre, kbd, samp {
+  font-family: inherit;
 }
 
 [dir="ltr"] {
@@ -135,6 +149,17 @@ body, [dir="rtl"] {
 
 .font-clash {
   font-family: var(--font-clash), 'Clash Display', -apple-system, sans-serif;
+}
+
+/* Apply brand fonts to numbers, prices, codes & badges using tabular-nums instead of browser system monospace */
+.font-mono {
+  font-family: var(--font-kalameh), 'Kalameh', tahoma, sans-serif !important;
+  font-variant-numeric: tabular-nums;
+}
+
+[dir="ltr"] .font-mono {
+  font-family: var(--font-clash), 'Clash Display', -apple-system, sans-serif !important;
+  font-variant-numeric: tabular-nums;
 }
 
 h1, h2, h3, h4, .font-brand-en {
@@ -158,16 +183,19 @@ h1, h2, h3, h4, .font-brand-en {
 [dir="rtl"] span,
 [dir="rtl"] button,
 [dir="rtl"] a,
-[dir="rtl"] div {
+[dir="rtl"] div,
+[dir="rtl"] input,
+[dir="rtl"] select,
+[dir="rtl"] textarea,
+[dir="rtl"] label {
   letter-spacing: normal !important;
 }
 
-/* Allow letter-spacing ONLY on explicit Latin / English classes or numbers */
-[dir="rtl"] .font-mono,
+/* Allow letter-spacing ONLY on explicit Latin / English classes */
 [dir="rtl"] .font-clash,
 [dir="rtl"] .font-brand-en,
-[dir="rtl"] [dir="ltr"],
-[dir="rtl"] [dir="ltr"] * {
+[dir="rtl"] [dir="ltr"]:not(.font-kalameh),
+[dir="rtl"] [dir="ltr"] .font-brand-en {
   letter-spacing: initial !important;
 }
 

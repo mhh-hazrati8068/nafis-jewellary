@@ -127,7 +127,7 @@ export function GemstoneIcon({ className = "w-5 h-5", ...props }: IconProps) {
 }
 
 /**
- * Turquoise & Mineral Gemstone Mineral Icon (فیروزه و عقیق اصیل معدنی)
+ * Agate & Natural Gemstone Icon (عقیق اصیل و سنگ‌های معدنی)
  */
 export function TurquoiseMineralIcon({ className = "w-5 h-5", ...props }: IconProps) {
   return (

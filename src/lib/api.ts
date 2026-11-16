@@ -1,5 +1,30 @@
 // API client for Silver Shop Spring Boot Backend
+import {
+  ADMIN_ROLE_KEY,
+  ADMIN_TOKEN_KEY,
+  isAdminToken,
+  isValidToken,
+  normalizeJwtToken,
+  removeAdminSession,
+} from '@/lib/adminAuth';
+
 export const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://nafiseebadijewellery.com').replace(/\/+$/, '');
+
+export class AuthRequiredError extends Error {
+  status: number;
+  scope: 'user' | 'admin';
+
+  constructor(message: string, status = 401, scope: 'user' | 'admin' = 'user') {
+    super(message);
+    this.name = 'AuthRequiredError';
+    this.status = status;
+    this.scope = scope;
+  }
+}
+
+export function isAuthRequiredError(err: unknown): err is AuthRequiredError {
+  return err instanceof AuthRequiredError;
+}
 
 export function extractCleanErrorMessage(raw: string, defaultMsg = 'خطا در برقراری ارتباط با سرور'): string {
   if (!raw) return defaultMsg;
@@ -70,6 +95,7 @@ export interface BackendProduct {
   stonePrice?: number;
   fixedPrice?: number;
   stone?: BackendProduct;
+  hasRhodiumPlating?: boolean;
   isVisible?: boolean;
   visible?: boolean;
   createdAt?: string;   // تاریخ ثبت (ISO)
@@ -128,15 +154,123 @@ export interface SilverPriceResponse {
   success?: boolean;
 }
 
+function resolveActiveToken(token?: string | null): string | null {
+  const fromArg = normalizeJwtToken(token);
+  if (fromArg) return fromArg;
+  if (typeof window === 'undefined') return null;
+  return normalizeJwtToken(localStorage.getItem(ADMIN_TOKEN_KEY));
+}
+
+function clearUserSessionStorage(): void {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem('nafis_token');
+  localStorage.removeItem('nafis_role');
+  localStorage.removeItem('nafis_user');
+}
+
+function notifyAuthRequired(scope: 'user' | 'admin'): void {
+  if (typeof window === 'undefined') return;
+  const eventName = scope === 'admin' ? 'nafis:admin-auth-required' : 'nafis:user-auth-required';
+  window.dispatchEvent(new CustomEvent(eventName));
+}
+
+export function requireUserToken(token?: string | null): string {
+  const activeToken = resolveActiveToken(token);
+  if (!activeToken || !isValidToken(activeToken)) {
+    clearUserSessionStorage();
+    notifyAuthRequired('user');
+    throw new AuthRequiredError(
+      'برای ادامه عملیات نیاز به ورود به حساب کاربری دارید. لطفاً مجدداً وارد شوید.',
+      401,
+      'user'
+    );
+  }
+  return activeToken;
+}
+
+export function requireAdminToken(token?: string | null): string {
+  const activeToken = resolveActiveToken(token);
+  const storedRole = typeof window !== 'undefined' ? localStorage.getItem(ADMIN_ROLE_KEY) : 'ADMIN';
+  if (!activeToken || (typeof window !== 'undefined' && storedRole !== 'ADMIN') || !isAdminToken(activeToken)) {
+    removeAdminSession();
+    notifyAuthRequired('admin');
+    throw new AuthRequiredError(
+      'نشست مدیریت معتبر نیست یا منقضی شده است. لطفاً مجدداً به پنل مدیریت وارد شوید.',
+      401,
+      'admin'
+    );
+  }
+  return activeToken;
+}
+
 function getAuthHeaders(token?: string | null): HeadersInit {
   const headers: Record<string, string> = {
     'Accept': 'application/json',
   };
-  const activeToken = token || (typeof window !== 'undefined' ? localStorage.getItem('nafis_token') : null);
-  if (activeToken) {
+  const activeToken = resolveActiveToken(token);
+  if (activeToken && isValidToken(activeToken)) {
     headers['Authorization'] = `Bearer ${activeToken}`;
   }
   return headers;
+}
+
+async function handleProtectedResponseError(
+  res: Response,
+  scope: 'user' | 'admin',
+  defaultMsg: string,
+  options?: { keepSessionOn403?: boolean }
+): Promise<never> {
+  let rawText = '';
+  try {
+    rawText = await res.text();
+  } catch {
+    rawText = '';
+  }
+
+  if (res.status === 401) {
+    if (scope === 'admin') {
+      removeAdminSession();
+      notifyAuthRequired('admin');
+      throw new AuthRequiredError(
+        'نشست مدیریت منقضی شده است (کد ۴۰۱). لطفاً مجدداً وارد پنل مدیریت شوید.',
+        401,
+        'admin'
+      );
+    }
+    clearUserSessionStorage();
+    notifyAuthRequired('user');
+    throw new AuthRequiredError(
+      'نشست کاربری شما منقضی شده است (کد ۴۰۱). لطفاً مجدداً وارد شوید.',
+      401,
+      'user'
+    );
+  }
+
+  if (res.status === 403) {
+    if (scope === 'admin') {
+      if (!options?.keepSessionOn403) {
+        removeAdminSession();
+        notifyAuthRequired('admin');
+      }
+      throw new AuthRequiredError(
+        extractCleanErrorMessage(
+          rawText,
+          'عدم دسترسی مدیریت (کد ۴۰۳). لطفاً با حساب کاربری مدیر مجدداً وارد شوید.'
+        ),
+        403,
+        'admin'
+      );
+    }
+    clearUserSessionStorage();
+    notifyAuthRequired('user');
+    throw new AuthRequiredError(
+      'دسترسی مجاز نیست یا نشست شما منقضی شده است (کد ۴۰۳). لطفاً مجدداً وارد حساب کاربری شوید.',
+      403,
+      'user'
+    );
+  }
+
+  throw new Error(extractCleanErrorMessage(rawText, defaultMsg));
 }
 
 // ---------------- AUTH API ----------------
@@ -148,7 +282,7 @@ export async function sendOtp(phoneNumber: string): Promise<string> {
   });
   if (!res.ok) {
     const errText = await res.text();
-    throw new Error(errText || 'Failed to send verification code');
+    throw new Error(extractCleanErrorMessage(errText, 'خطا در ارسال کد تایید'));
   }
   return res.text();
 }
@@ -161,9 +295,14 @@ export async function verifyOtp(phoneNumber: string, code: string): Promise<stri
   });
   if (!res.ok) {
     const errText = await res.text();
-    throw new Error(errText || 'Invalid verification code');
+    throw new Error(extractCleanErrorMessage(errText, 'کد تایید نامعتبر است'));
   }
-  return res.text(); // Returns JWT Token
+  const rawToken = await res.text();
+  const cleanToken = normalizeJwtToken(rawToken);
+  if (!cleanToken) {
+    throw new Error('توکن احراز هویت معتبر از سرور دریافت نشد');
+  }
+  return cleanToken;
 }
 
 export async function adminLogin(username: string, password: string): Promise<string> {
@@ -174,34 +313,51 @@ export async function adminLogin(username: string, password: string): Promise<st
   });
   if (!res.ok) {
     const errText = await res.text();
-    throw new Error(errText || 'Admin authentication failed');
+    throw new Error(extractCleanErrorMessage(errText, 'نام کاربری یا رمز عبور مدیر اشتباه است'));
   }
-  return res.text(); // Returns Admin JWT Token
+  const rawToken = await res.text();
+  const cleanToken = normalizeJwtToken(rawToken);
+  if (!cleanToken) {
+    throw new Error('توکن مدیریت معتبر از سرور دریافت نشد');
+  }
+  return cleanToken;
 }
 
 // ---------------- USER PROFILE API ----------------
 export async function getUserProfile(token?: string | null): Promise<UserProfile> {
-  const res = await fetch(`${API_BASE_URL}/api/users/profile`, {
-    method: 'GET',
-    headers: getAuthHeaders(token),
-  });
+  const validToken = requireUserToken(token);
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE_URL}/api/users/profile`, {
+      method: 'GET',
+      headers: getAuthHeaders(validToken),
+    });
+  } catch {
+    throw new Error('خطا در برقراری ارتباط با سرور پروفایل (لطفاً اتصال یا دسترسی حساب خود را بررسی کنید).');
+  }
   if (!res.ok) {
-    throw new Error('Failed to fetch user profile');
+    await handleProtectedResponseError(res, 'user', 'خطا در دریافت اطلاعات پروفایل');
   }
   return res.json();
 }
 
 export async function updateUserProfile(profile: Partial<UserProfile>, token?: string | null): Promise<string> {
-  const res = await fetch(`${API_BASE_URL}/api/users/profile`, {
-    method: 'PUT',
-    headers: {
-      ...getAuthHeaders(token),
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(profile),
-  });
+  const validToken = requireUserToken(token);
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE_URL}/api/users/profile`, {
+      method: 'PUT',
+      headers: {
+        ...getAuthHeaders(validToken),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(profile),
+    });
+  } catch {
+    throw new Error('امکان ثبت تغییرات پروفایل در سرور وجود ندارد (خطای شبکه یا محدودیت CORS).');
+  }
   if (!res.ok) {
-    throw new Error('Failed to update profile');
+    await handleProtectedResponseError(res, 'user', 'خطا در بروزرسانی پروفایل');
   }
   return res.text();
 }
@@ -336,12 +492,12 @@ export async function fastFetch<T>(
 }
 
 // ---------------- CATEGORIES API ----------------
-export async function fetchCategories(token?: string | null): Promise<BackendCategory[]> {
+export async function fetchCategories(_token?: string | null): Promise<BackendCategory[]> {
   return fastFetch('categories', async (signal) => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/categories`, {
         method: 'GET',
-        headers: getAuthHeaders(token),
+        headers: { 'Accept': 'application/json' },
         signal,
       });
       if (res.ok) {
@@ -361,28 +517,32 @@ export async function fetchCategories(token?: string | null): Promise<BackendCat
 }
 
 export async function createAdminCategory(name: string, description?: string, token?: string | null): Promise<BackendCategory> {
+  const validToken = requireAdminToken(token);
   const res = await fetch(`${API_BASE_URL}/api/admin/categories`, {
     method: 'POST',
     headers: {
-      ...getAuthHeaders(token),
+      ...getAuthHeaders(validToken),
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ name, ...(description ? { description } : {}) }),
   });
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(err || 'Failed to create category');
+    await handleProtectedResponseError(res, 'admin', 'خطا در ایجاد دسته‌بندی');
   }
   invalidateApiCache('categories');
   return res.json();
 }
 
 export async function deleteAdminCategory(id: number, token?: string | null): Promise<void> {
+  const validToken = requireAdminToken(token);
   const res = await fetch(`${API_BASE_URL}/api/admin/categories/${id}`, {
     method: 'DELETE',
-    headers: getAuthHeaders(token),
+    headers: getAuthHeaders(validToken),
   });
   if (!res.ok) {
+    if (res.status === 401) {
+      await handleProtectedResponseError(res, 'admin', 'خطا در حذف دسته‌بندی');
+    }
     if (res.status === 403) {
       throw new Error(
         'خطای عدم دسترسی (۴۰۳ Forbidden): روت DELETE /api/admin/categories در SecurityConfig بک‌اند برای دسترسی ADMIN مجاز نشده است. لطفاً به توسعه‌دهنده بک‌اند اطلاع دهید.'
@@ -400,7 +560,7 @@ export async function deleteAdminCategory(id: number, token?: string | null): Pr
     ) {
       throw new Error('این دسته‌بندی شامل محصول است و ابتدا باید محصولات آن را حذف یا جابجا کنید.');
     }
-    throw new Error(errText || 'خطا در حذف دسته‌بندی');
+    throw new Error(extractCleanErrorMessage(errText, 'خطا در حذف دسته‌بندی'));
   }
   invalidateApiCache('categories');
   invalidateApiCache('admin_products');
@@ -431,7 +591,7 @@ export function getProductCategoryOverride(productId: number): number | undefine
 }
 
 // ---------------- PRODUCTS & SILVER PRICE API ----------------
-export async function fetchAllProducts(categoryId?: number | null, token?: string | null): Promise<BackendProduct[]> {
+export async function fetchAllProducts(categoryId?: number | null, _token?: string | null): Promise<BackendProduct[]> {
   const cacheKey = `products_${categoryId ?? 'all'}`;
   return fastFetch(cacheKey, async (signal) => {
     try {
@@ -440,7 +600,7 @@ export async function fetchAllProducts(categoryId?: number | null, token?: strin
         : `${API_BASE_URL}/api/products`;
       const res = await fetch(url, {
         method: 'GET',
-        headers: getAuthHeaders(token),
+        headers: { 'Accept': 'application/json' },
         signal,
       });
       if (!res.ok) {
@@ -461,12 +621,12 @@ export async function fetchAllProducts(categoryId?: number | null, token?: strin
   }, 60000, 5000); // 60s TTL, 5s timeout
 }
 
-export async function fetchProductById(id: number | string, token?: string | null): Promise<BackendProduct | null> {
+export async function fetchProductById(id: number | string, _token?: string | null): Promise<BackendProduct | null> {
   return fastFetch(`product_${id}`, async (signal) => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/products/${id}`, {
         method: 'GET',
-        headers: getAuthHeaders(token),
+        headers: { 'Accept': 'application/json' },
         signal,
       });
       if (!res.ok) return null;
@@ -483,11 +643,11 @@ export interface SilverPriceResult {
   error?: string | null;
 }
 
-export async function fetchLiveSilverPriceWithStatus(token?: string | null): Promise<SilverPriceResult> {
+export async function fetchLiveSilverPriceWithStatus(_token?: string | null): Promise<SilverPriceResult> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/products/silver-price`, {
       method: 'GET',
-      headers: getAuthHeaders(token),
+      headers: { 'Accept': 'application/json' },
     });
     if (res.ok) {
       const text = await res.text();
@@ -525,11 +685,18 @@ export async function fetchLiveSilverPrice(token?: string | null): Promise<numbe
 
 // ---------------- CART API (Postman / Swagger: Cart) ----------------
 export async function fetchBackendCart(token?: string | null): Promise<InvoiceItem[]> {
+  const validToken = resolveActiveToken(token);
+  if (!validToken || !isValidToken(validToken)) return [];
   try {
     const res = await fetch(`${API_BASE_URL}/api/cart`, {
       method: 'GET',
-      headers: getAuthHeaders(token),
+      headers: getAuthHeaders(validToken),
     });
+    if (res.status === 401 || res.status === 403) {
+      clearUserSessionStorage();
+      notifyAuthRequired('user');
+      return [];
+    }
     if (!res.ok) return [];
     const data = await res.json();
     if (Array.isArray(data)) return data;
@@ -541,41 +708,41 @@ export async function fetchBackendCart(token?: string | null): Promise<InvoiceIt
 }
 
 export async function addToBackendCart(productId: number, quantity: number, token?: string | null): Promise<string> {
+  const validToken = requireUserToken(token);
   const res = await fetch(`${API_BASE_URL}/api/cart/add`, {
     method: 'POST',
     headers: {
-      ...getAuthHeaders(token),
+      ...getAuthHeaders(validToken),
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ productId, quantity }),
   });
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(err || 'Failed to add item to cart');
+    await handleProtectedResponseError(res, 'user', 'خطا در افزودن به سبد خرید');
   }
   return res.text();
 }
 
 export async function removeFromBackendCart(productId: number, token?: string | null): Promise<string> {
+  const validToken = requireUserToken(token);
   const res = await fetch(`${API_BASE_URL}/api/cart/remove/${productId}`, {
     method: 'DELETE',
-    headers: getAuthHeaders(token),
+    headers: getAuthHeaders(validToken),
   });
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(err || 'Failed to remove item from cart');
+    await handleProtectedResponseError(res, 'user', 'خطا در حذف محصول از سبد خرید');
   }
   return res.text();
 }
 
 export async function clearBackendCart(token?: string | null): Promise<string> {
+  const validToken = requireUserToken(token);
   const res = await fetch(`${API_BASE_URL}/api/cart/clear`, {
     method: 'DELETE',
-    headers: getAuthHeaders(token),
+    headers: getAuthHeaders(validToken),
   });
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(err || 'Failed to clear cart');
+    await handleProtectedResponseError(res, 'user', 'خطا در خالی کردن سبد خرید');
   }
   return res.text();
 }
@@ -598,7 +765,7 @@ export async function createCheckout(
   token?: string | null,
   detailedItems?: CheckoutCartItemInfo[]
 ): Promise<Invoice> {
-  const activeToken = token || (typeof window !== 'undefined' ? localStorage.getItem('nafis_token') : null);
+  const activeToken = requireUserToken(token);
 
   // Try standard backend checkout first
   try {
@@ -623,6 +790,10 @@ export async function createCheckout(
       }
     }
 
+    if (res.status === 401 || res.status === 403) {
+      await handleProtectedResponseError(res, 'user', 'نیاز به ورود مجدد به حساب کاربری دارد');
+    }
+
     const errText = await res.text();
     const cleanErr = extractCleanErrorMessage(errText, 'خطا در ثبت سفارش');
 
@@ -641,6 +812,10 @@ export async function createCheckout(
           postalCode,
         }),
       });
+
+      if (fallbackRes.status === 401 || fallbackRes.status === 403) {
+        await handleProtectedResponseError(fallbackRes, 'user', 'نیاز به ورود مجدد به حساب کاربری دارد');
+      }
 
       if (fallbackRes.ok) {
         const dbInvoice: Invoice = await fallbackRes.json();
@@ -686,6 +861,9 @@ export async function createCheckout(
 
     throw new Error(cleanErr);
   } catch (err: unknown) {
+    if (isAuthRequiredError(err)) {
+      throw err;
+    }
     const errorMsg = err instanceof Error ? err.message : String(err);
     if (!errorMsg.includes('getItems()')) {
       throw new Error(extractCleanErrorMessage(errorMsg, 'خطا در ثبت سفارش'));
@@ -751,7 +929,7 @@ function saveInvoiceDetailsLocally(invoice: Invoice, detailedItems?: CheckoutCar
 }
 
 export async function fetchMyOrders(token?: string | null): Promise<Invoice[]> {
-  const activeToken = token || (typeof window !== 'undefined' ? localStorage.getItem('nafis_token') : null);
+  const activeToken = requireUserToken(token);
   let serverOrders: Invoice[] = [];
 
   try {
@@ -759,10 +937,14 @@ export async function fetchMyOrders(token?: string | null): Promise<Invoice[]> {
       method: 'GET',
       headers: getAuthHeaders(activeToken),
     });
+    if (res.status === 401 || res.status === 403) {
+      await handleProtectedResponseError(res, 'user', 'خطا در دریافت سفارش‌ها');
+    }
     if (res.ok) {
       serverOrders = await res.json();
     }
   } catch (err) {
+    if (isAuthRequiredError(err)) throw err;
     console.warn('Could not fetch orders from server:', err);
   }
 
@@ -797,24 +979,24 @@ export async function fetchMyOrders(token?: string | null): Promise<Invoice[]> {
 }
 
 export async function payInvoice(invoiceId: number, token?: string | null): Promise<string> {
+  const validToken = requireUserToken(token);
   const res = await fetch(`${API_BASE_URL}/api/invoices/${invoiceId}/pay`, {
     method: 'POST',
-    headers: getAuthHeaders(token),
+    headers: getAuthHeaders(validToken),
   });
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(err || 'Payment failed');
+    await handleProtectedResponseError(res, 'user', 'خطا در پرداخت فاکتور');
   }
   return res.text();
 }
 
 // ---------------- ARTICLES / BLOG API (Swagger: Article Controller) ----------------
-export async function fetchArticles(token?: string | null): Promise<Article[]> {
+export async function fetchArticles(_token?: string | null): Promise<Article[]> {
   return fastFetch('articles', async (signal) => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/articles`, {
         method: 'GET',
-        headers: getAuthHeaders(token),
+        headers: { 'Accept': 'application/json' },
         signal,
       });
       if (res.ok) {
@@ -827,12 +1009,12 @@ export async function fetchArticles(token?: string | null): Promise<Article[]> {
   }, 180000, 4000); // 3 min TTL, 4s timeout
 }
 
-export async function fetchArticleBySlug(slug: string, token?: string | null): Promise<Article | null> {
+export async function fetchArticleBySlug(slug: string, _token?: string | null): Promise<Article | null> {
   return fastFetch(`article_${slug}`, async (signal) => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/articles/${encodeURIComponent(slug)}`, {
         method: 'GET',
-        headers: getAuthHeaders(token),
+        headers: { 'Accept': 'application/json' },
         signal,
       });
       if (res.ok) {
@@ -851,18 +1033,18 @@ export async function saveAdminArticle(
   id?: number,
   token?: string | null
 ): Promise<Article> {
+  const validToken = requireAdminToken(token);
   const url = isEdit ? `${API_BASE_URL}/api/admin/articles/${id}` : `${API_BASE_URL}/api/admin/articles`;
   const res = await fetch(url, {
     method: isEdit ? 'PUT' : 'POST',
     headers: {
-      'Authorization': `Bearer ${token || (typeof window !== 'undefined' ? localStorage.getItem('nafis_token') : '') || ''}`,
+      'Authorization': `Bearer ${validToken}`,
     },
     body: formData,
   });
 
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(err || 'Failed to save article');
+    await handleProtectedResponseError(res, 'admin', 'خطا در ذخیره مقاله');
   }
   invalidateApiCache('articles');
   invalidateApiCache('article_');
@@ -870,13 +1052,13 @@ export async function saveAdminArticle(
 }
 
 export async function deleteAdminArticle(id: number, token?: string | null): Promise<string> {
+  const validToken = requireAdminToken(token);
   const res = await fetch(`${API_BASE_URL}/api/admin/articles/${id}`, {
     method: 'DELETE',
-    headers: getAuthHeaders(token),
+    headers: getAuthHeaders(validToken),
   });
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(err || 'Failed to delete article');
+    await handleProtectedResponseError(res, 'admin', 'خطا در حذف مقاله');
   }
   invalidateApiCache('articles');
   invalidateApiCache('article_');
@@ -885,13 +1067,16 @@ export async function deleteAdminArticle(id: number, token?: string | null): Pro
 
 // ---------------- ADMIN API (Swagger: Admin Controller) ----------------
 export async function fetchAdminProducts(token?: string | null): Promise<BackendProduct[]> {
+  const validToken = requireAdminToken(token);
   return fastFetch('admin_products', async (signal) => {
     const res = await fetch(`${API_BASE_URL}/api/admin/products`, {
       method: 'GET',
-      headers: getAuthHeaders(token),
+      headers: getAuthHeaders(validToken),
       signal,
     });
-    if (!res.ok) throw new Error('Failed to fetch admin products');
+    if (!res.ok) {
+      await handleProtectedResponseError(res, 'admin', 'خطا در دریافت محصولات مدیریت');
+    }
     const prods: BackendProduct[] = await res.json();
     return prods.map((p) => {
       const override = getProductCategoryOverride(p.id);
@@ -904,13 +1089,16 @@ export async function fetchAdminProducts(token?: string | null): Promise<Backend
 }
 
 export async function fetchAdminStones(token?: string | null): Promise<BackendProduct[]> {
+  const validToken = requireAdminToken(token);
   return fastFetch('admin_stones', async (signal) => {
     const res = await fetch(`${API_BASE_URL}/api/admin/stones`, {
       method: 'GET',
-      headers: getAuthHeaders(token),
+      headers: getAuthHeaders(validToken),
       signal,
     });
-    if (!res.ok) throw new Error('Failed to fetch gemstones');
+    if (!res.ok) {
+      await handleProtectedResponseError(res, 'admin', 'خطا در دریافت لیست سنگ‌ها');
+    }
     return res.json();
   }, 300000, 4000); // 5 min TTL
 }
@@ -926,6 +1114,7 @@ export async function saveAdminProduct(
   primaryImageUrl?: string,
   replaceImages?: boolean
 ): Promise<BackendProduct> {
+  const validToken = requireAdminToken(token);
   let url = isEdit ? `${API_BASE_URL}/api/admin/products/${id}` : `${API_BASE_URL}/api/admin/products`;
   const queryParams: string[] = [];
   if (stoneId) queryParams.push(`stoneId=${stoneId}`);
@@ -960,14 +1149,13 @@ export async function saveAdminProduct(
   const res = await fetch(url, {
     method: isEdit ? 'PUT' : 'POST',
     headers: {
-      'Authorization': `Bearer ${token || (typeof window !== 'undefined' ? localStorage.getItem('nafis_token') : '') || ''}`,
+      'Authorization': `Bearer ${validToken}`,
     },
     body: formData,
   });
 
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(err || 'Failed to save product');
+    await handleProtectedResponseError(res, 'admin', 'خطا در ذخیره محصول');
   }
 
   const saved: BackendProduct = await res.json();
@@ -989,14 +1177,14 @@ export async function deleteProductGalleryImage(
   imageUrl: string,
   token?: string | null
 ): Promise<string> {
+  const validToken = requireAdminToken(token);
   const cleanUrl = imageUrl.replace(API_BASE_URL, '');
   const res = await fetch(`${API_BASE_URL}/api/admin/products/${productId}/gallery?imageUrl=${encodeURIComponent(cleanUrl)}`, {
     method: 'DELETE',
-    headers: getAuthHeaders(token),
+    headers: getAuthHeaders(validToken),
   });
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(err || 'Failed to delete gallery image');
+    await handleProtectedResponseError(res, 'admin', 'خطا در حذف تصویر گالری');
   }
   invalidateApiCache('products_');
   invalidateApiCache(`product_${productId}`);
@@ -1005,13 +1193,13 @@ export async function deleteProductGalleryImage(
 }
 
 export async function deleteAdminProduct(id: number, token?: string | null): Promise<string> {
+  const validToken = requireAdminToken(token);
   const res = await fetch(`${API_BASE_URL}/api/admin/products/${id}`, {
     method: 'DELETE',
-    headers: getAuthHeaders(token),
+    headers: getAuthHeaders(validToken),
   });
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(err || 'Failed to delete product');
+    await handleProtectedResponseError(res, 'admin', 'خطا در حذف محصول');
   }
   invalidateApiCache('products_');
   invalidateApiCache('admin_products');
@@ -1019,13 +1207,13 @@ export async function deleteAdminProduct(id: number, token?: string | null): Pro
 }
 
 export async function setAdminSilverPrice(price: number, token?: string | null): Promise<string> {
+  const validToken = requireAdminToken(token);
   const res = await fetch(`${API_BASE_URL}/api/admin/set-silver-price?price=${encodeURIComponent(price)}`, {
     method: 'POST',
-    headers: getAuthHeaders(token),
+    headers: getAuthHeaders(validToken),
   });
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(err || 'Failed to set silver price');
+    await handleProtectedResponseError(res, 'admin', 'خطا در ثبت دستی نرخ نقره');
   }
   invalidateApiCache('silver_price');
   invalidateApiCache('products_');
@@ -1033,88 +1221,73 @@ export async function setAdminSilverPrice(price: number, token?: string | null):
 }
 
 export async function forceUpdateSilverPrice(token?: string | null): Promise<string> {
+  const validToken = requireAdminToken(token);
   try {
     const res = await fetch(`${API_BASE_URL}/api/admin/set-silver-price?price=522980`, {
       method: 'POST',
-      headers: getAuthHeaders(token),
+      headers: getAuthHeaders(validToken),
     });
+    if (res.status === 401 || res.status === 403) {
+      await handleProtectedResponseError(res, 'admin', 'خطا در بروزرسانی نرخ نقره');
+    }
     if (res.ok) {
       invalidateApiCache('silver_price');
       invalidateApiCache('products_');
       return res.text();
     }
-  } catch {
+  } catch (err) {
+    if (isAuthRequiredError(err)) throw err;
     // fallback to legacy endpoint
   }
   const res = await fetch(`${API_BASE_URL}/api/admin/update-silver-price`, {
     method: 'POST',
-    headers: getAuthHeaders(token),
+    headers: getAuthHeaders(validToken),
   });
-  if (!res.ok) throw new Error('Failed to update silver price');
+  if (!res.ok) {
+    await handleProtectedResponseError(res, 'admin', 'خطا در بروزرسانی نرخ نقره');
+  }
   invalidateApiCache('silver_price');
   invalidateApiCache('products_');
   return res.text();
 }
 
 export async function deleteMyOrder(invoiceId: number, token?: string | null): Promise<string> {
+  const validToken = requireUserToken(token);
   const res = await fetch(`${API_BASE_URL}/api/invoices/${invoiceId}`, {
     method: 'DELETE',
-    headers: getAuthHeaders(token),
+    headers: getAuthHeaders(validToken),
   });
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(err || 'Failed to delete order');
+    await handleProtectedResponseError(res, 'user', 'خطا در حذف سفارش');
   }
   invalidateApiCache('my_orders');
   return res.text();
 }
 
 export async function fetchAdminInvoices(token?: string | null): Promise<Invoice[]> {
+  const validToken = requireAdminToken(token);
   return fastFetch('admin_invoices', async (signal) => {
     const res = await fetch(`${API_BASE_URL}/api/admin/invoices`, {
       method: 'GET',
-      headers: getAuthHeaders(token),
+      headers: getAuthHeaders(validToken),
       signal,
     });
-    if (!res.ok) throw new Error('Failed to fetch admin invoices');
+    if (!res.ok) {
+      await handleProtectedResponseError(res, 'admin', 'خطا در دریافت لیست فاکتورها');
+    }
     return res.json();
   }, 15000, 5000); // 15s cache, 5s timeout
 }
 
 export async function updateInvoiceStatus(id: number, status: string, token?: string | null): Promise<string> {
+  const validToken = requireAdminToken(token);
   const res = await fetch(`${API_BASE_URL}/api/admin/invoices/${id}/status?status=${encodeURIComponent(status)}`, {
     method: 'PUT',
-    headers: getAuthHeaders(token),
+    headers: getAuthHeaders(validToken),
   });
-  if (!res.ok) throw new Error('Failed to update invoice status');
+  if (!res.ok) {
+    await handleProtectedResponseError(res, 'admin', 'خطا در تغییر وضعیت فاکتور');
+  }
   invalidateApiCache('admin_invoices');
   return res.text();
-}
-
-// ---------------- AR & 3D Helpers ----------------
-export interface ArGenerationApiResponse {
-  id: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
-  arImageUrl?: string | null;
-  message?: string;
-  cached?: boolean;
-  error?: string | null;
-}
-
-export async function generateProductArImage(
-  productId: number | string,
-  imageUrl?: string,
-  force = false
-): Promise<ArGenerationApiResponse> {
-  const res = await fetch(`/api/products/${productId}/generate-ar${force ? '?force=true' : ''}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ imageUrl }),
-  });
-  return res.json();
-}
-
-export async function fetchProductArStatus(productId: number | string): Promise<ArGenerationApiResponse> {
-  const res = await fetch(`/api/products/${productId}/generate-ar`);
-  return res.json();
 }

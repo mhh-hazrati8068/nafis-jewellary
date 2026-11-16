@@ -1,10 +1,12 @@
+import type { StoneSpecifications } from '@/lib/stoneSpecs';
+
 export interface Product {
   id: number
   nameFa: string
   nameEn: string
   nameAr?: string
   price: number
-  category: 'rings' | 'necklaces' | 'bracelets' | 'earrings'
+  category: 'rings' | 'necklaces' | 'bracelets' | 'earrings' | 'stones' | 'chains' | 'sets' | 'other'
   categoryId?: number
   categoryFa: string
   categoryEn: string
@@ -23,6 +25,9 @@ export interface Product {
   description?: string
   purity?: string
   size?: string
+  stoneName?: string
+  stoneSpecs?: StoneSpecifications
+  hasRhodiumPlating?: boolean
   createdAt?: string
   updatedAt?: string
 }

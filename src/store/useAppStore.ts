@@ -12,12 +12,19 @@ import {
   verifyOtp,
   adminLogin as adminLoginApi,
   getUserProfile,
-  API_BASE_URL,
+  isAuthRequiredError,
   BackendProduct,
   BackendCategory,
   fetchCategories as fetchCategoriesApi,
   getCachedApiData
 } from '@/lib/api'
+import {
+  isAdminToken,
+  isValidToken,
+  normalizeJwtToken,
+  removeAdminSession,
+  setAdminSession,
+} from '@/lib/adminAuth'
 
 export type { Product }
 
@@ -41,9 +48,10 @@ interface AppState {
 
   // Categories state
   categories: BackendCategory[]
+  hasFetchedCategories: boolean
   selectedCategoryId: number | null
   setSelectedCategoryId: (catId: number | null) => void
-  fetchCategories: () => Promise<void>
+  fetchCategories: (force?: boolean) => Promise<void>
 
   // Products state
   products: Product[]
@@ -93,13 +101,6 @@ interface AppState {
   logout: () => void
   loadUserFromStorage: () => Promise<void>
   refreshProfile: () => Promise<void>
-
-  // AR & 3D Try-On modal
-  isArModalOpen: boolean
-  openArModal: (product?: Product, targetImage?: string) => void
-  closeArModal: () => void
-  arProduct: Product | null
-  arTargetImage: string | null
 }
 
 
@@ -138,16 +139,24 @@ export const useAppStore = create<AppState>()((set, get) => ({
     { id: 4, name: "گوشواره" },
     { id: 6, name: "سنگ" }
   ],
+  hasFetchedCategories: false,
   selectedCategoryId: null,
   setSelectedCategoryId: (catId) => {
+    const prevCatId = get().selectedCategoryId;
+    const existingBackend = get().backendProducts;
+
+    // Avoid redundant re-fetch loops if category hasn't changed and products are already loaded
+    if (prevCatId === catId && existingBackend && existingBackend.length > 0 && !get().isLoadingProducts) {
+      return;
+    }
+
     set({ selectedCategoryId: catId });
 
     // 1. Instant optimistic local filtering (0ms feedback) from loaded backend products
-    const { backendProducts } = get();
-    if (backendProducts && backendProducts.length > 0) {
+    if (existingBackend && existingBackend.length > 0) {
       const filtered = catId 
-        ? backendProducts.filter((p) => (p.categoryId === catId || p.category?.id === catId))
-        : backendProducts;
+        ? existingBackend.filter((p) => (p.categoryId === catId || p.category?.id === catId))
+        : existingBackend;
       set({ products: filtered.map(mapBackendToFrontend) });
     } else {
       set({ isLoadingProducts: true });
@@ -156,7 +165,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
     // 2. Fetch fresh from server for this category
     get().fetchProducts(catId);
   },
-  fetchCategories: async () => {
+  fetchCategories: async (force = false) => {
+    if (!force && get().hasFetchedCategories) return;
+    set({ hasFetchedCategories: true });
     try {
       const { token } = get();
       const cats = await fetchCategoriesApi(token);
@@ -164,6 +175,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
         set({ categories: cats });
       }
     } catch (err) {
+      set({ hasFetchedCategories: false });
       console.warn('Could not load categories:', err);
     }
   },
@@ -298,14 +310,18 @@ export const useAppStore = create<AppState>()((set, get) => ({
 
   clearCart: () => set({ cart: [] }),
 
-  wishlist: [1, 2],
+  wishlist: [],
   toggleWishlist: (id) => set((state) => {
-    const exists = state.wishlist.includes(id)
-    return {
-      wishlist: exists
-        ? state.wishlist.filter((wId) => wId !== id)
-        : [...state.wishlist, id]
+    const exists = state.wishlist.includes(id);
+    const updatedWishlist = exists
+      ? state.wishlist.filter((wId) => wId !== id)
+      : [...state.wishlist, id];
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('nafis_wishlist', JSON.stringify(updatedWishlist));
+      } catch {}
     }
+    return { wishlist: updatedWishlist };
   }),
 
   // Authentication
@@ -316,23 +332,16 @@ export const useAppStore = create<AppState>()((set, get) => ({
   isProfileModalOpen: false,
   activeReceiptInvoice: null,
 
-  // AR & 3D Try-On modal
-  isArModalOpen: false,
-  arProduct: null,
-  arTargetImage: null,
-  openArModal: (product, targetImage) => set({
-    isArModalOpen: true,
-    arProduct: product || null,
-    arTargetImage: targetImage || null,
-  }),
-  closeArModal: () => set({ isArModalOpen: false }),
-
   setAuthModalOpen: (open) => set({ isAuthModalOpen: open }),
   setProfileModalOpen: (open) => set({ isProfileModalOpen: open }),
   setActiveReceiptInvoice: (invoice) => set({ activeReceiptInvoice: invoice }),
 
   loginWithOtp: async (phoneNumber: string, code: string) => {
-    const token = await verifyOtp(phoneNumber, code);
+    const rawToken = await verifyOtp(phoneNumber, code);
+    const token = normalizeJwtToken(rawToken);
+    if (!token || !isValidToken(token)) {
+      throw new Error('توکن احراز هویت معتبر نیست. لطفاً مجدداً تلاش کنید.');
+    }
     if (typeof window !== 'undefined') {
       localStorage.setItem('nafis_token', token);
       localStorage.setItem('nafis_role', 'USER');
@@ -342,12 +351,13 @@ export const useAppStore = create<AppState>()((set, get) => ({
   },
 
   loginAsAdmin: async (username: string, pass: string) => {
-    const token = await adminLoginApi(username, pass);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('nafis_token', token);
-      localStorage.setItem('nafis_role', 'ADMIN');
-      localStorage.setItem('nafis_user', JSON.stringify({ phoneNumber: username, role: 'ADMIN', firstName: 'مدیر', lastName: 'سیستم' }));
+    const rawToken = await adminLoginApi(username, pass);
+    const token = normalizeJwtToken(rawToken);
+    if (!token || !isAdminToken(token)) {
+      throw new Error('توکن مدیریت معتبر دریافت نشد.');
     }
+    const adminInfo = { phoneNumber: username, username, role: 'ADMIN', firstName: 'مدیر', lastName: 'سیستم' };
+    setAdminSession(token, adminInfo);
     set({ 
       token, 
       isAdmin: true, 
@@ -357,17 +367,14 @@ export const useAppStore = create<AppState>()((set, get) => ({
   },
 
   logout: () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('nafis_token');
-      localStorage.removeItem('nafis_user');
-      localStorage.removeItem('nafis_role');
-    }
+    removeAdminSession();
     set({ token: null, user: null, isAdmin: false, isProfileModalOpen: false });
   },
 
   loadUserFromStorage: async () => {
     if (typeof window === 'undefined') return;
-    const token = localStorage.getItem('nafis_token');
+    const rawToken = localStorage.getItem('nafis_token');
+    const token = normalizeJwtToken(rawToken);
     const role = localStorage.getItem('nafis_role');
     const userStr = localStorage.getItem('nafis_user');
     const langStr = localStorage.getItem('nafis_language') as Language | null;
@@ -375,6 +382,16 @@ export const useAppStore = create<AppState>()((set, get) => ({
     if (langStr && (langStr === 'fa' || langStr === 'en' || langStr === 'ar')) {
       get().setLanguage(langStr);
     }
+
+    try {
+      const savedWishlist = localStorage.getItem('nafis_wishlist');
+      if (savedWishlist) {
+        const parsedWishlist = JSON.parse(savedWishlist);
+        if (Array.isArray(parsedWishlist)) {
+          set({ wishlist: parsedWishlist.filter((id): id is number => typeof id === 'number') });
+        }
+      }
+    } catch {}
 
     // Instant 0ms hydration from client cache
     try {
@@ -396,6 +413,14 @@ export const useAppStore = create<AppState>()((set, get) => ({
     } catch {}
 
     if (token) {
+      const valid = role === 'ADMIN' ? isAdminToken(token) : isValidToken(token);
+      if (!valid) {
+        // Clear expired/invalid stored token immediately so we don't trigger 401/403 later
+        removeAdminSession();
+        set({ token: null, isAdmin: false, user: null });
+        return;
+      }
+
       let parsedUser = null;
       try {
         if (userStr) parsedUser = JSON.parse(userStr);
@@ -414,7 +439,10 @@ export const useAppStore = create<AppState>()((set, get) => ({
 
   refreshProfile: async () => {
     const { token } = get();
-    if (!token) return;
+    if (!token || !isValidToken(token)) {
+      if (token) get().logout();
+      return;
+    }
     try {
       const profile = await getUserProfile(token);
       if (typeof window !== 'undefined') {
@@ -422,6 +450,10 @@ export const useAppStore = create<AppState>()((set, get) => ({
       }
       set({ user: profile });
     } catch (err) {
+      if (isAuthRequiredError(err)) {
+        get().logout();
+        return;
+      }
       console.warn('Could not refresh profile:', err);
     }
   }

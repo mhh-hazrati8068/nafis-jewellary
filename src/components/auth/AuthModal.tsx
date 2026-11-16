@@ -82,7 +82,7 @@ export default function AuthModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-[180] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
       <div className="relative w-full max-w-md bg-white border border-[#C4852B]/30 rounded-2xl shadow-2xl overflow-hidden p-6 sm:p-8">
         
         {/* Close Button */}
@@ -128,7 +128,7 @@ export default function AuthModal() {
         {/* Customer SMS Login Form */}
         <div>
           {step === "phone" ? (
-            <form onSubmit={handleSendCode} className="space-y-4">
+            <form onSubmit={handleSendCode} noValidate className="space-y-4">
               <div>
                 <label className="block text-xs font-medium text-zinc-700 mb-1.5">
                   {language === "fa" ? "شماره تلفن همراه" : language === "ar" ? "رقم الهاتف المحمول" : "Mobile Phone Number"}
@@ -154,7 +154,7 @@ export default function AuthModal() {
               </button>
             </form>
           ) : (
-            <form onSubmit={handleVerifyCode} className="space-y-4">
+            <form onSubmit={handleVerifyCode} noValidate className="space-y-4">
               <div>
                 <div className="flex justify-between items-center mb-1.5">
                   <label className="block text-xs font-medium text-zinc-700">

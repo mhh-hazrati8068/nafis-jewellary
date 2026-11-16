@@ -4,6 +4,7 @@ import { useAppStore } from "@/store/useAppStore";
 import Link from "next/link";
 import { useEffect } from "react";
 import { getProductName, getProductMaterial } from "@/lib/dynamicTranslator";
+import WishlistButton from "@/components/product/WishlistButton";
 
 export default function NecklacesPage() {
   const { products, language, addToCart, t, fetchProducts, isLoadingProducts } = useAppStore();
@@ -15,9 +16,9 @@ export default function NecklacesPage() {
   const necklaces = products.filter(p => p.categoryId === 3 || p.category === 'necklaces');
 
   const getSubtitle = () => {
-    if (language === 'fa') return 'گردنبندهای عقیق سرخ، دُرّ نجف شفاف و نقره ۹۲۵ با تراش دست‌ساز و اصیل.';
-    if (language === 'ar') return 'قلائد العقيق الأحمر والفيروز النيسابوري المؤطرة بالفضة الإسترلينية 925 مع تصاميم فريدة.';
-    return 'Authentic natural agate and turquoise pendant necklaces encased in handcrafted 925 sterling silver.';
+    if (language === 'fa') return 'گردنبندهای عقیق سرخ، دُرّ نجف طبیعی و نقره ۹۲۵ با تراش دست‌ساز و اصیل.';
+    if (language === 'ar') return 'قلائد العقيق الأحمر ودر النجف الطبيعي المؤطرة بالفضة الإسترلينية 925 مع تصاميم فريدة.';
+    return 'Authentic natural agate and Durr-e Najaf pendant necklaces encased in handcrafted 925 sterling silver.';
   };
 
   return (
@@ -27,7 +28,7 @@ export default function NecklacesPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 border-b border-[#C4852B]/20 pb-8">
           <div>
             <span className="text-[10px] text-[#C4852B] font-mono tracking-widest uppercase mb-2 block font-bold">
-              TURQUOISE, AGATE & 925 SILVER NECKLACES
+              YEMENI AGATE, DURR-E NAJAF & 925 SILVER NECKLACES
             </span>
             <h1 className="text-3xl md:text-5xl font-bold uppercase">{t.header.necklaces}</h1>
           </div>
@@ -36,7 +37,7 @@ export default function NecklacesPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 lg:gap-6">
           {necklaces.map((product) => {
             const prodName = getProductName(product, language);
             const prodMaterial = getProductMaterial(product, language);
@@ -44,10 +45,12 @@ export default function NecklacesPage() {
             return (
               <div 
                 key={product.id} 
-                className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-zinc-200 hover:border-[#C4852B] transition-all p-5 shadow-sm luxury-card-hover"
+                className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-zinc-200/80 hover:border-[#C4852B]/70 transition-all p-4 shadow-2xs hover:shadow-md h-full justify-between"
               >
-                <Link href={`/product/${product.id}`} className="aspect-[4/5] rounded-xl overflow-hidden bg-white mb-4 block border border-zinc-100">
-                  <img src={product.image} alt={prodName} className="w-full h-full object-contain group-hover:scale-[1.02] transition-transform duration-500" />
+                <Link href={`/product/${product.id}`} className="relative aspect-square rounded-xl overflow-hidden bg-[#FAF9F5] mb-3.5 block border border-zinc-100 p-2.5">
+                  <WishlistButton productId={product.id} className="absolute top-2.5 end-2.5 z-10" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={product.image} alt={prodName} loading="lazy" decoding="async" className="w-full h-full object-contain group-hover:scale-[1.03] transition-transform duration-500" />
                 </Link>
                 
                 <div className="flex flex-col flex-1 justify-between">
@@ -56,14 +59,14 @@ export default function NecklacesPage() {
                       {prodMaterial}
                     </span>
                     <Link href={`/product/${product.id}`}>
-                      <h3 className="font-bold text-base text-zinc-950 hover:text-[#C4852B] transition-colors mb-2">
+                      <h3 className="font-bold text-sm text-zinc-950 hover:text-[#660000] transition-colors mb-1.5 line-clamp-2 leading-snug">
                         {prodName}
                       </h3>
                     </Link>
                   </div>
 
-                  <div className="pt-4 border-t border-zinc-200 flex items-center justify-between mt-4">
-                    <span className="font-mono text-base font-bold text-[#C4852B]">
+                  <div className="pt-3 border-t border-zinc-100 flex items-center justify-between gap-2 mt-3">
+                    <span className="font-mono text-xs sm:text-sm font-bold text-[#C4852B]">
                       {product.price.toLocaleString()} تومان
                     </span>
                     <button
@@ -73,7 +76,7 @@ export default function NecklacesPage() {
                         price: product.price,
                         image: product.image
                       })}
-                      className="px-4 py-2 bg-[#660000] text-white text-xs font-semibold rounded-lg hover:bg-[#7D0000] transition-colors cursor-pointer"
+                      className="px-3 py-1.5 bg-[#660000] text-white text-[11px] font-bold rounded-lg hover:bg-[#7D0000] transition-colors cursor-pointer whitespace-nowrap"
                     >
                       {t.products.addToCart}
                     </button>

@@ -17,7 +17,7 @@ export default function FeaturesRow() {
       number: "02",
       title: t.features.returnTitle,
       description: t.features.returnDesc,
-      tag: "UNCONDITIONAL RETURN"
+      tag: "E'MAD QURANIC RETURN"
     },
     {
       number: "03",
@@ -34,13 +34,13 @@ export default function FeaturesRow() {
   ];
 
   return (
-    <section className="py-16 md:py-24 bg-[#F4F1EA] border-y border-[#C4852B]/20 transition-colors duration-500">
+    <section className="py-16 md:py-22 bg-white border-y border-[#C4852B]/15 transition-colors duration-500">
       <div className="container mx-auto px-4 md:px-12">
-        <MotionStaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <MotionStaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
           {features.map((feature, idx) => (
             <MotionStaggerItem key={idx}>
               <div 
-                className="h-full flex flex-col justify-between p-6 sm:p-8 rounded-2xl bg-white border border-zinc-200/80 hover:border-[#C4852B] transition-all duration-500 shadow-sm group luxury-card-hover"
+                className="h-full flex flex-col justify-between p-6 rounded-2xl bg-[#FAF9F5] border border-zinc-200/70 hover:border-[#C4852B]/60 transition-all duration-300 shadow-2xs group"
               >
                 <div>
                   <div className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-200">

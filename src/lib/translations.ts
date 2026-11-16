@@ -26,7 +26,7 @@ export const translations = {
       admin: "Admin Panel",
       profile: "Profile & Orders",
       login: "Sign In",
-      searchPlaceholder: "Search silver rings, turquoise, natural agate..."
+      searchPlaceholder: "Search silver rings, Durr-e Najaf, natural agate..."
     },
     hero: {
       badge: "Handcrafted 925 Silver Collection 2026",
@@ -37,10 +37,10 @@ export const translations = {
       mouseGuide: "Move cursor to inspect"
     },
     features: {
-      guaranteeTitle: "Silver Authenticity Guarantee",
-      guaranteeDesc: "Each piece comes with an official certificate of authenticity and 925 sterling silver warranty.",
-      returnTitle: "Unconditional Return Guarantee",
-      returnDesc: "Hassle-free replacement or full refund if you are not completely enchanted.",
+      guaranteeTitle: "925 Silver Authenticity Guarantee",
+      guaranteeDesc: "The 925 sterling silver authenticity of all Nafise Ebadi silver creations is guaranteed. Products are delivered with an official invoice and a valid silver authenticity certificate.",
+      returnTitle: "E'mad Quranic Gemstones Return Guarantee",
+      returnDesc: "If you are not satisfied, you can return E'mad Quranic gemstones to E'mad Company and receive a refund of the amount paid along with its applicable value-added tax.",
       shippingTitle: "Insured Express Delivery",
       shippingDesc: "Tamper-proof, fully insured express delivery right to your doorstep.",
       craftedTitle: "Exquisite & Timeless Design",
@@ -53,7 +53,7 @@ export const translations = {
       ringsSub: "Handcrafted 925 Sterling Silver",
       necklaces: "Natural Agate & Durr Silver Necklaces",
       necklacesSub: "Natural Agate & Clear Quartz Gems",
-      bracelets: "Silver Bracelets & Chains",
+      bracelets: "Silver Bracelets",
       braceletsSub: "Artisan Hand-braided Designs",
       womenSet: "Women's High Jewellery",
       womenSetSub: "Delicate Rings, Pendants & Bangles",
@@ -110,19 +110,21 @@ export const translations = {
       clearAll: "Clear Wishlist"
     },
     story: {
-      tag: "Heritage & Silversmith Atelier",
-      title: "The Fusion of Master Artistry & Pure 925 Sterling Silver",
-      p1: "At Nafise Ebadi Jewellery, each handcrafted piece embodies the harmonious union of 925 sterling silver and certified natural gemstones, including authentic Neyshabur turquoise and Yemeni agate.",
-      p2: "Combining time-honored Iranian silversmithing techniques with modern minimalist aesthetics, our master artisans craft enduring jewelry pieces designed to celebrate personal elegance and genuine luxury.",
-      button: "Discover Our Story & Craft",
-      quote: "Handcrafted brilliance in every silver curve, pure authenticity in every gemstone.",
-      quoteAuthor: "Nafise Ebadi Fine Jewellery Atelier"
+      tag: "The Nafise Ebadi Brand Story",
+      title: "Everything Began With a Single Stone…",
+      p1: "A stone that at first glance might have seemed like just a piece of nature; yet once the secret within it was revealed, it was no longer an ordinary stone.",
+      p2: "Years of dedicated research by specialists at ACECR (Jahad Daneshgahi) of Sharif University of Technology at Emad Company led to gemstones microscopically inscribed with all verses of the Holy Quran—a journey that took around twelve years to reach this milestone. When these stones reached us, we saw more than a stone: we saw an enduring, blessed heritage waiting to be told through fine craftsmanship.",
+      p3: "That is where Nafise Ebadi was born. By designing and crafting jewelry that holds these gemstones, we set out to share this fusion of art, faith, and technology—knowing that our growth and Emad Company’s journey are parts of one shared story.",
+      p4: "Even the stone placed at the heart of the Nafise Ebadi emblem is no coincidence: it symbolizes the very origin where everything began, a reminder of a legacy of spirituality, artistry, and dedication meant to be passed on to future generations.",
+      button: "About Gallery & Brand Heritage",
+      quote: "Nafise Ebadi; a precious and enduring legacy. Because we believe some pieces are not made merely to be worn—they are made to bring peace, to carry meaning, and to be passed down as an heirloom.",
+      quoteAuthor: "Nafise Ebadi Brand Story"
     },
     footer: {
       brandDesc: "Online luxury boutique for handcrafted 925 sterling silver and natural certified gemstone jewelry. Experience elegance, quality, and authenticity in every piece.",
       collectionsTitle: "Collections",
       rings: "925 Sterling Silver Rings",
-      necklaces: "Turquoise & Agate Silver Necklaces",
+      necklaces: "Agate & Durr-e Najaf Necklaces",
       bracelets: "Artisan Silver Bracelets",
       earrings: "Natural Pearl & Silver Earrings",
       sets: "Signature Silver Sets",
@@ -177,10 +179,10 @@ export const translations = {
       mouseGuide: "برای چرخش نشانگر را حرکت دهید"
     },
     features: {
-      guaranteeTitle: "گارانتی اصالت نقره",
-      guaranteeDesc: "تمامی محصولات دارای فاکتور رسمی، شناسنامه اصالت نقره ۹۲۵ و سنگ‌های اصیل معدنی می‌باشند.",
-      returnTitle: "گارانتی مرجوعی بی‌قید و شرط",
-      returnDesc: "تضمین عودت وجه یا تعویض آسان بدون قید و شرط در صورت عدم رضایت کامل شما.",
+      guaranteeTitle: "ضمانت اصالت نقره ۹۲۵",
+      guaranteeDesc: "اصالت نقره ۹۲۵ تمامی محصولات نقره مجموعه نفیسه عبادی تضمین می‌شود. محصولات همراه با فاکتور رسمی و شناسنامه معتبر اصالت نقره عرضه می‌شوند.",
+      returnTitle: "ضمانت مرجوعی سنگ‌های قرآنی اعماد",
+      returnDesc: "در صورت عدم رضایت، امکان بازگرداندن سنگ‌های قرآنی اعماد به شرکت اعماد و دریافت وجه پرداختی به همراه ارزش افزوده مربوط به آن فراهم است.",
       shippingTitle: "ارسال بیمه‌شده",
       shippingDesc: "بسته‌بندی ایمن و تشریفاتی همراه با ارسال اکسپرس و بیمه کامل مرسوله به سراسر کشور.",
       craftedTitle: "طراحی نفیس و ماندگار",
@@ -193,7 +195,7 @@ export const translations = {
       ringsSub: "نقره استرلینگ دست‌ساز و گوهرنشانی",
       necklaces: "گردنبند نقره، عقیق و دُرّ نجف",
       necklacesSub: "سنگ‌های اصیل معدنی و نقره ۹۲۵",
-      bracelets: "دستبند و زنجیر نقره",
+      bracelets: "دستبند نقره",
       braceletsSub: "طراحی مدرن و دست‌بافت زرگری",
       womenSet: "مجموعه اختصاصی بانوان",
       womenSetSub: "ظرافت، نگین‌های اصیل و خطوط مدرن",
@@ -250,13 +252,15 @@ export const translations = {
       clearAll: "پاک کردن همه"
     },
     story: {
-      tag: "اصالت و میراث زرگری نفیسه عبادی",
-      title: "پیوند هنر اصیل دست‌ساز با نقره ناب ۹۲۵",
-      p1: "در گالری زیورآلات نفیسه عبادی، هر قطعه تجسمی از تلفیق نقره استرلینگ ۹۲۵ با سنگ‌های اصیل معدنی نظیر عقیق‌های کمیاب یمنی، عقیق کبدی، یشمی، سوسنی و دُرّ نجف شیشه‌ای است. ما بر آنیم تا با تکیه بر ذوق استادکاران و استانداردهای کهن زرگری، آثاری ماندگار و پرمعنا بیافرینیم.",
-      p2: "طراحی‌های منحصربه‌فرد، پولیش آینه‌ای با آبکاری رادیوم ضدحساسیت و توجه وسواس‌گونه به جزئیات، زیورآلاتی را پدید می‌آورد که برازنده زیبایی، وقار و اصالت همراهان گرامی ما باشد.",
-      button: "درباره گالری و داستان برند",
-      quote: "درخشش هنر دست در هر منحنی نقره و هر تراش سنگ اصیل.",
-      quoteAuthor: "گالری تخصصی نقره و جواهر نفیسه عبادی"
+      tag: "داستان برند نفیسه عبادی",
+      title: "همه‌چیز از یک سنگ شروع شد…",
+      p1: "سنگی که در نگاه اول، شاید فقط بخشی از طبیعت بود؛ اما وقتی راز درونش آشکار شد، دیگر یک سنگ معمولی نبود. سال‌ها تلاش و تحقیق متخصصین جهاد دانشگاهی دانشگاه صنعتی شریف در شرکت عماد، به خلق سنگ‌هایی با حکاکی میکروسکوپی آیات کل قرآن انجامید؛ مسیری که حدود دوازده سال برای رسیدن به این نقطه زمان برد.",
+      p2: "وقتی این سنگ‌ها به دست ما رسیدند، ما فقط یک سنگ ندیدیم؛ یک میراث ماندگار و پربرکت دیدیم. میراثی که باید به شکلی شایسته روایت می‌شد و می‌توانست در قالب یک اثر زیبا، وارد زندگی آدم‌ها شود. اینجا بود که نفیسه عبادی شکل گرفت.",
+      p3: "ما در نفیسه عبادی تصمیم گرفتیم با طراحی و ساخت زیورآلاتی که این سنگ‌ها را در خود جای می‌دهند، به معرفی و رشد این مسیر کمک کنیم؛ تا این هنر و فناوری بیشتر دیده شود و برکتی که در دل این کار می‌بینیم، بتواند به زندگی آدم‌های بیشتری راه پیدا کند. برای ما، رشد نفیسه عبادی جدا از رشد شرکت عماد نیست؛ چون هر دو، بخشی از یک داستان‌اند.",
+      p4: "حتی سنگی که در دل لوگوی نفیسه عبادی قرار گرفته، اتفاقی نیست. آن سنگ، نمادی از همان نقطه‌ای است که همه‌چیز از آن آغاز شد؛ یادآور میراثی که قرار است از دل معنویت، هنر و تلاش، به نسل‌های بعد برسد. ما آرزو داریم این زیبایی و برکت، فقط در یک اثر باقی نماند؛ بلکه از طریق هر قطعه، وارد زندگی انسان‌های بیشتری شود و آرامش و زیبایی را با خود به همراه بیاورد.",
+      button: "درباره گالری و میراث برند",
+      quote: "نفیسه عبادی؛ میراثی نفیس و ماندگار. چون باور داریم بعضی چیزها فقط برای پوشیدن ساخته نمی‌شوند؛ برای آرامش بخشیدن، برای معنا دادن و برای به ارث گذاشتن ساخته می‌شوند.",
+      quoteAuthor: "داستان برند نفیسه عبادی"
     },
     footer: {
       brandDesc: "طراحی و ساخت آنلاین زیورآلات دست‌ساز نقره استرلینگ ۹۲۵ و سنگ‌های اصیل طبیعی. تجربه ظرافت، کیفیت و اصالت در هر قطعه.",
@@ -317,10 +321,10 @@ export const translations = {
       mouseGuide: "حرك المؤشر للتفاعل"
     },
     features: {
-      guaranteeTitle: "ضمان أصالة الفضة",
-      guaranteeDesc: "تأتي جميع القطع مع شهادة أصالة معتمدة للفضة الاسترليني 925 والأحجار المعدنية الطبيعية.",
-      returnTitle: "ضمان إرجاع غير مشروط",
-      returnDesc: "استرجاع كامل للمبلغ أو استبدال ميسر دون قيد أو شرط في حال عدم الرضا التام.",
+      guaranteeTitle: "ضمان أصالة الفضة 925",
+      guaranteeDesc: "تضمن مجموعة نفيسة عبادي أصالة الفضة الإسترلينية 925 في جميع منتجاتها الفضية، وتُرفق كل قطعة بفاتورة رسمية وشهادة أصالة معتمدة للفضة.",
+      returnTitle: "ضمان إرجاع أحجار إعماد القرآنية",
+      returnDesc: "في حال عدم الرضا، يمكنك إعادة أحجار إعماد القرآنية إلى شركة إعماد واسترداد المبلغ المدفوع مع ضريبة القيمة المضافة المترتبة عليه.",
       shippingTitle: "شحن آمن ومؤمّن بالكامل",
       shippingDesc: "تغليف تشريفي حصري وشحن سريع مع تأمين شامل حتى باب منزلك.",
       craftedTitle: "تصميم فاخر وخالد",
@@ -333,7 +337,7 @@ export const translations = {
       ringsSub: "فضة استرليني 925 صياغة يدوية",
       necklaces: "قلائد فضة وعقيق ودر النجف",
       necklacesSub: "أحجار العقيق الطبيعي ودر النجف الصافي",
-      bracelets: "أساور وسلاسل فضة",
+      bracelets: "أساور فضة",
       braceletsSub: "تصاميم مينيمال حديثة",
       womenSet: "مجموعة السيدات الراقية",
       womenSetSub: "خواتم وقلائد فضة مرصعة بالعقيق",
@@ -390,13 +394,15 @@ export const translations = {
       clearAll: "إفراغ القائمة"
     },
     story: {
-      tag: "أصالة وتراث صياغة الفضة",
-      title: "امتزاج الإبداع الحرفي الأصيل بالفضة الاسترليني 925",
-      p1: "في بوتيك مجوهرات نفيسة عبادي، تجسد كل قطعة حكاية فنية تلتقي فيها الفضة عيار 925 مع أرقى الأحجار الكريمة الطبيعية كالعقيق اليماني والعقيق الكبدي واليشفي ودر النجف الكريستالي الصافي.",
-      p2: "نجمع بين عراقة الفنون اليدوية التراثية وأحدث معايير الصياغة الحديثة لنقدم مجوهرات فريدة تليق بذوقكم الرفيع وتعكس فخامة متجددة.",
-      button: "اكتشف قصة البوتيك وتراثنا",
-      quote: "إبداع متقن في كل انحناءة فضة، وبريق خالد في كل حجر كريم طبيعي.",
-      quoteAuthor: "بوتيك مجوهرات نفيسة عبادي للفضة الفاخرة"
+      tag: "قصة علامة نفيسة عبادي",
+      title: "بدأ كل شيء من حجرٍ واحد…",
+      p1: "حجرٌ قد يبدو للوهلة الأولى مجرد جزءٍ من الطبيعة؛ ولكن حين انكشف السرّ الكامن في داخله، لم يعد حجراً عادياً. فقد أثمرت سنواتٌ من البحث والجهد لمتخصصي الجهاد الجامعي في جامعة شريف التكنولوجية ضمن شركة عماد عن ابتكار أحجارٍ منقوشةٍ مجهرياً بآيات القرآن الكريم كاملاً؛ في مسيرةٍ استغرقت نحو اثني عشر عاماً.",
+      p2: "عندما وصلتنا هذه الأحجار، لم نرَ حجراً فحسب، بل رأينا إرثاً خالداً ومباركاً يستحق أن يُروى بأسلوب يليق به ليدخل حياة الناس في قالب قطعة فنية جميلة؛ ومن هنا وُلدت نفيسة عبادي.",
+      p3: "قررنا في نفيسة عبادي أن نسهم عبر تصميم وصياغة مجوهرات تحتضن هذه الأحجار في التعريف بهذا المسار وتنميته، ليبصر الناس هذا الإبداع والتقنية وتصل بركته إلى حياة المزيد من الناس؛ فنموّ نفيسة عبادي لا ينفصل عن نموّ شركة عماد، فكلاهما جزء من حكاية واحدة.",
+      p4: "حتى الحجر الموجود في قلب شعار نفيسة عبادي لم يأتِ مصادفة؛ إنه رمز لنقطة البداية التي انطلق منها كل شيء، وتذكير بإرثٍ يجمع الروحانية والفن والجهد ليمتد إلى الأجيال القادمة، حاملًا معه السكينة والجمال في كل قطعة.",
+      button: "اكتشف قصة العلامة ورسالتنا",
+      quote: "نفيسة عبادي؛ إرثٌ نفيس وخالد. لأننا نؤمن أن بعض الأشياء لا تُصنع للارتداء فقط؛ بل تُصنع لتمنح السكينة، وتهب المعنى، وتُورّث للأجيال.",
+      quoteAuthor: "قصة علامة نفيسة عبادي"
     },
     footer: {
       brandDesc: "بوتيك راقٍ لتصميم وصياغة الفضة عيار 925 والمجوهرات المرصعة بالفيروز والعقيق الطبيعي المعتمد. فخامة وأصالة تدوم.",

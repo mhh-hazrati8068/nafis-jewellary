@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { ENAMAD_CONFIG } from "@/lib/contactConfig";
 
 export interface IconProps extends React.SVGProps<SVGSVGElement> {
   className?: string;
@@ -87,27 +88,33 @@ export function WhatsAppIcon({ className = "w-5 h-5", ...props }: IconProps) {
 }
 
 /**
- * اینماد (eNamad Trust Emblem)
+ * اینماد (eNamad Official Trust Seal)
+ * Only renders when real verified eNamad ID and Code are configured.
  */
-export function EnamadBadge({ className = "w-16 h-16" }: { className?: string }) {
+export function EnamadBadge({ className = "w-24 h-24" }: { className?: string }) {
+  if (!ENAMAD_CONFIG.isVerified || !ENAMAD_CONFIG.id || !ENAMAD_CONFIG.code) {
+    return null;
+  }
+
+  const verifyUrl = `https://trustseal.enamad.ir/?id=${encodeURIComponent(ENAMAD_CONFIG.id)}&Code=${encodeURIComponent(ENAMAD_CONFIG.code)}`;
+  const logoUrl = `https://trustseal.enamad.ir/logo.aspx?id=${encodeURIComponent(ENAMAD_CONFIG.id)}&Code=${encodeURIComponent(ENAMAD_CONFIG.code)}`;
+
   return (
-    <div className={`relative flex flex-col items-center justify-center p-3 rounded-2xl bg-white border border-[#C4852B]/40 shadow-md group hover:border-[#C4852B] transition-all duration-300 ${className}`}>
-      {/* Official Enamad 5-Point Star & E emblem */}
-      <svg viewBox="0 0 64 64" fill="none" className="w-10 h-10 text-[#003B73] group-hover:scale-105 transition-transform">
-        <circle cx="32" cy="32" r="30" stroke="#C4852B" strokeWidth="2" fill="#FAF9F5" />
-        <path d="M32 10L37.5 23H52L40.5 32L45 46L32 37.5L19 46L23.5 32L12 23H26.5L32 10Z" fill="#C4852B" fillOpacity="0.25" stroke="#C4852B" strokeWidth="1.5" />
-        <circle cx="32" cy="32" r="14" fill="#003B73" />
-        <text x="32" y="38" fontSize="16" fontWeight="bold" textAnchor="middle" fill="#FFFFFF" fontFamily="sans-serif">e</text>
-        {/* 2 Trust Stars */}
-        <circle cx="26" cy="52" r="2.5" fill="#C4852B" />
-        <circle cx="38" cy="52" r="2.5" fill="#C4852B" />
-      </svg>
-      <span className="text-[9px] font-bold text-zinc-800 mt-1 whitespace-nowrap font-mono tracking-tighter">
-        نماد اعتماد الکترونیکی
-      </span>
-      <span className="text-[7px] text-[#A06314] font-semibold">
-        دو ستاره رسمی
-      </span>
-    </div>
+    <a
+      referrerPolicy="origin"
+      target="_blank"
+      rel="noopener noreferrer"
+      href={verifyUrl}
+      className={`inline-flex items-center justify-center p-2 rounded-2xl bg-white border border-[#C4852B]/40 shadow-sm hover:border-[#C4852B] transition-all duration-300 ${className}`}
+      aria-label="نماد اعتماد الکترونیکی (اینماد)"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        referrerPolicy="origin"
+        src={logoUrl}
+        alt="نماد اعتماد الکترونیکی"
+        className="w-full h-full object-contain cursor-pointer"
+      />
+    </a>
   );
 }

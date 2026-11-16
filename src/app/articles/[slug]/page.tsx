@@ -12,17 +12,17 @@ const ARTICLE_TITLES: Record<string, { title: string; summary: string; image: st
   "silver-and-gemstone-care-guide": {
     title: "راهنمای نگهداری و تمیز کردن زیورآلات نقره و سنگ‌های طبیعی",
     summary: "چگونه از درخشش و جلای ماندگار نقره ۹۲۵ و سنگ‌های اصیل عقیق و دُرّ نجف در برابر کدر شدن و سایش محافظت کنیم؟",
-    image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=1000&auto=format&fit=crop",
+    image: "https://nafiseebadijewellery.com/images/hero-silver-bg.jpg",
   },
   "identifying-authentic-neyshabur-turquoise": {
-    title: "رازهای شناخت و اصالت سنگ دُرّ نجف شفاف و عقیق یمنی اصل",
-    summary: "بررسی شناسنامه گوهرشناسی، بلور شفاف و زلال دُرّ نجف، و شناخت طیف رنگی عقیق سرخ، کبدی و یشمی.",
-    image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=1000&auto=format&fit=crop",
+    title: "رازهای شناخت و اصالت سنگ دُرّ نجف طبیعی و عقیق یمنی اصل",
+    summary: "آشنایی با دُرّ نجف طبیعی با جلوه‌ای شفاف و درخشان و شناخت طیف رنگی عقیق سرخ، کبدی و یشمی.",
+    image: "https://nafiseebadijewellery.com/images/campaign_durr_agate_ring.jpg",
   },
   "art-of-minimalist-silver-jewelry-styling": {
     title: "هنر ست کردن زیورآلات نقره مینیمال در استایل‌های مدرن",
     summary: "اصول لایه‌بندی گردنبندهای ظریف، ترکیب دستبندهای زنجیری و انتخاب انگشتر مناسب با فرم دست.",
-    image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1000&auto=format&fit=crop",
+    image: "https://nafiseebadijewellery.com/images/campaign_agate_necklace.jpg",
   },
 };
 
@@ -54,7 +54,7 @@ export async function generateMetadata({
 
   const title = meta?.title || "مقاله تخصصی گوهرشناسی و نقره ۹۲۵";
   const summary = meta?.summary || "ژورنال تخصصی زیورآلات نقره استرلینگ ۹۲۵ دست‌ساز و سنگ‌های طبیعی اصیل.";
-  const image = meta?.image || "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=1000&auto=format&fit=crop";
+  const image = meta?.image || "https://nafiseebadijewellery.com/images/hero-silver-bg.jpg";
   const pageTitle = `${title} | ژورنال زیورآلات نفیسه عبادی`;
 
   return {
@@ -104,7 +104,7 @@ export default async function ArticlePage({
     "@type": "BlogPosting",
     "headline": meta?.title || "مقاله تخصصی زیورآلات نقره",
     "description": meta?.summary || "ژورنال تخصصی گوهرشناسی و نگهداری نقره",
-    "image": meta?.image || "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=1000&auto=format&fit=crop",
+    "image": meta?.image || "https://nafiseebadijewellery.com/images/hero-silver-bg.jpg",
     "author": {
       "@type": "Organization",
       "name": "زیورآلات نفیسه عبادی"

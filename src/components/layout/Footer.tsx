@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useAppStore } from "@/store/useAppStore";
 import BrandLogo from "@/components/layout/BrandLogo";
+import { CONTACT_CONFIG, ENAMAD_CONFIG } from "@/lib/contactConfig";
 import { 
   InstagramIcon, 
   TelegramIcon, 
@@ -18,14 +19,15 @@ export default function Footer() {
   const { t, language } = useAppStore();
 
   const socialLinks = [
-    { name: "اینستاگرام", nameEn: "Instagram", href: "https://instagram.com", icon: <InstagramIcon className="w-4 h-4" /> },
-    { name: "تلگرام", nameEn: "Telegram", href: "https://t.me", icon: <TelegramIcon className="w-4 h-4" /> },
-    { name: "ایتا", nameEn: "Eitaa", href: "https://eitaa.com", icon: <EitaaIcon className="w-4 h-4" /> },
-    { name: "بله", nameEn: "Bale", href: "https://ble.ir", icon: <BaleIcon className="w-4 h-4" /> },
-    { name: "روبیکا", nameEn: "Rubika", href: "https://rubika.ir", icon: <RubikaIcon className="w-4 h-4" /> },
-    { name: "سروش", nameEn: "Soroush", href: "https://splus.ir", icon: <SoroushIcon className="w-4 h-4" /> },
-    { name: "واتساپ", nameEn: "WhatsApp", href: "https://whatsapp.com", icon: <WhatsAppIcon className="w-4 h-4" /> },
+    { name: "اینستاگرام", nameEn: "Instagram", href: CONTACT_CONFIG.instagramHref, icon: <InstagramIcon className="w-4 h-4" /> },
+    { name: "تلگرام", nameEn: "Telegram", href: CONTACT_CONFIG.telegramHref, icon: <TelegramIcon className="w-4 h-4" /> },
+    { name: "ایتا", nameEn: "Eitaa", href: CONTACT_CONFIG.eitaaHref, icon: <EitaaIcon className="w-4 h-4" /> },
+    { name: "بله", nameEn: "Bale", href: CONTACT_CONFIG.baleHref, icon: <BaleIcon className="w-4 h-4" /> },
+    { name: "روبیکا", nameEn: "Rubika", href: CONTACT_CONFIG.rubikaHref, icon: <RubikaIcon className="w-4 h-4" /> },
+    { name: "سروش", nameEn: "Soroush", href: CONTACT_CONFIG.soroushHref, icon: <SoroushIcon className="w-4 h-4" /> },
+    { name: "واتساپ", nameEn: "WhatsApp", href: CONTACT_CONFIG.whatsappHref, icon: <WhatsAppIcon className="w-4 h-4" /> },
   ];
+  const activeSocialLinks = socialLinks.filter((s) => Boolean(s.href));
 
   return (
     <footer className="bg-[#FAF9F5] text-zinc-800 border-t border-[#C4852B]/30 pt-20 pb-12 transition-colors relative overflow-hidden">
@@ -52,26 +54,35 @@ export default function Footer() {
             {t.footer.brandDesc}
           </p>
           
-          {/* Social Links (Eitaa, Bale, Rubika, Soroush, Instagram, Telegram, WhatsApp) */}
+          {/* Social Links (rendered only when official links are configured) */}
           <div className="mt-2 w-full">
             <span className="text-[10px] uppercase tracking-widest text-[#A06314] font-bold font-mono block mb-2.5">
-              {language === 'fa' ? 'پیام‌رسان‌ها و شبکه‌های اجتماعی:' : 'CONNECT WITH ATELIER:'}
+              {language === 'fa' ? 'راه‌های ارتباطی رسمی:' : 'CONNECT WITH ATELIER:'}
             </span>
-            <div className="flex flex-wrap items-center gap-2">
-              {socialLinks.map((s, idx) => (
-                <a
-                  key={idx}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title={language === 'fa' ? s.name : s.nameEn}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#C4852B]/30 hover:border-[#C4852B] text-zinc-700 hover:text-[#660000] hover:scale-105 transition-all shadow-xs text-xs"
-                >
-                  {s.icon}
-                  <span className="text-[11px] font-medium">{language === 'fa' ? s.name : s.nameEn}</span>
-                </a>
-              ))}
-            </div>
+            {activeSocialLinks.length > 0 ? (
+              <div className="flex flex-wrap items-center gap-2">
+                {activeSocialLinks.map((s, idx) => (
+                  <a
+                    key={idx}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={language === 'fa' ? s.name : s.nameEn}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#C4852B]/30 hover:border-[#C4852B] text-zinc-700 hover:text-[#660000] hover:scale-105 transition-all shadow-xs text-xs"
+                  >
+                    {s.icon}
+                    <span className="text-[11px] font-medium">{language === 'fa' ? s.name : s.nameEn}</span>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#C4852B]/30 hover:border-[#C4852B] text-zinc-700 hover:text-[#660000] transition-all shadow-xs text-xs font-medium"
+              >
+                {language === 'fa' ? 'اطلاعات تماس رسمی به‌زودی در صفحه تماس درج می‌شود' : 'Official channels updating — Contact Page'}
+              </Link>
+            )}
           </div>
         </div>
         
@@ -83,7 +94,7 @@ export default function Footer() {
             <li><Link href="/necklaces" className="hover:text-[#C4852B] transition-colors">{t.footer.necklaces}</Link></li>
             <li><Link href="/bracelets" className="hover:text-[#C4852B] transition-colors">{t.footer.bracelets}</Link></li>
             <li><Link href="/earrings" className="hover:text-[#C4852B] transition-colors">{t.footer.earrings}</Link></li>
-            <li><Link href="/collections" className="hover:text-[#C4852B] transition-colors">{t.footer.sets}</Link></li>
+            <li><Link href="/shop?filter=sets" className="hover:text-[#C4852B] transition-colors">{t.footer.sets}</Link></li>
           </ul>
         </div>
 
@@ -93,9 +104,19 @@ export default function Footer() {
           <ul className="flex flex-col gap-3.5 text-xs text-[#626667]">
             <li><Link href="/stores" className="hover:text-[#C4852B] transition-colors">{t.footer.findBranch}</Link></li>
             <li><Link href="/contact" className="hover:text-[#C4852B] transition-colors">{t.footer.bookAppt}</Link></li>
-            <li><Link href="/shipping" className="hover:text-[#C4852B] transition-colors">{t.footer.shippingPolicy}</Link></li>
-            <li><Link href="/care" className="hover:text-[#C4852B] transition-colors">{t.footer.careGuide}</Link></li>
+            <li><Link href="/about" className="hover:text-[#C4852B] transition-colors">{t.header.aboutUs}</Link></li>
+            <li><Link href="/articles/silver-and-gemstone-care-guide" className="hover:text-[#C4852B] transition-colors">{t.footer.careGuide}</Link></li>
             <li><Link href="/articles" className="hover:text-[#C4852B] transition-colors">{t.footer.journal}</Link></li>
+            <li>
+              <a
+                href={CONTACT_CONFIG.emadWebsite}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-[#C4852B] transition-colors"
+              >
+                {language === 'fa' ? 'وب‌سایت شرکت عماد آسمان' : language === 'ar' ? 'موقع شركة عماد آسمان' : 'Emad Aseman Website'}
+              </a>
+            </li>
           </ul>
         </div>
 
@@ -121,26 +142,36 @@ export default function Footer() {
             </form>
           </div>
 
-          {/* eNamad Trust Emblem & Guarantee */}
+          {/* eNamad Trust Emblem (only rendered when officially verified) */}
           <div className="pt-4 border-t border-zinc-200/80 flex items-center gap-4">
-            <EnamadBadge className="w-24 h-24 shrink-0" />
-            <div className="text-[11px] text-zinc-600 leading-snug">
-              <span className="font-bold text-[#003B73] block mb-1">
-                نماد اعتماد الکترونیکی (اینماد)
-              </span>
-              <span>دارای مجوز رسمی کسب‌وکار اینترنتی، درگاه پرداخت امن شاپرک و تضمین کامل حقوق خریداران.</span>
-            </div>
+            {ENAMAD_CONFIG.isVerified && ENAMAD_CONFIG.id && ENAMAD_CONFIG.code ? (
+              <>
+                <EnamadBadge className="w-24 h-24 shrink-0" />
+                <div className="text-[11px] text-zinc-600 leading-snug">
+                  <span className="font-bold text-[#003B73] block mb-1">
+                    نماد اعتماد الکترونیکی (اینماد)
+                  </span>
+                  <span>دارای نماد اعتماد الکترونیکی معتبر و تضمین حقوق خریداران.</span>
+                </div>
+              </>
+            ) : (
+              <div className="text-[11px] text-zinc-600 leading-relaxed">
+                <span className="font-bold text-[#660000] block mb-1">
+                  ضمانت اصالت نقره ۹۲۵ و فاکتور رسمی
+                </span>
+                <span>تمامی سفارش‌ها همراه با فاکتور رسمی و شناسنامه اصالت نقره مجموعه نفیسه عبادی ارائه می‌شوند.</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
       
       {/* Bottom Bar */}
-      <div className="container mx-auto px-6 md:px-12 border-t border-[#C4852B]/20 pt-8 flex flex-col md:flex-row items-center justify-between text-[11px] text-[#626667]">
+      <div className="container mx-auto px-6 md:px-12 border-t border-[#C4852B]/20 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-[#626667]">
         <p>&copy; {new Date().getFullYear()} {t.footer.rights}</p>
-        <div className="flex gap-6 mt-4 md:mt-0">
-          <Link href="/privacy" className="hover:text-[#C4852B] transition-colors">{t.footer.privacy}</Link>
-          <Link href="/terms" className="hover:text-[#C4852B] transition-colors">{t.footer.terms}</Link>
-        </div>
+        <Link href="/contact" className="hover:text-[#C4852B] transition-colors">
+          {language === 'fa' ? 'ارتباط با پشتیبانی و امور مشتریان' : language === 'ar' ? 'تواصل مع خدمة العملاء' : 'Client Concierge & Contact'}
+        </Link>
       </div>
     </footer>
   );

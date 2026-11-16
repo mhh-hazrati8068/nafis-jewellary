@@ -16,6 +16,10 @@ import {
   invalidateApiCache,
   API_BASE_URL,
 } from "@/lib/api";
+import {
+  parseProductMetadataFromDescription,
+  serializeProductDescriptionWithSpecs,
+} from "@/lib/stoneSpecs";
 import styles from "./products.module.css";
 
 export default function AdminProductsPage() {
@@ -45,6 +49,13 @@ export default function AdminProductsPage() {
   const [description, setDescription] = useState("");
   const [purity, setPurity] = useState("925");
   const [size, setSize] = useState("");
+  const [hasRhodiumPlating, setHasRhodiumPlating] = useState(false);
+  const [stoneColor, setStoneColor] = useState("");
+  const [stoneNaturalStatus, setStoneNaturalStatus] = useState("");
+  const [stoneClarity, setStoneClarity] = useState("");
+  const [stonePattern, setStonePattern] = useState("");
+  const [stoneOrigin, setStoneOrigin] = useState("");
+  const [stoneUniqueFeatures, setStoneUniqueFeatures] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [pricingMethod, setPricingMethod] = useState<string>("METHOD_1_SILVER_MAKING_STONE");
   const [weight, setWeight] = useState<string>(""); // Strictly empty by default
@@ -141,6 +152,13 @@ export default function AdminProductsPage() {
     setDescription("");
     setPurity("925");
     setSize("");
+    setHasRhodiumPlating(false);
+    setStoneColor("");
+    setStoneNaturalStatus("");
+    setStoneClarity("");
+    setStonePattern("");
+    setStoneOrigin("");
+    setStoneUniqueFeatures("");
     setSelectedCategoryId(categories[0]?.id ? String(categories[0].id) : "");
     setPricingMethod("METHOD_1_SILVER_MAKING_STONE");
     // Strictly empty as per system law: "اجرت ساخت هر گرم برای هر محصول باید به صورت دستی وارد شود. سیستم هیچ مقدار پیش‌فرضی ندارد"
@@ -164,9 +182,20 @@ export default function AdminProductsPage() {
   const handleOpenEdit = (prod: BackendProduct) => {
     setEditingProduct(prod);
     setName(prod.name || "");
-    setDescription(prod.description || "");
+    const parsedMeta = parseProductMetadataFromDescription(
+      prod.description,
+      prod.stoneName || prod.stone?.name
+    );
+    setDescription(parsedMeta.cleanDescription);
     setPurity(prod.purity || "925");
     setSize(prod.size || "");
+    setHasRhodiumPlating(Boolean(prod.hasRhodiumPlating || parsedMeta.hasRhodiumPlating));
+    setStoneColor(parsedMeta.stoneSpecs.color || "");
+    setStoneNaturalStatus(parsedMeta.stoneSpecs.naturalStatus || "");
+    setStoneClarity(parsedMeta.stoneSpecs.clarity || "");
+    setStonePattern(parsedMeta.stoneSpecs.pattern || "");
+    setStoneOrigin(parsedMeta.stoneSpecs.origin || "");
+    setStoneUniqueFeatures(parsedMeta.stoneSpecs.uniqueFeatures || "");
     const catId = prod.categoryId
       ? String(prod.categoryId)
       : prod.category?.id
@@ -369,9 +398,22 @@ export default function AdminProductsPage() {
 
     try {
       const formData = new FormData();
+      const serializedDescription = serializeProductDescriptionWithSpecs(
+        description,
+        {
+          color: stoneColor,
+          naturalStatus: stoneNaturalStatus,
+          clarity: stoneClarity,
+          pattern: stonePattern,
+          origin: stoneOrigin,
+          uniqueFeatures: stoneUniqueFeatures,
+        },
+        hasRhodiumPlating
+      );
       formData.append("name", name.trim());
-      formData.append("description", description.trim());
+      formData.append("description", serializedDescription);
       formData.append("purity", purity.trim() || "925");
+      formData.append("hasRhodiumPlating", String(hasRhodiumPlating));
       if (size.trim()) {
         formData.append("size", size.trim());
       }
@@ -622,8 +664,7 @@ export default function AdminProductsPage() {
                               alt={p.name}
                               className={styles.thumb}
                               onError={(e) => {
-                                (e.target as HTMLImageElement).src =
-                                  "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=100&q=80";
+                                (e.target as HTMLImageElement).src = "/images/campaign_agate_ring.jpg";
                               }}
                             />
                             {p.galleryImages && p.galleryImages.length > 0 && (
@@ -920,15 +961,80 @@ export default function AdminProductsPage() {
               <div className={styles.formGroup}>
                 <label className={styles.label}>
                   <span>توضیحات کامل محصول (Description)</span>
-                  <span className={styles.labelHint}>(متن چندخطی برای صفحه جزئیات کالا)</span>
+                  <span className={styles.labelHint}>(متن اختصاصی برای صفحه جزئیات کالا)</span>
                 </label>
                 <textarea
                   rows={3}
                   className={styles.textarea}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="طراحی دست‌ساز رکاب صفوی نقره استرلینگ به همراه نگین فیروزه طبیعی نیشابور اصل با شناسنامه اصالت..."
+                  placeholder="توضیحات اختصاصی این اثر را بنویسید..."
                 />
+              </div>
+
+              {/* 2.3 Per-Product Gemstone Specifications & Optional Rhodium Plating */}
+              <div className={styles.formGroup}>
+                <label className={styles.checkboxLabel} style={{ marginBottom: "10px" }}>
+                  <input
+                    type="checkbox"
+                    checked={hasRhodiumPlating}
+                    onChange={(e) => setHasRhodiumPlating(e.target.checked)}
+                  />
+                  <span>این محصول دارای آبکاری رادیوم است (فقط در صورت انجام آبکاری فعال شود)</span>
+                </label>
+
+                <label className={styles.label}>
+                  <span>مشخصات اختصاصی سنگ این محصول (اختیاری)</span>
+                  <span className={styles.labelHint}>(هر فیلد فقط در صورت وارد شدن در صفحه محصول نمایش داده می‌شود)</span>
+                </label>
+                <div className={styles.formRow}>
+                  <input
+                    type="text"
+                    className={styles.input}
+                    value={stoneColor}
+                    onChange={(e) => setStoneColor(e.target.value)}
+                    placeholder="رنگ و طیف رنگی (مثال: سرخ جگری)"
+                  />
+                  <input
+                    type="text"
+                    className={styles.input}
+                    value={stoneNaturalStatus}
+                    onChange={(e) => setStoneNaturalStatus(e.target.value)}
+                    placeholder="طبیعی یا مصنوعی (مثال: معدنی طبیعی)"
+                  />
+                </div>
+                <div className={styles.formRow} style={{ marginTop: "8px" }}>
+                  <input
+                    type="text"
+                    className={styles.input}
+                    value={stoneClarity}
+                    onChange={(e) => setStoneClarity(e.target.value)}
+                    placeholder="شفافیت و ظاهر (مثال: شفاف و درخشان)"
+                  />
+                  <input
+                    type="text"
+                    className={styles.input}
+                    value={stonePattern}
+                    onChange={(e) => setStonePattern(e.target.value)}
+                    placeholder="طرح، نقش یا رگه‌های شاخص"
+                  />
+                </div>
+                <div className={styles.formRow} style={{ marginTop: "8px" }}>
+                  <input
+                    type="text"
+                    className={styles.input}
+                    value={stoneOrigin}
+                    onChange={(e) => setStoneOrigin(e.target.value)}
+                    placeholder="محل خاستگاه (در صورت مشخص بودن)"
+                  />
+                  <input
+                    type="text"
+                    className={styles.input}
+                    value={stoneUniqueFeatures}
+                    onChange={(e) => setStoneUniqueFeatures(e.target.value)}
+                    placeholder="ویژگی‌های اختصاصی و متمایز سنگ"
+                  />
+                </div>
               </div>
 
               {/* 3. Method-Specific Fields */}

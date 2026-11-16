@@ -13,16 +13,16 @@ const FALLBACK_ARTICLES: Article[] = [
     title: "راهنمای نگهداری و تمیز کردن زیورآلات نقره و سنگ‌های طبیعی",
     summary: "چگونه از درخشش و جلای ماندگار نقره ۹۲۵ و سنگ‌های اصیل عقیق و دُرّ نجف در برابر کدر شدن و سایش محافظت کنیم؟",
     content: "زیورآلات نقره به دلیل زیبایی و اصالت خود، جایگاه ویژه‌ای در دنیای جواهرات دارند. برای حفظ درخشش نقره و جلوگیری از اکسید شدن، رعایت نکات نگهداری و شستشوی اصولی ضروری است.",
-    imageUrl: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=1000&auto=format&fit=crop",
+    imageUrl: "/images/hero-silver-bg.jpg",
     createdAt: new Date().toISOString(),
   },
   {
     id: 102,
     slug: "identifying-authentic-neyshabur-turquoise",
-    title: "رازهای شناخت و اصالت سنگ دُرّ نجف شفاف و عقیق یمنی اصل",
-    summary: "بررسی شناسنامه گوهرشناسی، بلور شفاف و زلال دُرّ نجف، و شناخت طیف رنگی عقیق سرخ، کبدی و یشمی.",
-    content: "دُرّ نجف و عقیق یمنی از اصیل‌ترین و پرفضیلت‌ترین گوهرهای طبیعی در فرهنگ زرگری مشرق‌زمین هستند که به دلیل شفافیت شیشه‌ای و جلای ماندگار شهرت دارند.",
-    imageUrl: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=1000&auto=format&fit=crop",
+    title: "رازهای شناخت و اصالت سنگ دُرّ نجف طبیعی و عقیق یمنی اصل",
+    summary: "آشنایی با دُرّ نجف طبیعی با جلوه‌ای شفاف و درخشان و شناخت طیف رنگی عقیق سرخ، کبدی و یشمی.",
+    content: "دُرّ نجف، سنگی طبیعی و شناخته‌شده با جلوه‌ای شفاف و درخشان است که در برخی از آثار مجموعه نفیسه عبادی به کار می‌رود و در کنار عقیق یمنی از اصیل‌ترین گوهرهای طبیعی در هنر زرگری به شمار می‌آید.",
+    imageUrl: "/images/campaign_durr_agate_ring.jpg",
     createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
   },
   {
@@ -31,7 +31,7 @@ const FALLBACK_ARTICLES: Article[] = [
     title: "هنر استایل و ست کردن زیورآلات نقره مینیمال در مراسم و زندگی روزمره",
     summary: "اصول هماهنگی گردنبندهای چندلایه، ترکیب عقیق یمنی با نقره ۹۲۵ و تکنیک‌های لایه‌بندی دستبندها برای ظاهری اشرافی و مدرن.",
     content: "در دنیای امروز، زیورآلات مینیمال بیانگر سلیقه‌ای خاص، پیراسته و بی‌زمان هستند. ترکیب خطوط تمیز نقره با سنگ‌های معدنی جلوه‌ای لوکس و منحصر‌به‌فرد پدید می‌آورد.",
-    imageUrl: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1000&auto=format&fit=crop",
+    imageUrl: "/images/campaign_agate_necklace.jpg",
     createdAt: new Date(Date.now() - 86400000 * 7).toISOString(),
   }
 ];
@@ -102,9 +102,9 @@ export default function ArticlesPage() {
     if (url && url.startsWith("http")) return url;
     if (url && url.startsWith("/")) return `${API_BASE_URL}${url}`;
     const defaultImages = [
-      "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=1000&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=1000&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1000&auto=format&fit=crop",
+      "/images/hero-silver-bg.jpg",
+      "/images/campaign_durr_agate_ring.jpg",
+      "/images/campaign_agate_necklace.jpg",
     ];
     return defaultImages[fallbackIndex % defaultImages.length];
   };

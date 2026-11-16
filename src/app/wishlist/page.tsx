@@ -3,17 +3,18 @@
 import { useAppStore } from "@/store/useAppStore";
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { getProductName, getProductMaterial } from "@/lib/dynamicTranslator";
 import { HeartLuxuryIcon, ShoppingBagLuxuryIcon } from "@/components/icons/JewelryIcons";
 
+const emptySubscribe = () => () => {};
+
 export default function WishlistPage() {
   const { wishlist, products, toggleWishlist, addToCart, language, t, fetchProducts } = useAppStore();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
   const [addedToastId, setAddedToastId] = useState<number | null>(null);
 
   useEffect(() => {
-    setMounted(true);
     fetchProducts();
   }, [fetchProducts]);
 
@@ -137,7 +138,7 @@ export default function WishlistPage() {
                     {/* Product Image Link */}
                     <Link
                       href={`/product/${product.id}`}
-                      className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-white mb-3 block border border-zinc-100"
+                      className="relative aspect-square rounded-2xl overflow-hidden bg-[#FAF9F5] mb-3 block border border-zinc-100 p-2.5"
                     >
                       <Image
                         src={product.image}

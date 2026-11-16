@@ -2,10 +2,16 @@
 
 import { useAppStore } from "@/store/useAppStore";
 import { useState } from "react";
+import { CONTACT_CONFIG } from "@/lib/contactConfig";
 
 export default function ContactPage() {
   const { language } = useAppStore();
   const [submitted, setSubmitted] = useState(false);
+
+  const pendingFa = "اطلاعات رسمی در حال به‌روزرسانی است";
+  const pendingEn = "Official contact details are being updated";
+  const pendingAr = "جارٍ تحديث بيانات التواصل الرسمية";
+  const pendingText = language === "fa" ? pendingFa : language === "ar" ? pendingAr : pendingEn;
 
   return (
     <div className="py-20 md:py-32 bg-[#FFFFFF] dark:bg-[#FAF9F5] text-zinc-950 min-h-screen transition-colors duration-500">
@@ -20,10 +26,10 @@ export default function ContactPage() {
           </h1>
           <p className="text-xs md:text-sm text-[#626667] leading-relaxed">
             {language === 'fa'
-              ? 'تیم امور مشتریان و مشاوره تخصصی زیورآلات نفیسه عبادی پاسخگوی تمامی پرسش‌ها و سفارش‌های اختصاصی شماست.'
+              ? 'تیم امور مشتریان و مشاوره تخصصی زیورآلات نفیسه عبادی پاسخگوی پرسش‌ها و سفارش‌های اختصاصی شماست.'
               : language === 'ar'
               ? 'فريق استشارات مجوهرات نفيسة عبادي في خدمتكم للإجابة على جميع الاستفسارات والطلبات الخاصة.'
-              : 'Our client concierge is at your service for private inquiries, bespoke jewelry commissions, and order assistance.'}
+              : 'Our client concierge is at your service for inquiries, bespoke jewelry commissions, and order assistance.'}
           </p>
         </div>
 
@@ -31,35 +37,90 @@ export default function ContactPage() {
           
           <div className="p-8 sm:p-12 rounded-3xl bg-[#F4F1EA] border border-[#C4852B]/30 shadow-sm">
             <h2 className="text-xl md:text-2xl font-bold uppercase mb-8 pb-4 border-b border-zinc-200">
-              {language === 'fa' ? 'اطلاعات دفتر مرکزی' : language === 'ar' ? 'معلومات المقر الرئيسي' : 'Headquarters Concierge'}
+              {language === 'fa' ? 'اطلاعات تماس و شوروم' : language === 'ar' ? 'بيانات التواصل وصالة العرض' : 'Official Contact & Showroom'}
             </h2>
 
             <div className="space-y-6 text-xs text-[#626667]">
               <div>
                 <span className="text-[10px] text-[#C4852B] uppercase tracking-widest block font-mono mb-1 font-bold">
-                  OFFICE & LOUNGE
+                  SHOWROOM ADDRESS
                 </span>
                 <p className="font-semibold text-zinc-950 text-sm">
-                  {language === 'fa' ? 'تهران، خیابان فرشته، برج رز، طبقه همکف، واحد ۱۲' : language === 'ar' ? 'طهران، شارع فرشته، برج روز، الطابق الأرضي، جناح 12' : 'Tehran, Fereshteh St, Rose Tower, Suite 12'}
+                  {CONTACT_CONFIG.isVerified && CONTACT_CONFIG.addressFa
+                    ? (language === 'fa' ? CONTACT_CONFIG.addressFa : language === 'ar' ? CONTACT_CONFIG.addressAr : CONTACT_CONFIG.addressEn)
+                    : pendingText}
                 </p>
               </div>
 
               <div>
                 <span className="text-[10px] text-[#C4852B] uppercase tracking-widest block font-mono mb-1 font-bold">
-                  PHONE SUPPORT
+                  PHONE & DIRECT CONTACT
                 </span>
-                <p className="font-mono text-zinc-950 font-bold text-sm">
-                  +98 (21) 2200-8800 / +98 (21) 2611-4400
-                </p>
+                {CONTACT_CONFIG.isVerified && (CONTACT_CONFIG.landlineDisplay || CONTACT_CONFIG.mobileDisplay) ? (
+                  <div className="flex flex-wrap items-center gap-3 font-mono text-zinc-950 font-bold text-sm">
+                    {CONTACT_CONFIG.landlineDisplay && (
+                      <a href={CONTACT_CONFIG.landlineHref} dir="ltr" className="hover:text-[#C4852B] transition-colors">
+                        {CONTACT_CONFIG.landlineDisplay}
+                      </a>
+                    )}
+                    {CONTACT_CONFIG.landlineDisplay && CONTACT_CONFIG.mobileDisplay && (
+                      <span className="text-zinc-400">|</span>
+                    )}
+                    {CONTACT_CONFIG.mobileDisplay && (
+                      <a href={CONTACT_CONFIG.mobileHref} dir="ltr" className="hover:text-[#C4852B] transition-colors">
+                        {CONTACT_CONFIG.mobileDisplay}
+                      </a>
+                    )}
+                  </div>
+                ) : (
+                  <p className="font-mono text-zinc-950 font-bold text-sm">{pendingText}</p>
+                )}
               </div>
 
               <div>
                 <span className="text-[10px] text-[#C4852B] uppercase tracking-widest block font-mono mb-1 font-bold">
-                  DIRECT EMAIL
+                  SOCIAL & MESSENGERS
                 </span>
-                <p className="font-mono text-zinc-950 text-sm">
-                  concierge@nafis-jewellery.com
+                <div className="flex flex-wrap gap-2 pt-1">
+                  <a href={CONTACT_CONFIG.instagramHref} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 rounded-lg bg-white border border-zinc-200 hover:border-[#C4852B] text-zinc-900 font-semibold transition-colors">
+                    اینستاگرام
+                  </a>
+                  <a href={CONTACT_CONFIG.telegramHref} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 rounded-lg bg-white border border-zinc-200 hover:border-[#C4852B] text-zinc-900 font-semibold transition-colors">
+                    تلگرام ({CONTACT_CONFIG.telegramHandle})
+                  </a>
+                  <a href={CONTACT_CONFIG.eitaaHref} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 rounded-lg bg-white border border-zinc-200 hover:border-[#C4852B] text-zinc-900 font-semibold transition-colors">
+                    ایتا ({CONTACT_CONFIG.eitaaHandle})
+                  </a>
+                  <a href={CONTACT_CONFIG.baleHref} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 rounded-lg bg-white border border-zinc-200 hover:border-[#C4852B] text-zinc-900 font-semibold transition-colors">
+                    بله ({CONTACT_CONFIG.baleHandle})
+                  </a>
+                  <a href={CONTACT_CONFIG.rubikaHref} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 rounded-lg bg-white border border-zinc-200 hover:border-[#C4852B] text-zinc-900 font-semibold transition-colors">
+                    روبیکا
+                  </a>
+                  <a href={CONTACT_CONFIG.soroushHref} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 rounded-lg bg-white border border-zinc-200 hover:border-[#C4852B] text-zinc-900 font-semibold transition-colors">
+                    سروش
+                  </a>
+                </div>
+              </div>
+
+              <div>
+                <span className="text-[10px] text-[#C4852B] uppercase tracking-widest block font-mono mb-1 font-bold">
+                  PARTNER & WORKING HOURS
+                </span>
+                <p className="text-zinc-950 text-sm mb-2">
+                  {CONTACT_CONFIG.isVerified && CONTACT_CONFIG.workingHoursFa
+                    ? (language === 'fa' ? CONTACT_CONFIG.workingHoursFa : language === 'ar' ? CONTACT_CONFIG.workingHoursAr : CONTACT_CONFIG.workingHoursEn)
+                    : (language === 'fa' ? 'ساعات کاری رسمی به‌زودی اعلام می‌شود' : language === 'ar' ? 'سيتم الإعلان عن ساعات العمل قريباً' : 'Official working hours will be announced shortly')}
                 </p>
+                <a
+                  href={CONTACT_CONFIG.emadWebsite}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#660000] hover:text-[#C4852B] transition-colors"
+                >
+                  <span>وب‌سایت شرکت عماد آسمان (emadaseman.ir)</span>
+                  <span>←</span>
+                </a>
               </div>
             </div>
           </div>
@@ -71,7 +132,7 @@ export default function ContactPage() {
 
             {submitted ? (
               <div className="p-6 rounded-2xl bg-[#C4852B]/10 border border-[#C4852B] text-center text-xs text-[#C4852B] font-semibold">
-                ✓ {language === 'fa' ? 'پیام شما با موفقیت ارسال شد. به‌زودی با شما تماس خواهیم گرفت.' : language === 'ar' ? 'تم استلام رسالتكم بنجاح. سيتواصل معكم فريقنا قريباً.' : 'Your message has been received. Our team will contact you shortly.'}
+                ✓ {language === 'fa' ? 'پیام شما با موفقیت ثبت شد. به‌زودی با شما تماس خواهیم گرفت.' : language === 'ar' ? 'تم استلام رسالتكم بنجاح. سيتواصل معكم فريقنا قريباً.' : 'Your message has been received. Our team will contact you shortly.'}
               </div>
             ) : (
               <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} className="flex flex-col gap-4 text-xs">

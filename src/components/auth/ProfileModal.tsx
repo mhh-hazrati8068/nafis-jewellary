@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
 import { useAppStore } from "@/store/useAppStore";
-import { Invoice, fetchMyOrders, payInvoice, updateUserProfile, deleteMyOrder } from "@/lib/api";
+import { Invoice, fetchMyOrders, payInvoice, updateUserProfile, deleteMyOrder, isAuthRequiredError } from "@/lib/api";
+import { isValidToken } from "@/lib/adminAuth";
 import IranLocationSelector from "@/components/ui/IranLocationSelector";
 import JalaliDatePicker from "@/components/ui/JalaliDatePicker";
-import { OfficialReceiptIcon, CreditCardPayIcon, UserAvatarIcon } from "@/components/icons/JewelryIcons";
+import { OfficialReceiptIcon, CreditCardPayIcon } from "@/components/icons/JewelryIcons";
 
 function ProfileModalContent() {
-  const { setProfileModalOpen, user, token, logout, language, refreshProfile, setActiveReceiptInvoice } = useAppStore();
+  const { setProfileModalOpen, setAuthModalOpen, user, token, isAdmin, logout, language, refreshProfile, setActiveReceiptInvoice } = useAppStore();
 
   const [activeTab, setActiveTab] = useState<"profile" | "orders">("profile");
   const [firstName, setFirstName] = useState(user?.firstName || "");
@@ -21,41 +23,52 @@ function ProfileModalContent() {
   const [orders, setOrders] = useState<Invoice[]>([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [msg, setMsg] = useState<string | null>(null);
+  const [statusMsg, setStatusMsg] = useState<{ text: string; isError: boolean } | null>(null);
 
-  useEffect(() => {
-    if (user) {
-      if (user.firstName) setFirstName(user.firstName);
-      if (user.lastName) setLastName(user.lastName);
-      if (user.province) setProvince(user.province);
-      if (user.city) setCity(user.city);
-      if (user.birthDate) setBirthDate(user.birthDate);
-      if (user.address) setAddress(user.address);
-      if (user.postalCode) setPostalCode(user.postalCode);
+  const requireValidSession = useCallback(() => {
+    const activeToken = token || (typeof window !== "undefined" ? localStorage.getItem("nafis_token") : null);
+    if (!isValidToken(activeToken)) {
+      logout();
+      setProfileModalOpen(false);
+      setAuthModalOpen(true);
+      return false;
     }
-  }, [user]);
+    return true;
+  }, [token, logout, setProfileModalOpen, setAuthModalOpen]);
 
   const loadOrders = useCallback(async () => {
-    if (!token) return;
+    if (!requireValidSession()) return;
     setIsLoadingOrders(true);
     try {
       const data = await fetchMyOrders(token);
       setOrders(data);
     } catch (err) {
+      if (isAuthRequiredError(err)) {
+        logout();
+        setProfileModalOpen(false);
+        setAuthModalOpen(true);
+        return;
+      }
       console.error("Failed to load orders:", err);
     } finally {
       setIsLoadingOrders(false);
     }
-  }, [token]);
+  }, [token, requireValidSession, logout, setProfileModalOpen, setAuthModalOpen]);
 
   useEffect(() => {
     let ignore = false;
-    if (token && activeTab === "orders") {
+    if (activeTab === "orders" && !isAdmin && requireValidSession()) {
       fetchMyOrders(token)
         .then((data) => {
           if (!ignore) setOrders(data);
         })
         .catch((err) => {
+          if (isAuthRequiredError(err)) {
+            logout();
+            setProfileModalOpen(false);
+            setAuthModalOpen(true);
+            return;
+          }
           console.error("Failed to load orders:", err);
         })
         .finally(() => {
@@ -65,12 +78,22 @@ function ProfileModalContent() {
     return () => {
       ignore = true;
     };
-  }, [token, activeTab]);
+  }, [token, activeTab, isAdmin, requireValidSession, logout, setProfileModalOpen, setAuthModalOpen]);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isAdmin) {
+      setStatusMsg({
+        text: language === "fa"
+          ? "حساب مدیر کل دارای پروفایل خرید مشتری نیست. برای ثبت/ویرایش پروفایل مشتری، با شماره موبایل وارد شوید."
+          : "Admin account does not have a customer profile. Sign in with a customer phone number.",
+        isError: true,
+      });
+      return;
+    }
+    if (!requireValidSession()) return;
     setIsSaving(true);
-    setMsg(null);
+    setStatusMsg(null);
     try {
       await updateUserProfile({ 
         firstName, 
@@ -82,26 +105,43 @@ function ProfileModalContent() {
         postalCode 
       }, token);
       await refreshProfile();
-      setMsg(language === "fa" ? "پروفایل با موفقیت بروزرسانی شد" : language === "ar" ? "تم تحديث الملف الشخصي بنجاح" : "Profile updated successfully");
+      setStatusMsg({
+        text: language === "fa" ? "پروفایل با موفقیت بروزرسانی شد" : language === "ar" ? "تم تحديث الملف الشخصي بنجاح" : "Profile updated successfully",
+        isError: false,
+      });
     } catch (err: unknown) {
-      const errorText = err instanceof Error ? err.message : "خطا در بروزرسانی";
-      setMsg(errorText);
+      if (isAuthRequiredError(err)) {
+        logout();
+        setProfileModalOpen(false);
+        setAuthModalOpen(true);
+        return;
+      }
+      const errorText = err instanceof Error ? err.message : "خطا در بروزرسانی پروفایل";
+      setStatusMsg({ text: errorText, isError: true });
     } finally {
       setIsSaving(false);
     }
   };
 
   const handlePay = async (invoiceId: number) => {
+    if (!requireValidSession()) return;
     try {
       await payInvoice(invoiceId, token);
       loadOrders();
     } catch (err: unknown) {
+      if (isAuthRequiredError(err)) {
+        logout();
+        setProfileModalOpen(false);
+        setAuthModalOpen(true);
+        return;
+      }
       const errorText = err instanceof Error ? err.message : "خطا در پرداخت";
       alert(errorText);
     }
   };
 
   const handleDeleteOrder = async (invoiceId: number) => {
+    if (!requireValidSession()) return;
     const confirmMsg = language === "fa" 
       ? "آیا از لغو و حذف این سفارش اطمینان دارید؟" 
       : language === "ar" 
@@ -113,13 +153,19 @@ function ProfileModalContent() {
       await deleteMyOrder(invoiceId, token);
       await loadOrders();
     } catch (err: unknown) {
+      if (isAuthRequiredError(err)) {
+        logout();
+        setProfileModalOpen(false);
+        setAuthModalOpen(true);
+        return;
+      }
       const errorText = err instanceof Error ? err.message : "خطا در لغو سفارش";
       alert(errorText);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-[170] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
       <div className="relative w-full max-w-xl max-h-[90vh] bg-white dark:bg-[#FAF9F5] border border-[#C4852B]/30 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
         
         {/* Header */}
@@ -158,7 +204,7 @@ function ProfileModalContent() {
           <button
             onClick={() => {
               setActiveTab("orders");
-              if (orders.length === 0) setIsLoadingOrders(true);
+              if (!isAdmin && orders.length === 0) setIsLoadingOrders(true);
             }}
             className={`flex-1 py-3 text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer ${
               activeTab === "orders" 
@@ -174,9 +220,31 @@ function ProfileModalContent() {
         <div className="p-6 overflow-y-auto flex-1">
           {activeTab === "profile" ? (
             <form onSubmit={handleUpdateProfile} className="space-y-4">
-              {msg && (
-                <div className="p-3 bg-green-50 border border-green-200 text-green-800 text-xs rounded-lg font-medium">
-                  {msg}
+              {isAdmin && (
+                <div className="p-3.5 bg-amber-50 border border-amber-200 text-amber-900 text-xs rounded-xl flex items-center justify-between gap-3">
+                  <span>
+                    {language === "fa"
+                      ? "شما با حساب مدیریت وارد شده‌اید؛ پروفایل و ثبت سفارش مربوط به حساب مشتریان است."
+                      : "Signed in as Admin. Customer profile updates require a customer mobile account."}
+                  </span>
+                  <Link
+                    href="/admin"
+                    onClick={() => setProfileModalOpen(false)}
+                    className="px-3 py-1.5 rounded-lg bg-[#660000] text-white font-bold shrink-0 hover:bg-[#7D0000] transition-colors"
+                  >
+                    {language === "fa" ? "پنل مدیریت" : "Admin Panel"}
+                  </Link>
+                </div>
+              )}
+              {statusMsg && (
+                <div
+                  className={`p-3 border text-xs rounded-lg font-medium ${
+                    statusMsg.isError
+                      ? "bg-red-50 border-red-200 text-red-700"
+                      : "bg-green-50 border-green-200 text-green-800"
+                  }`}
+                >
+                  {statusMsg.text}
                 </div>
               )}
 

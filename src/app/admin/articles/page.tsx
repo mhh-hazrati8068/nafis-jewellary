@@ -264,8 +264,7 @@ export default function AdminArticlesPage() {
                             alt={art.title}
                             className={styles.thumb}
                             onError={(e) => {
-                              (e.target as HTMLImageElement).src =
-                                "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=100&q=80";
+                              (e.target as HTMLImageElement).src = "/images/hero-silver-bg.jpg";
                             }}
                           />
                           <div className={styles.articleInfo}>

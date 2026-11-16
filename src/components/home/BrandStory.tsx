@@ -18,19 +18,21 @@ export default function BrandStory() {
           
           {/* Editorial Visual Frame */}
           <TiltCard className="relative group">
-            <div className="relative aspect-[4/3] sm:aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-[#C4852B]/30 luxury-card-hover">
+            <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-lg border border-[#C4852B]/25 bg-[#F4F1EA]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img 
                 src="/images/brand_atelier_story.jpg" 
                 alt="کارگاه تخصصی نقره‌سازی و گوهرنشانی عقیق اصیل و دُرّ نجف - زیورآلات نفیسه عبادی" 
-                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-103"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
             </div>
 
-            {/* Floating Luxury Stamp */}
-            <div className="absolute -bottom-6 -right-6 md:bottom-8 md:-right-8 p-6 bg-[#660000] text-white rounded-2xl shadow-2xl max-w-[200px] border border-[#C4852B]/40 hidden sm:block animate-pulse">
-              <span className="font-mono text-2xl font-bold text-[#C4852B] block mb-1">925 SILVER</span>
-              <p className="text-[10px] uppercase tracking-widest leading-tight">Handcrafted Artisan Certificate</p>
+            {/* Minimal Frosted Heritage Stamp */}
+            <div className="hidden sm:block absolute bottom-5 end-5 px-5 py-3 bg-white/85 backdrop-blur-md text-[#1A1816] rounded-2xl shadow-sm border border-[#C4852B]/30">
+              <span className="font-mono text-sm font-bold text-[#660000] block">925 STERLING SILVER</span>
+              <p className="text-[10px] text-zinc-600 uppercase tracking-widest">Handcrafted Artisan Heritage</p>
             </div>
           </TiltCard>
 
@@ -44,15 +46,17 @@ export default function BrandStory() {
               {t.story.title}
             </h2>
 
-            <div className="space-y-6 text-xs sm:text-sm text-[#626667] leading-relaxed mb-10">
+            <div className="space-y-4 text-xs sm:text-sm text-[#626667] leading-loose mb-10">
               <p>{t.story.p1}</p>
               <p>{t.story.p2}</p>
+              {t.story.p3 && <p>{t.story.p3}</p>}
+              {t.story.p4 && <p>{t.story.p4}</p>}
             </div>
 
             {/* Quote Box */}
-            <div className="p-6 rounded-2xl bg-[#F4F1EA] border-l-4 border-[#660000] mb-10 shadow-sm">
-              <p className="font-serif italic text-sm text-zinc-900 mb-2">
-                &ldquo;{t.story.quote}&rdquo;
+            <div className="p-6 rounded-2xl bg-[#F4F1EA] border-s-4 border-[#660000] mb-10 shadow-sm">
+              <p className="text-sm font-semibold text-zinc-900 leading-relaxed mb-2">
+                &laquo;{t.story.quote}&raquo;
               </p>
               <span className="text-[10px] font-mono uppercase tracking-widest text-[#660000] font-bold block">
                 — {t.story.quoteAuthor}

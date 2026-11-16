@@ -10,7 +10,7 @@ import {
   getProductDescription 
 } from "@/lib/dynamicTranslator";
 import { SparkleStarIcon } from "@/components/icons/JewelryIcons";
-import ARProductViewerModal from "@/components/product/ARProductViewerModal";
+import WishlistButton from "@/components/product/WishlistButton";
 
 interface ProductDetailViewProps {
   productId: number;
@@ -23,9 +23,7 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
 
   useEffect(() => {
     const existing = getProductById(productId);
-    if (existing) {
-      setLoadedProduct(existing);
-    } else {
+    if (!existing) {
       fetchSingleProduct(productId).then((p) => {
         if (p) setLoadedProduct(p);
       });
@@ -35,7 +33,6 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
   const product = loadedProduct || getProductById(productId);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [qty, setQty] = useState(1);
-  const [isAROpen, setIsAROpen] = useState(false);
 
   const activeImg = selectedImage || product?.image;
   const isWishlisted = product ? wishlist.includes(product.id) : false;
@@ -118,28 +115,6 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
                 ))}
               </div>
             )}
-            {/* 3D & AR Virtual Try-On Studio Trigger */}
-            <button
-              onClick={() => setIsAROpen(true)}
-              className="mt-3 w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#1A1816] via-[#2A1F18] to-[#1A1816] text-[#E5A84B] border border-[#C4852B]/60 hover:border-[#E5A84B] flex items-center justify-between gap-3 shadow-md hover:shadow-xl transition-all duration-300 group cursor-pointer"
-            >
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-[#C4852B]/20 flex items-center justify-center text-[#E5A84B] group-hover:scale-110 transition-transform">
-                  <SparkleStarIcon className="w-4 h-4 text-[#E5A84B]" />
-                </div>
-                <div className="text-start">
-                  <span className="text-xs font-bold block text-white group-hover:text-[#E5A84B] transition-colors">
-                    {language === 'fa' ? 'شبیه‌ساز سه‌بعدی و تست روی دست (AR هوش مصنوعی)' : '3D Studio & Live AR Virtual Try-On'}
-                  </span>
-                  <span className="text-[10px] text-zinc-400">
-                    {language === 'fa' ? 'امکان شخصی‌سازی نگین به دُرّ نجف و عقیق یمنی' : 'Customize with natural Agate & Durr-e Najaf'}
-                  </span>
-                </div>
-              </div>
-              <span className="text-[9px] bg-[#660000] text-white px-2.5 py-1 rounded-full font-mono uppercase font-bold tracking-wider shrink-0">
-                LIVE AR 3D
-              </span>
-            </button>
           </div>
 
           <div className="flex flex-col justify-between">
@@ -179,7 +154,7 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
                 {description}
               </p>
 
-              <div className="p-6 rounded-2xl bg-[#F4F1EA] border border-[#C4852B]/30 mb-8 grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
+              <div className="p-6 rounded-2xl bg-[#F4F1EA] border border-[#C4852B]/30 mb-6 grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
                 <div>
                   <span className="text-[10px] text-[#626667] uppercase tracking-widest block font-mono mb-1 font-bold">
                     {getMaterialLabel()}
@@ -206,7 +181,99 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
                     </span>
                   </div>
                 )}
+                {product.hasRhodiumPlating && (
+                  <div>
+                    <span className="text-[10px] text-[#626667] uppercase tracking-widest block font-mono mb-1 font-bold">
+                      {language === 'fa' ? 'پوشش و آبکاری' : language === 'ar' ? 'الطلاء' : 'Surface Finish'}
+                    </span>
+                    <span className="font-semibold text-[#660000]">
+                      {language === 'fa' ? 'دارای آبکاری رادیوم' : language === 'ar' ? 'مطلي بالروديوم' : 'Rhodium Plated'}
+                    </span>
+                  </div>
+                )}
               </div>
+
+              {/* Dedicated Per-Product Gemstone Specifications */}
+              {(product.stoneName ||
+                product.stoneSpecs?.color ||
+                product.stoneSpecs?.naturalStatus ||
+                product.stoneSpecs?.clarity ||
+                product.stoneSpecs?.pattern ||
+                product.stoneSpecs?.origin ||
+                product.stoneSpecs?.uniqueFeatures) && (
+                <div className="p-5 sm:p-6 rounded-2xl bg-white border border-[#C4852B]/35 shadow-xs mb-8">
+                  <h2 className="text-xs font-bold text-[#660000] mb-4 flex items-center gap-2">
+                    <SparkleStarIcon className="w-4 h-4 text-[#C4852B]" />
+                    <span>
+                      {language === 'fa'
+                        ? 'مشخصات اختصاصی سنگ این اثر'
+                        : language === 'ar'
+                        ? 'مواصفات الحجر الخاصة بهذه القطعة'
+                        : 'Gemstone Specifications'}
+                    </span>
+                  </h2>
+                  <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
+                    {(product.stoneSpecs?.name || product.stoneName) && (
+                      <div className="p-3 rounded-xl bg-[#FAF9F5] border border-zinc-200/70">
+                        <dt className="text-[10px] text-[#626667] font-bold mb-1">
+                          {language === 'fa' ? 'نام سنگ' : language === 'ar' ? 'اسم الحجر' : 'Stone Name'}
+                        </dt>
+                        <dd className="font-semibold text-zinc-950">
+                          {product.stoneSpecs?.name || product.stoneName}
+                        </dd>
+                      </div>
+                    )}
+                    {product.stoneSpecs?.color && (
+                      <div className="p-3 rounded-xl bg-[#FAF9F5] border border-zinc-200/70">
+                        <dt className="text-[10px] text-[#626667] font-bold mb-1">
+                          {language === 'fa' ? 'رنگ و طیف رنگی' : language === 'ar' ? 'اللون والطيف اللوني' : 'Color & Tone'}
+                        </dt>
+                        <dd className="font-semibold text-zinc-950">{product.stoneSpecs.color}</dd>
+                      </div>
+                    )}
+                    {product.stoneSpecs?.naturalStatus && (
+                      <div className="p-3 rounded-xl bg-[#FAF9F5] border border-zinc-200/70">
+                        <dt className="text-[10px] text-[#626667] font-bold mb-1">
+                          {language === 'fa' ? 'اصالت و ساختار سنگ' : language === 'ar' ? 'طبيعة الحجر' : 'Natural / Origin Status'}
+                        </dt>
+                        <dd className="font-semibold text-zinc-950">{product.stoneSpecs.naturalStatus}</dd>
+                      </div>
+                    )}
+                    {product.stoneSpecs?.clarity && (
+                      <div className="p-3 rounded-xl bg-[#FAF9F5] border border-zinc-200/70">
+                        <dt className="text-[10px] text-[#626667] font-bold mb-1">
+                          {language === 'fa' ? 'ویژگی‌های ظاهری و شفافیت' : language === 'ar' ? 'المظهر والشفافية' : 'Appearance & Clarity'}
+                        </dt>
+                        <dd className="font-semibold text-zinc-950">{product.stoneSpecs.clarity}</dd>
+                      </div>
+                    )}
+                    {product.stoneSpecs?.pattern && (
+                      <div className="p-3 rounded-xl bg-[#FAF9F5] border border-zinc-200/70">
+                        <dt className="text-[10px] text-[#626667] font-bold mb-1">
+                          {language === 'fa' ? 'طرح، نقش و رگه‌های شاخص' : language === 'ar' ? 'النقش والعروق المميزة' : 'Pattern & Inclusions'}
+                        </dt>
+                        <dd className="font-semibold text-zinc-950">{product.stoneSpecs.pattern}</dd>
+                      </div>
+                    )}
+                    {product.stoneSpecs?.origin && (
+                      <div className="p-3 rounded-xl bg-[#FAF9F5] border border-zinc-200/70">
+                        <dt className="text-[10px] text-[#626667] font-bold mb-1">
+                          {language === 'fa' ? 'محل خاستگاه' : language === 'ar' ? 'الموطن الأصلي' : 'Origin'}
+                        </dt>
+                        <dd className="font-semibold text-zinc-950">{product.stoneSpecs.origin}</dd>
+                      </div>
+                    )}
+                    {product.stoneSpecs?.uniqueFeatures && (
+                      <div className="sm:col-span-2 p-3 rounded-xl bg-[#FAF9F5] border border-zinc-200/70">
+                        <dt className="text-[10px] text-[#626667] font-bold mb-1">
+                          {language === 'fa' ? 'ویژگی‌های اختصاصی و متمایز سنگ' : language === 'ar' ? 'المزايا الخاصة والفريدة' : 'Distinctive Features'}
+                        </dt>
+                        <dd className="font-semibold text-zinc-950 leading-relaxed">{product.stoneSpecs.uniqueFeatures}</dd>
+                      </div>
+                    )}
+                  </dl>
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -244,27 +311,11 @@ export default function ProductDetailView({ productId }: ProductDetailViewProps)
                 {t.products.addToCart}
               </button>
 
-              <button
-                onClick={() => setIsAROpen(true)}
-                className="w-full sm:w-auto py-4 px-6 border-2 border-[#C4852B] text-[#A06314] hover:bg-[#C4852B]/10 font-bold text-xs uppercase tracking-[0.15em] rounded-full transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
-              >
-                <SparkleStarIcon className="w-4 h-4 text-[#C4852B]" />
-                <span>{language === 'fa' ? 'تست AR روی دست' : 'AR Try-On'}</span>
-              </button>
+              <WishlistButton productId={product.id} variant="button" />
             </div>
           </div>
         </div>
       </div>
-
-      {/* Interactive 3D & Live Camera AR Virtual Try-On Modal */}
-      {isAROpen && (
-        <ARProductViewerModal 
-          isOpen={isAROpen} 
-          onClose={() => setIsAROpen(false)} 
-          productTitle={name}
-          initialProduct={product}
-        />
-      )}
     </div>
   );
 }

@@ -6,8 +6,6 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import BrandLogo from "@/components/layout/BrandLogo";
 import LanguageDropdown from "@/components/layout/LanguageDropdown";
 import CollectionsMegaMenu from "@/components/layout/CollectionsMegaMenu";
-import AuthModal from "@/components/auth/AuthModal";
-import ProfileModal from "@/components/auth/ProfileModal";
 import { 
   RingIcon, 
   NecklaceIcon, 
@@ -58,24 +56,24 @@ export default function Header() {
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [loadUserFromStorage, fetchProducts, fetchSilverPrice]);
+  }, [loadUserFromStorage, fetchCategories, fetchProducts, fetchSilverPrice]);
 
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
     <>
-      <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${
-        isScrolled 
-          ? "bg-[#FFFFFF]/98 dark:bg-[#FAF9F5]/98 backdrop-blur-lg shadow-[0_4px_25px_rgba(0,0,0,0.07)] border-b border-[#C4852B]/30" 
-          : "bg-[#FFFFFF]/95 dark:bg-[#FAF9F5]/95 backdrop-blur-md shadow-[0_2px_15px_rgba(0,0,0,0.02)] border-b border-[#C4852B]/20"
+      <header className={`w-full transition-colors duration-300 ${
+        isScrolled
+          ? "bg-white/30"
+          : "bg-transparent"
       }`}>
-        <div className="container mx-auto px-4 sm:px-6 md:px-8 h-20 flex items-center justify-between gap-4">
+        <div className="container mx-auto px-3 sm:px-6 md:px-8 h-[72px] flex items-center justify-between gap-2 sm:gap-4">
           
           {/* Mobile Navigation Toggle */}
-          <div className="flex items-center md:hidden">
+          <div className="flex items-center md:hidden shrink-0">
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-zinc-900 hover:text-[#C4852B] transition-colors rounded-lg hover:bg-zinc-100 cursor-pointer"
+              className="p-1.5 sm:p-2 text-zinc-900 hover:text-[#C4852B] transition-colors rounded-lg hover:bg-zinc-100 cursor-pointer"
               aria-label="Toggle Navigation Menu"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
@@ -86,18 +84,20 @@ export default function Header() {
 
           {/* Brand Logo & Brand Name:
               - Desktop: Start (Right in FA/AR, Left in EN)
-              - Mobile: Centered in viewport */}
-          <div className="flex-1 md:flex-initial flex justify-center md:justify-start">
-            <Link href="/" className="flex items-center gap-3 group py-1">
-              <BrandLogo size="md" showSubline={false} />
-              <div className="hidden sm:flex flex-col items-start text-start justify-center">
+              - Mobile: Centered with readable English & Persian titles beside emblem */}
+          <div className="flex-1 md:flex-initial flex justify-center md:justify-start min-w-0">
+            <Link href="/" className="flex items-center gap-2 sm:gap-3 group py-1 max-w-full">
+              <div className="shrink-0 w-9 h-9 sm:w-[50px] sm:h-[50px] flex items-center justify-center [&>div]:w-full [&>div]:h-full [&>div>div]:!w-full [&>div>div]:!h-full">
+                <BrandLogo size="md" showSubline={false} />
+              </div>
+              <div className="flex flex-col items-start text-start justify-center min-w-0">
                 {/* English Brand Name on TOP */}
-                <span className="font-brand-en font-black uppercase text-base sm:text-lg md:text-xl text-zinc-950 group-hover:text-[#C4852B] transition-colors whitespace-nowrap leading-tight tracking-[0.14em]">
+                <span className="font-brand-en font-black uppercase text-[11px] min-[380px]:text-xs sm:text-lg md:text-xl text-zinc-950 group-hover:text-[#C4852B] transition-colors whitespace-nowrap leading-tight tracking-[0.06em] sm:tracking-[0.14em]">
                   NAFISE EBADI
                 </span>
 
                 {/* Persian/Subtitle on BOTTOM */}
-                <span className="font-kalameh font-bold text-xs sm:text-sm text-[#660000] whitespace-nowrap leading-tight pt-0.5">
+                <span className="font-kalameh font-bold text-[10px] min-[380px]:text-[11px] sm:text-sm text-[#660000] whitespace-nowrap leading-tight pt-0.5">
                   {language === 'ar' 
                     ? 'مجوهرات نفيسة عبادي للفضة' 
                     : language === 'en' 
@@ -144,13 +144,13 @@ export default function Header() {
           <div className="hidden md:flex flex-1" />
 
           {/* Header Actions */}
-          <div className="flex items-center justify-end gap-2 sm:gap-3">
+          <div className="flex items-center justify-end gap-1 sm:gap-3 shrink-0">
             
             {/* Search Trigger */}
             <button 
               onClick={() => toggleSearch(true)}
               aria-label="Search" 
-              className="p-2 text-zinc-800 hover:text-[#C4852B] hover:bg-zinc-100 dark:hover:bg-[#F4F1EA] rounded-full transition-colors cursor-pointer"
+              className="p-1.5 sm:p-2 text-zinc-800 hover:text-[#C4852B] hover:bg-zinc-100 dark:hover:bg-[#F4F1EA] rounded-full transition-colors cursor-pointer"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
@@ -231,10 +231,6 @@ export default function Header() {
           </div>
         </div>
       </header>
-
-      {/* Auth Modal & Profile Modal */}
-      <AuthModal />
-      <ProfileModal />
 
       {/* Mobile Menu with Smooth Slide In & Out Animations */}
       <div 

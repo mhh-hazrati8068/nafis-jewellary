@@ -151,30 +151,25 @@ const jsonLd = {
       "url": "https://nafiseebadijewellery.com",
       "logo": "https://nafiseebadijewellery.com/logo.jpg",
       "image": "https://nafiseebadijewellery.com/images/brand_atelier_story.jpg",
-      "description": "فروشگاه تخصصی زیورآلات دست‌ساز نقره استرلینگ ۹۲۵ و سنگ‌های طبیعی اصیل عقیق معدنی و دُرّ نجف شفاف همراه با شناسنامه معتبر.",
+      "description": "فروشگاه تخصصی زیورآلات دست‌ساز نقره استرلینگ ۹۲۵، سنگ‌های قرآنی و سنگ‌های طبیعی عقیق و دُرّ نجف همراه با فاکتور رسمی و شناسنامه معتبر.",
+      "telephone": "+98-21-46020254",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "شهرک راه‌آهن، بلوار شهیدان زینعلی، بلوار امیرکبیر، پاساژ مالمون ۱، همکف، پلاک ۴۶، واحد B8",
+        "addressLocality": "Tehran",
+        "addressCountry": "IR"
+      },
       "priceRange": "$$",
       "currenciesAccepted": "IRT, IRR",
       "paymentAccepted": "Online Payment, Debit Card",
-      "telephone": "+98-21-22008800",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "خیابان فرشته، برج رز، طبقه همکف",
-        "addressLocality": "تهران",
-        "addressRegion": "تهران",
-        "addressCountry": "IR"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": "35.7905",
-        "longitude": "51.4255"
-      },
-      "openingHoursSpecification": [
-        {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
-          "opens": "09:30",
-          "closes": "21:30"
-        }
+      "sameAs": [
+        "https://www.instagram.com/nafisebadi.jewelry/",
+        "https://t.me/nafisebadijewellery",
+        "https://ble.ir/nafisebadijewellry",
+        "https://eitaa.com/nafisebadijewellry",
+        "https://rubika.ir/nafisebadijewellery",
+        "https://splus.ir/nafisebadijewellry",
+        "https://emadaseman.ir/"
       ]
     },
     {

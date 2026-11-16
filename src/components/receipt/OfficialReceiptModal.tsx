@@ -6,6 +6,7 @@ import { Invoice, InvoiceItem } from "@/lib/api";
 import { numberToPersianWords, toPersianDigits } from "@/lib/numberToPersianWords";
 import BrandLogo from "@/components/layout/BrandLogo";
 import { OfficialReceiptIcon, PrinterIcon, SparkleStarIcon } from "@/components/icons/JewelryIcons";
+import { CONTACT_CONFIG } from "@/lib/contactConfig";
 
 interface Props {
   invoice?: Invoice | null;
@@ -74,7 +75,7 @@ export default function OfficialReceiptModal({ invoice: propInvoice, isOpen: pro
         const cached = savedMap[invoice.id];
         if (cached?.invoice?.items?.length) return cached.invoice.items;
         if (cached?.detailedItems?.length) {
-          return cached.detailedItems.map((it: any) => ({
+          return cached.detailedItems.map((it: { id: number; name: string; price: number; quantity: number }) => ({
             id: it.id,
             quantity: it.quantity,
             calculatedPriceToman: it.price * it.quantity,
@@ -198,8 +199,8 @@ ${itemsSummary ? `\nاقلام سفارش:\n${itemsSummary}\n` : ""}
 مبلغ کل قابل پرداخت: ${toPersianDigits(Number(totalAmount).toLocaleString())} تومان (${totalWords})
 نرخ نقره روز: ${toPersianDigits(Number(silverPricePerGramToman).toLocaleString())} تومان
 
-📞 تلفن: ۰۲۱۴۶۰۲۰۲۵۴ | ۰۹۹۹۳۲۳۱۳۱۱
-📍 نشانی: شهرک راه آهن، بلوار امیرکبیر، پاساژ مالمون، پلاک ۴۶
+📞 تلفن: ${CONTACT_CONFIG.landlineDisplay} | ${CONTACT_CONFIG.mobileDisplay}
+📍 نشانی: ${CONTACT_CONFIG.addressFa}
 https://nafiseebadijewellery.com`;
 
     if (navigator.share) {
@@ -453,11 +454,11 @@ https://nafiseebadijewellery.com`;
                   <span className="font-mono text-zinc-600 text-[10px]">
                     nafisebadi60@gmail.com
                   </span>
-                  <span className="font-mono text-zinc-900 font-bold text-[10px] sm:text-[11px]">
-                    02146020254 | 09993231311
+                  <span className="font-mono text-zinc-900 font-bold text-[10px] sm:text-[11px]" dir="ltr">
+                    {CONTACT_CONFIG.landlineDisplay} | {CONTACT_CONFIG.mobileDisplay}
                   </span>
                   <p className="text-[9px] sm:text-[10px] text-zinc-500 text-right leading-tight max-w-[280px] sm:max-w-[340px] pt-0.5">
-                    شهرک راه آهن، بلوار شهیدان زینعلی، بلوار امیرکبیر، پاساژ تجاری مالمون، همکف، پلاک 46
+                    {CONTACT_CONFIG.addressFa}
                   </p>
                 </div>
               </div>

@@ -11,11 +11,11 @@ export default function Home() {
   return (
     <>
       <HeroSection />
-      <FeaturesRow />
       <CategoryGrid />
       <ProductCarousel />
-      <PackagingShowcase />
+      <FeaturesRow />
       <SocialCampaignSection />
+      <PackagingShowcase />
       <BrandStory />
       <HomeContactSection />
     </>

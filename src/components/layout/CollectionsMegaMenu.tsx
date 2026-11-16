@@ -1,22 +1,18 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAppStore } from "@/store/useAppStore";
+import { mapBackendToFrontend } from "@/lib/productMapper";
 import { getProductName, getProductMaterial, translateDynamicText } from "@/lib/dynamicTranslator";
 import { getCategorySvgIcon, SparkleStarIcon, SilverShieldIcon } from "@/components/icons/JewelryIcons";
 
 export default function CollectionsMegaMenu() {
-  const { categories, products, fetchCategories, fetchProducts, language, t } = useAppStore();
+  const { categories, products, backendProducts, language, t } = useAppStore();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    if (!categories || categories.length === 0) fetchCategories();
-    if (!products || products.length === 0) fetchProducts();
-  }, [categories, products, fetchCategories, fetchProducts]);
 
   const handleMouseEnter = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -30,9 +26,7 @@ export default function CollectionsMegaMenu() {
   };
 
   // Helper to get category link
-  const getCategoryHref = (_name: string, id: number) => {
-    return `/shop?categoryId=${id}`;
-  };
+  const getCategoryHref = (id: number) => `/shop?categoryId=${id}`;
 
   // Dynamic Categories from Backend API
   const apiCategories = categories && categories.length > 0
@@ -44,21 +38,31 @@ export default function CollectionsMegaMenu() {
         { id: 4, name: "گوشواره", description: "گوشواره‌های دست‌ساز هنری" }
       ];
 
-  const safeIndex = Math.min(selectedIndex, apiCategories.length - 1);
+  const safeIndex = Math.min(selectedIndex, Math.max(0, apiCategories.length - 1));
   const activeCategory = apiCategories[safeIndex] || apiCategories[0];
 
-  // Dynamically find a real product from the active API category
-  const sampleProduct = products.find((p) => {
+  // Always prefer full cached backend catalog so hovering works even when viewing an empty category page
+  const catalogProducts = useMemo(() => {
+    if (backendProducts && backendProducts.length > 0) {
+      return backendProducts.map(mapBackendToFrontend);
+    }
+    return products;
+  }, [backendProducts, products]);
+
+  const sampleProduct = useMemo(() => {
     const catName = (activeCategory.name || "").toLowerCase();
     return (
-      (p.categoryFa && p.categoryFa.toLowerCase().includes(catName)) ||
-      (p.nameFa && p.nameFa.toLowerCase().includes(catName)) ||
-      (catName.includes("انگشتر") && p.category === "rings") ||
-      (catName.includes("گردنبند") && p.category === "necklaces") ||
-      (catName.includes("دستبند") && p.category === "bracelets") ||
-      (catName.includes("گوشواره") && p.category === "earrings")
+      catalogProducts.find((p) => (
+        p.categoryId === activeCategory.id ||
+        (p.categoryFa && p.categoryFa.toLowerCase().includes(catName)) ||
+        (p.nameFa && p.nameFa.toLowerCase().includes(catName)) ||
+        (catName.includes("انگشتر") && p.category === "rings") ||
+        (catName.includes("گردنبند") && p.category === "necklaces") ||
+        (catName.includes("دستبند") && p.category === "bracelets") ||
+        (catName.includes("گوشواره") && p.category === "earrings")
+      )) || catalogProducts[0]
     );
-  }) || products[0];
+  }, [activeCategory, catalogProducts]);
 
   const getLocalizedCategoryName = (name: string) => {
     if (language === "fa") return name;
@@ -70,7 +74,7 @@ export default function CollectionsMegaMenu() {
       return desc || `مجموعه زیورآلات نقره ۹۲۵ دست‌ساز در دسته‌بندی ${name || ""}`;
     }
     if (language === "ar") {
-      return `مجموعة حصرية من الفضة الاسترليني 925 المصوغة يدوياً`;
+      return "مجموعة حصرية من الفضة الاسترليني 925 المصوغة يدوياً";
     }
     return `Exclusive handcrafted 925 sterling silver ${name || "creations"}`;
   };
@@ -84,6 +88,7 @@ export default function CollectionsMegaMenu() {
       {/* Nav Link Trigger */}
       <Link
         href="/collections"
+        onClick={() => setIsOpen(false)}
         className={`flex items-center gap-1.5 py-2 font-semibold text-[13px] transition-colors relative group cursor-pointer ${
           isOpen ? "text-[#C4852B]" : "text-zinc-800 hover:text-[#C4852B]"
         }`}
@@ -97,36 +102,35 @@ export default function CollectionsMegaMenu() {
           viewBox="0 0 24 24"
           strokeWidth={2}
           stroke="currentColor"
-          className={`w-3.5 h-3.5 transition-transform duration-250 ${
+          className={`w-3.5 h-3.5 transition-transform duration-200 ${
             isOpen ? "rotate-180 text-[#C4852B]" : "text-zinc-500 group-hover:text-[#C4852B]"
           }`}
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
         </svg>
 
-        {/* Hover underline animation */}
         <span
           className={`absolute bottom-0 left-0 h-0.5 bg-[#C4852B] transition-all duration-300 ${
             isOpen ? "w-full" : "w-0 group-hover:w-full"
           }`}
-        ></span>
+        />
       </Link>
 
       {/* Floating Mega Menu Dropdown */}
       <div
-        className={`fixed md:absolute top-full start-1/2 -translate-x-1/2 md:start-0 md:translate-x-0 rtl:md:start-auto rtl:md:right-[-120px] pt-3 z-50 transition-all duration-300 ${
+        className={`fixed md:absolute top-full start-1/2 -translate-x-1/2 md:start-0 md:translate-x-0 rtl:md:translate-x-0 pt-3 z-50 transition-all duration-200 ${
           isOpen
             ? "opacity-100 translate-y-0 pointer-events-auto visible"
-            : "opacity-0 -translate-y-2 pointer-events-none invisible"
+            : "opacity-0 -translate-y-1.5 pointer-events-none invisible"
         }`}
       >
-        <div className="w-[740px] lg:w-[820px] max-w-[94vw] bg-white/98 dark:bg-[#FAF9F5]/98 backdrop-blur-xl rounded-3xl p-6 border border-[#C4852B]/35 shadow-[0_20px_60px_rgba(0,0,0,0.14)] grid grid-cols-12 gap-6 overflow-hidden">
-          
+        <div className="w-[min(780px,calc(100vw-2rem))] bg-white/95 backdrop-blur-2xl rounded-3xl p-5 sm:p-6 border border-[#C4852B]/25 shadow-[0_20px_50px_rgba(26,24,22,0.12)] grid grid-cols-12 gap-5 overflow-hidden">
+
           {/* Column 1: Dynamic Categories List from Backend API (7 of 12 cols) */}
-          <div className="col-span-7 flex flex-col justify-between border-e border-[#C4852B]/20 pe-6">
+          <div className="col-span-7 flex flex-col justify-between border-e border-zinc-200/70 pe-5">
             <div>
-              <div className="flex items-center justify-between pb-3 mb-2 border-b border-zinc-100">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#A06314] flex items-center gap-1.5 font-sans">
+              <div className="flex items-center justify-between pb-3 mb-2.5 border-b border-zinc-100">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#9C6518] flex items-center gap-1.5 font-sans">
                   <SparkleStarIcon className="w-3.5 h-3.5 text-[#C4852B]" />
                   <span>
                     {language === "fa"
@@ -145,13 +149,13 @@ export default function CollectionsMegaMenu() {
                 </Link>
               </div>
 
-              {/* Dynamic Categories Interactive List */}
-              <div className="space-y-1.5">
+              {/* Scrollable Categories List */}
+              <div className="space-y-1.5 max-h-[320px] overflow-y-auto overscroll-contain pe-1">
                 {apiCategories.map((cat, idx) => {
-                  const isHovered = selectedIndex === idx;
+                  const isHovered = safeIndex === idx;
                   const catName = getLocalizedCategoryName(cat.name);
                   const catDesc = getLocalizedCategoryDesc(cat.description, cat.name);
-                  const catHref = getCategoryHref(cat.name, cat.id);
+                  const catHref = getCategoryHref(cat.id);
 
                   return (
                     <Link
@@ -159,24 +163,24 @@ export default function CollectionsMegaMenu() {
                       href={catHref}
                       onMouseEnter={() => setSelectedIndex(idx)}
                       onClick={() => setIsOpen(false)}
-                      className={`w-full flex items-center justify-between p-2.5 rounded-2xl transition-all duration-200 text-start group cursor-pointer ${
+                      className={`w-full flex items-center justify-between p-2.5 rounded-2xl transition-colors duration-200 text-start group cursor-pointer ${
                         isHovered
-                          ? "bg-[#C4852B]/12 border border-[#C4852B]/40 shadow-2xs translate-x-1 rtl:-translate-x-1"
-                          : "hover:bg-zinc-100/80 dark:hover:bg-[#F4F1EA] border border-transparent"
+                          ? "bg-[#FAF9F5] border border-[#C4852B]/35 shadow-2xs"
+                          : "hover:bg-[#FAF9F5]/70 border border-transparent"
                       }`}
                     >
-                      <div className="flex items-center gap-3">
-                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border transition-all duration-250 ${
-                          isHovered 
-                            ? "bg-[#C4852B] text-white border-[#C4852B] shadow-sm scale-105" 
-                            : "bg-white dark:bg-[#FAF9F5] text-[#A06314] border-[#C4852B]/25 group-hover:border-[#C4852B]/50"
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border transition-colors duration-200 ${
+                          isHovered
+                            ? "bg-[#660000] text-white border-[#660000]"
+                            : "bg-white text-[#9C6518] border-[#C4852B]/20"
                         }`}>
                           {getCategorySvgIcon(cat.name, cat.id, "w-4.5 h-4.5")}
                         </div>
-                        <div className="flex flex-col">
+                        <div className="flex flex-col min-w-0">
                           <span
-                            className={`font-bold text-[13px] leading-snug transition-colors ${
-                              isHovered ? "text-[#660000] dark:text-[#A06314]" : "text-zinc-900 group-hover:text-[#C4852B]"
+                            className={`font-bold text-[13px] leading-snug transition-colors truncate ${
+                              isHovered ? "text-[#660000]" : "text-zinc-900"
                             }`}
                           >
                             {catName}
@@ -188,8 +192,8 @@ export default function CollectionsMegaMenu() {
                       </div>
 
                       <span
-                        className={`text-xs transition-transform duration-200 shrink-0 ${
-                          isHovered ? "text-[#C4852B] translate-x-1 rtl:-translate-x-1" : "text-zinc-400 group-hover:text-zinc-600"
+                        className={`text-xs transition-colors duration-200 shrink-0 ${
+                          isHovered ? "text-[#660000]" : "text-zinc-400"
                         }`}
                       >
                         {language === "en" ? "→" : "←"}
@@ -201,7 +205,7 @@ export default function CollectionsMegaMenu() {
             </div>
 
             {/* Bottom Quick Links Banner */}
-            <div className="pt-3 mt-2 border-t border-zinc-100 flex items-center justify-between text-[11px]">
+            <div className="pt-3 mt-3 border-t border-zinc-100 flex items-center justify-between text-[11px]">
               <span className="text-zinc-600 font-medium flex items-center gap-1.5">
                 <SilverShieldIcon className="w-3.5 h-3.5 text-[#C4852B]" />
                 <span>
@@ -219,42 +223,35 @@ export default function CollectionsMegaMenu() {
           </div>
 
           {/* Column 2: Dynamic Sample Product from Active API Category (5 of 12 cols) */}
-          <div className="col-span-5 flex flex-col justify-between bg-white dark:bg-[#FAF9F5] p-4 rounded-2xl border border-[#C4852B]/25 shadow-sm">
+          <div className="col-span-5 flex flex-col justify-between bg-[#FAF9F5] p-4 rounded-2xl border border-zinc-200/80">
             {sampleProduct ? (
               <div>
-                {/* Product Badge / Category Tag */}
                 <div className="flex items-center justify-between gap-2 mb-2.5">
                   <span className="px-2.5 py-0.5 rounded-full bg-[#660000]/10 text-[#660000] text-[10px] font-bold tracking-wider">
                     {getLocalizedCategoryName(activeCategory.name)}
                   </span>
-                  <span className="px-2 py-0.5 rounded-full bg-[#C4852B]/15 text-[#A06314] text-[10px] font-bold">
+                  <span className="px-2 py-0.5 rounded-full bg-white border border-[#C4852B]/25 text-[#9C6518] text-[10px] font-bold">
                     {getProductMaterial(sampleProduct, language)}
                   </span>
                 </div>
 
-                {/* Sample Product Image */}
-                <div className="relative w-full h-44 rounded-xl overflow-hidden bg-white border border-zinc-200/80 mb-3 group">
+                <div className="relative w-full aspect-square max-h-44 rounded-xl overflow-hidden bg-white border border-zinc-200/70 p-2.5 mb-3 group">
                   <Image
                     src={sampleProduct.image}
                     alt={getProductName(sampleProduct, language)}
                     fill
-                    sizes="(max-width: 768px) 100vw, 300px"
-                    className="object-contain object-center transition-transform duration-500 group-hover:scale-[1.02]"
+                    sizes="(max-width: 768px) 100vw, 260px"
+                    className="object-contain object-center transition-transform duration-500 group-hover:scale-[1.03]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 pointer-events-none" />
-                  <div className="absolute bottom-2 start-2 end-2 flex justify-between items-end text-white">
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-black/50 backdrop-blur-xs font-mono">
-                      SILVER 925
-                    </span>
-                  </div>
+                  <span className="absolute bottom-2 start-2 text-[9px] font-bold px-2 py-0.5 rounded-full bg-white/85 backdrop-blur-md border border-[#C4852B]/25 text-[#1A1816] font-mono">
+                    SILVER 925
+                  </span>
                 </div>
 
-                {/* Sample Product Title */}
                 <h4 className="font-bold text-xs sm:text-sm text-zinc-950 line-clamp-2 leading-snug mb-2">
                   {getProductName(sampleProduct, language)}
                 </h4>
 
-                {/* Live Price */}
                 <div className="flex items-baseline gap-1.5 text-[#660000] font-bold font-mono text-sm">
                   <span className="text-zinc-500 font-sans text-[11px] font-medium">
                     {language === "fa" ? "قیمت:" : language === "ar" ? "السعر:" : "Price:"}
@@ -268,11 +265,10 @@ export default function CollectionsMegaMenu() {
               </div>
             )}
 
-            {/* Direct CTA Link to the Selected Category */}
             <Link
-              href={getCategoryHref(activeCategory.name, activeCategory.id)}
+              href={getCategoryHref(activeCategory.id)}
               onClick={() => setIsOpen(false)}
-              className="mt-3 w-full py-2.5 px-4 rounded-xl bg-[#660000] hover:bg-[#7D0000] text-white font-bold text-xs text-center transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+              className="mt-3 w-full py-2.5 px-4 rounded-xl bg-[#660000] hover:bg-[#7D0000] text-white font-bold text-xs text-center transition-colors shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <span>
                 {language === "fa"

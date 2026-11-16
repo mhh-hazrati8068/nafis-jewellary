@@ -21,18 +21,18 @@ export default function AboutPage() {
       titleFa: "نقره ۹۲۵ استرلینگ عیار خالص",
       titleEn: "Certified 925 Sterling Silver",
       titleAr: "فضة استرليني 925 نقية معتمدة",
-      descFa: "تمام آثار گالری با بالاترین استاندارد خلوص نقره ۹۲۵ و آبکاری محافظ رودیوم برای درخشش مادام‌العمر و عدم کدر شدن تولید می‌شوند.",
-      descEn: "Every creation is forged from premium 925 sterling silver with protective rhodium finish for enduring brilliance.",
-      descAr: "تُصاغ جميع قطعنا من الفضة الاسترليني 925 النقية مع طبقة حماية متطورة للمحافظة على البريق الخالد.",
+      descFa: "تمامی زیورآلات نقره این مجموعه بر پایه استاندارد نقره استرلینگ ۹۲۵ تولید می‌شوند؛ آبکاری رادیوم تنها در برخی از آثار به‌صورت اختصاصی انجام شده و در مشخصات همان محصول درج می‌گردد.",
+      descEn: "All silver pieces are crafted from 925 sterling silver; protective rhodium plating is applied selectively to specific creations and noted on each product page.",
+      descAr: "تُصاغ جميع قطع الفضة وفق معيار الفضة الإسترلينية 925 النقية، بينما يُطبق طلاء الروديوم على قطع محددة فقط ويُذكر في مواصفات كل منتج.",
     },
     {
       icon: <TurquoiseMineralIcon className="w-6 h-6 text-[#A06314]" />,
-      titleFa: "سنگ‌های اصیل عقیق طبیعی و دُرّ نجف",
-      titleEn: "Authentic Natural Agate & Durr-e Najaf",
-      titleAr: "أحجار العقيق الطبيعي ودر النجف الصافي",
-      descFa: "استفاده انحصاری از سنگ‌های معدنی ۱۰۰٪ طبیعی، شناسنامه‌دار و بدون بهسازی شیمیایی از جمله عقیق یمنی، کبدی و دُرّ نجف زلال.",
-      descEn: "100% natural, certified, untreated gemstones including Yemeni agate, dark liver agate, and crystalline Durr-e Najaf.",
-      descAr: "أحجار كريمة طبيعية 100% تشمل العقيق اليماني والكبدي ودر النجف الكريستالي ومرفقة بشهادات فحص معتمدة.",
+      titleFa: "سنگ‌های طبیعی و کمیاب (عقیق و دُرّ نجف)",
+      titleEn: "Natural & Rare Agate & Durr-e Najaf",
+      titleAr: "أحجار طبيعية ونادرة من العقيق ودر النجف",
+      descFa: "دُرّ نجف، سنگی طبیعی و شناخته‌شده با جلوه‌ای شفاف و درخشان است که در کنار عقیق‌های کمیاب یمنی، کبدی و سوسنی در برخی از آثار مجموعه به کار می‌رود. برخی از این سنگ‌ها به‌دلیل ویژگی‌های طبیعی و کم‌نظیر خود از نمونه‌های کمیاب به شمار می‌آیند.",
+      descEn: "Natural Durr-e Najaf with its luminous clarity alongside rare hand-selected Yemeni, liver, and lavender agates chosen for their distinctive natural character.",
+      descAr: "حجر در النجف الطبيعي بتألقه الشفاف إلى جانب أحجار العقيق اليماني والكبدي والسوسني النادرة المختارة بعناية لخصائصها الطبيعية المميزة.",
     },
     {
       icon: <SilversmithHammerIcon className="w-6 h-6 text-[#A06314]" />,
@@ -81,7 +81,7 @@ export default function AboutPage() {
       titleFa: "راه‌اندازی فروشگاه آنلاین و ارسال سراسری",
       titleEn: "E-Commerce Launch & Nationwide Delivery",
       titleAr: "إطلاق المتجر الإلكتروني والشحن المباشر",
-      descFa: "فراهم‌سازی بستر خرید آنلاین امن با محاسبه‌گر لحظه‌ای نقره، صدور فاکتور رسمی و ارسال بیمه‌شده به تمام نقاط.",
+      descFa: "فراهم‌سازی بستر خرید آنلاین امن با قیمت‌گذاری شفاف، صدور فاکتور رسمی و ارسال بیمه‌شده به سراسر کشور.",
       descEn: "State-of-the-art online boutique with live silver rate integration and fully insured express delivery.",
       descAr: "تقديم تجربة تسوق إلكترونية راقية مع تسعير مباشر للفضة وفواتير رسمية وشحن مؤمن بالكامل.",
     },
@@ -126,20 +126,19 @@ export default function AboutPage() {
 
         {/* Studio Showcase Banner */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-28">
-          <div className="relative aspect-[4/3] sm:aspect-[16/10] rounded-3xl overflow-hidden border border-[#C4852B]/30 shadow-2xl">
+          <div className="relative aspect-[4/3] sm:aspect-[16/10] rounded-3xl overflow-hidden border border-[#C4852B]/25 shadow-lg bg-[#F4F1EA]">
             <Image
-              src="/images/hero-silver-bg.jpg"
+              src="/images/atelier_craft_detail.jpg"
               alt="Nafise Ebadi Silver Atelier"
               fill
-              className="object-cover object-center transition-transform duration-700 hover:scale-105"
+              className="object-cover object-center transition-transform duration-700 hover:scale-103"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-            <div className="absolute bottom-6 start-6 end-6 text-white">
-              <span className="text-[10px] text-[#C4852B] font-mono tracking-widest uppercase block mb-1 font-bold">
+            <div className="absolute bottom-4 start-4 end-4 sm:end-auto px-4 py-2.5 rounded-2xl bg-white/85 backdrop-blur-md border border-white/90 text-[#1A1816] shadow-xs">
+              <span className="text-[10px] text-[#9C6518] font-mono tracking-widest uppercase block mb-0.5 font-bold">
                 FINE SILVER ATELIER
               </span>
-              <h3 className="font-bold text-lg sm:text-xl">
-                {language === 'fa' ? 'میز کار نقره‌سازی و ابزارهای سنتی ساخت' : 'Artisan Workbench & Silversmith Craft'}
+              <h3 className="font-bold text-sm sm:text-base">
+                {language === 'fa' ? 'میز کار نقره‌سازی و دقت در جزئیات ساخت' : 'Artisan Atelier & Fine Silver Craft'}
               </h3>
             </div>
           </div>

@@ -418,7 +418,7 @@ export default function AdminDashboardPage() {
                           alt={p.name} 
                           className={styles.productThumb} 
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=100&q=80";
+                            (e.target as HTMLImageElement).src = "/images/campaign_agate_ring.jpg";
                           }}
                         />
                       </td>

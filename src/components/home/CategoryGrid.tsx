@@ -3,31 +3,29 @@
 import { useState } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import Link from "next/link";
-import { MotionFadeIn, MotionStaggerContainer, MotionStaggerItem, TiltCard } from "@/components/ui/MotionWrappers";
+import { MotionFadeIn } from "@/components/ui/MotionWrappers";
 
 export default function CategoryGrid() {
   const { t, language } = useAppStore();
   const [activeMode, setActiveMode] = useState<"mode1" | "mode2">("mode1");
 
-  // Mode 1: ست‌ها، مجموعه زنانه، مجموعه مردانه
+  // Mode 1: ست‌ها و نیم‌ست‌ها، مجموعه تخصصی بانوان، مجموعه فاخر آقایان
   const mode1Cards = [
     {
       id: "mode1-sets",
       titleFa: "ست‌ها و نیم‌ست‌های نقره",
       titleEn: "Signature Silver Sets",
       titleAr: "أطقم الفضة الفاخرة",
-      href: "/collections",
-      image: "/images/campaign_durr_agate_ring.jpg",
-      colSpan: "col-span-1 lg:col-span-1"
+      href: "/shop?filter=sets",
+      image: "/images/campaign_agate_hand_ring.jpg",
     },
     {
       id: "mode1-women",
-      titleFa: "مجموعه اختصاصی بانوان",
+      titleFa: "مجموعه تخصصی بانوان",
       titleEn: "Women's High Jewellery",
       titleAr: "مجموعة السيدات الراقية",
       href: "/shop?filter=women",
-      image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=1000&auto=format&fit=crop",
-      colSpan: "col-span-1 lg:col-span-1"
+      image: "/images/campaign_agate_necklace_alt.jpg",
     },
     {
       id: "mode1-men",
@@ -35,129 +33,134 @@ export default function CategoryGrid() {
       titleEn: "Men's Heritage Silver",
       titleAr: "مجموعة الرجال الفاخرة",
       href: "/shop?filter=men",
-      image: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=1000&auto=format&fit=crop",
-      colSpan: "col-span-1 lg:col-span-1"
+      image: "/images/hero-silver-ring-light.jpg",
     }
   ];
 
-  // Mode 2: ست‌ها، دستبند، انگشتر، گردن‌آویز
+  // Mode 2: ۱. سنگ‌های قرآنی، ۲. انگشتر نقره، ۳. گردنبند و گردن‌آویز نقره، ۴. دستبند نقره، ۵. زنجیر نقره
   const mode2Cards = [
     {
-      id: "mode2-sets",
-      titleFa: "ست‌ها و نیم‌ست‌ها",
-      titleEn: "Silver Sets",
-      titleAr: "أطقم الفضة",
-      href: "/collections",
-      image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1000&auto=format&fit=crop",
-      colSpan: "col-span-1 lg:col-span-1"
-    },
-    {
-      id: "mode2-bracelets",
-      titleFa: "دستبند و زنجیر نقره",
-      titleEn: "Silver Bracelets",
-      titleAr: "أساور وسلاسل فضة",
-      href: "/bracelets",
-      image: "/images/campaign_silver_bracelet.jpg",
-      colSpan: "col-span-1 lg:col-span-1"
+      id: "mode2-stones",
+      titleFa: "سنگ‌های قرآنی",
+      titleEn: "Quranic Gemstones",
+      titleAr: "الأحجار القرآنية",
+      href: "/shop?categoryId=6",
+      image: "/images/brand_atelier_story.jpg",
     },
     {
       id: "mode2-rings",
-      titleFa: "انگشتر نقره و عقیق",
-      titleEn: "Silver & Agate Rings",
-      titleAr: "خواتم فضة وعقيق",
+      titleFa: "انگشتر نقره",
+      titleEn: "Silver Rings",
+      titleAr: "خواتم الفضة",
       href: "/rings",
-      image: "/images/campaign_durr_agate_ring.jpg",
-      colSpan: "col-span-1 lg:col-span-1"
+      image: "/images/hero-silver-ring-light.jpg",
     },
     {
-      id: "mode2-pendants",
-      titleFa: "گردن‌آویز و پلاک نقره",
-      titleEn: "Silver Pendants",
-      titleAr: "قلائد ومداليات فضة",
+      id: "mode2-necklaces",
+      titleFa: "گردنبند و گردن‌آویز نقره",
+      titleEn: "Silver Necklaces & Pendants",
+      titleAr: "قلائد ومداليات الفضة",
       href: "/necklaces",
-      image: "/images/campaign_agate_necklace.jpg",
-      colSpan: "col-span-1 lg:col-span-1"
+      image: "/images/campaign_agate_necklace_alt.jpg",
+    },
+    {
+      id: "mode2-bracelets",
+      titleFa: "دستبند نقره",
+      titleEn: "Silver Bracelets",
+      titleAr: "أساور الفضة",
+      href: "/bracelets",
+      image: "/images/campaign_silver_bracelet.jpg",
+    },
+    {
+      id: "mode2-chains",
+      titleFa: "زنجیر نقره",
+      titleEn: "Silver Chains",
+      titleAr: "سلاسل الفضة",
+      href: "/shop?filter=chains",
+      image: "/images/atelier_craft_detail.jpg",
     }
   ];
 
   const currentCards = activeMode === "mode1" ? mode1Cards : mode2Cards;
 
   return (
-    <section className="py-20 md:py-28 bg-[#FFFFFF] dark:bg-[#FAF9F5] text-zinc-950 transition-colors duration-500 border-t border-[#C4852B]/20">
+    <section className="py-14 md:py-20 bg-white text-[#1A1816] transition-colors duration-500 border-b border-[#C4852B]/15">
       <div className="container mx-auto px-4 md:px-12">
-        
+
         {/* Section Title */}
         <MotionFadeIn direction="up" className="text-center max-w-2xl mx-auto mb-10">
-          <span className="text-[10px] text-[#C4852B] uppercase tracking-[0.3em] font-semibold mb-2 block font-mono">
+          <span className="text-[10px] text-[#C4852B] uppercase tracking-[0.28em] font-semibold mb-2 block font-mono">
             {t.categories.tag}
           </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold uppercase tracking-tight mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold uppercase tracking-tight mb-4 text-[#1A1816]">
             {language === 'fa' ? 'کالکشن‌های اختصاصی' : t.categories.title}
           </h2>
-          <div className="w-20 h-0.5 bg-gradient-to-r from-[#C4852B] to-[#660000] mx-auto mb-6"></div>
-          
-          {/* Mode Switcher Buttons */}
-          <div className="inline-flex p-1 rounded-full bg-[#F4F1EA] border border-[#C4852B]/30 shadow-xs">
+          <div className="w-16 h-0.5 bg-gradient-to-r from-[#C4852B] to-[#660000] mx-auto mb-6"></div>
+
+          {/* Mode Switcher Pills */}
+          <div className="inline-flex flex-wrap justify-center p-1 rounded-full bg-[#FAF9F5] border border-[#C4852B]/25 shadow-2xs gap-1">
             <button
+              type="button"
               onClick={() => setActiveMode("mode1")}
-              className={`px-5 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              className={`px-4 sm:px-5 py-2 rounded-full text-xs font-bold transition-colors cursor-pointer ${
                 activeMode === "mode1"
-                  ? "bg-[#660000] text-white shadow-sm"
+                  ? "bg-[#660000] text-white shadow-xs"
                   : "text-zinc-600 hover:text-zinc-950"
               }`}
             >
               {language === 'fa' ? 'کالکشن‌های اختصاصی (ست‌ها، زنانه، مردانه)' : "Curated Collections"}
             </button>
             <button
+              type="button"
               onClick={() => setActiveMode("mode2")}
-              className={`px-5 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              className={`px-4 sm:px-5 py-2 rounded-full text-xs font-bold transition-colors cursor-pointer ${
                 activeMode === "mode2"
-                  ? "bg-[#660000] text-white shadow-sm"
+                  ? "bg-[#660000] text-white shadow-xs"
                   : "text-zinc-600 hover:text-zinc-950"
               }`}
             >
-              {language === 'fa' ? 'دسته‌بندی آثار (ست، دستبند، انگشتر، گردن‌آویز)' : "Jewellery Categories"}
+              {language === 'fa' ? 'دسته‌بندی آثار (سنگ، انگشتر، گردنبند، دستبند، زنجیر)' : "Jewellery Categories"}
             </button>
           </div>
         </MotionFadeIn>
 
-        {/* Clean Holder Visual Grid - without heavy cluttered details */}
-        <MotionStaggerContainer 
-          key={activeMode}
-          className={`grid grid-cols-1 sm:grid-cols-2 ${activeMode === 'mode1' ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-6 md:gap-8`}
+        {/* Clean, Bright, Minimalist Collections Grid (pure CSS transitions, zero remount flicker) */}
+        <div
+          className={
+            activeMode === "mode1"
+              ? "max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-5 md:gap-6"
+              : "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5"
+          }
         >
           {currentCards.map((cat) => (
-            <MotionStaggerItem key={cat.id} className={cat.colSpan}>
-              <TiltCard className="h-full">
-                <Link 
-                  href={cat.href}
-                  className="group relative h-[300px] sm:h-[360px] rounded-3xl overflow-hidden border border-zinc-200/90 hover:border-[#C4852B] luxury-card-hover shadow-sm block w-full bg-[#1A1816]"
-                >
-                  {/* Image Holder */}
-                  <img 
-                    src={cat.image} 
-                    alt={language === 'fa' ? cat.titleFa : cat.titleEn}
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108"
-                  />
-                  
-                  {/* Sleek Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent transition-opacity duration-500 group-hover:opacity-90"></div>
+            <Link
+              key={cat.id}
+              href={cat.href}
+              className="group flex flex-col rounded-2xl overflow-hidden border border-zinc-200/80 hover:border-[#C4852B]/70 bg-[#FAF9F5] transition-all duration-300 shadow-2xs hover:shadow-md h-full"
+            >
+              <div className={`w-full overflow-hidden bg-[#F4F1EA] ${activeMode === "mode1" ? "aspect-[4/3]" : "aspect-square"}`}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={cat.image}
+                  alt={language === 'fa' ? cat.titleFa : cat.titleEn}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                />
+              </div>
 
-                  {/* Clean Visual Holder - Title & Minimal Action */}
-                  <div className="absolute bottom-0 inset-x-0 p-6 flex items-center justify-between z-10">
-                    <h3 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-wide group-hover:text-[#FFDF73] transition-colors">
-                      {language === 'fa' ? cat.titleFa : language === 'ar' ? cat.titleAr : cat.titleEn}
-                    </h3>
+              <div className="px-4 py-3.5 bg-white flex items-center justify-between gap-2 border-t border-zinc-100 mt-auto">
+                <h3 className={`font-bold text-[#1A1816] group-hover:text-[#660000] transition-colors leading-snug ${activeMode === "mode1" ? "text-sm sm:text-base" : "text-xs sm:text-sm"}`}>
+                  {language === 'fa' ? cat.titleFa : language === 'ar' ? cat.titleAr : cat.titleEn}
+                </h3>
 
-                    <div className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white group-hover:bg-[#660000] group-hover:scale-110 transition-all shrink-0">
-                      <span className="text-sm font-bold">{language === 'en' ? '→' : '←'}</span>
-                    </div>
-                  </div>
-                </Link>
-              </TiltCard>
-            </MotionStaggerItem>
+                <span className="w-7 h-7 rounded-full bg-[#FAF9F5] border border-zinc-200 flex items-center justify-center text-[#660000] group-hover:bg-[#660000] group-hover:text-white group-hover:border-[#660000] transition-colors shrink-0 text-xs font-bold">
+                  {language === 'en' ? '→' : '←'}
+                </span>
+              </div>
+            </Link>
           ))}
-        </MotionStaggerContainer>
+        </div>
 
       </div>
     </section>
